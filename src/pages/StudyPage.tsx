@@ -153,7 +153,7 @@ export const StudyPage = () => {
       <div className="max-w-md mx-auto p-4 flex flex-col h-[calc(100vh-80px)] md:h-[calc(100vh-140px)]">
         {/* Header */}
         <div className="flex justify-between items-center mb-4">
-          <button onClick={() => setStudyMode('list')} className="text-slate-400 hover:text-brand-primary font-bold text-sm flex items-center gap-1">
+          <button onClick={() => setStudyMode('list')} className="text-slate-400 hover:text-brand-primary font-bold text-sm flex items-center gap-1 transition-colors">
              <X size={24} /> 退出
           </button>
           <div className="text-brand-secondary font-bold text-lg">
@@ -162,7 +162,7 @@ export const StudyPage = () => {
         </div>
 
         {/* Card */}
-        <div className="flex-1 bg-white rounded-3xl shadow-xl border border-slate-100 p-6 flex flex-col items-center justify-center relative overflow-hidden mb-6">
+        <div className="flex-1 bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800 p-6 flex flex-col items-center justify-center relative overflow-hidden mb-6 transition-colors duration-300">
           
           {/* Top Hint */}
           <div className={`transition-all duration-300 flex flex-col items-center ${!showDetails ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
@@ -171,7 +171,7 @@ export const StudyPage = () => {
           </div>
 
           {/* Main Pinyin - BIGGER FONT */}
-          <div className="text-[120px] md:text-[200px] font-black text-brand-dark mb-4 tracking-wider leading-none select-none text-center break-words max-w-full">
+          <div className="text-[120px] md:text-[200px] font-black text-brand-dark dark:text-brand-primary mb-4 tracking-wider leading-none select-none text-center break-words max-w-full transition-colors duration-300">
             {currentItem.pinyin}
           </div>
 
@@ -185,8 +185,8 @@ export const StudyPage = () => {
 
           {/* Example Word */}
           <div className={`transition-all duration-300 text-center ${!showDetails ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
-            <div className="text-xl text-slate-400 mb-2 font-bold">{currentItem.example_pinyin}</div>
-            <div className="text-4xl font-bold text-slate-700">{currentItem.example_word}</div>
+            <div className="text-xl text-slate-400 dark:text-slate-500 mb-2 font-bold">{currentItem.example_pinyin}</div>
+            <div className="text-4xl font-bold text-slate-700 dark:text-slate-200">{currentItem.example_word}</div>
           </div>
         </div>
 
@@ -203,14 +203,14 @@ export const StudyPage = () => {
              <div className="flex gap-4 h-full">
                <button 
                  onClick={() => handleTestResult(false)}
-                 className="flex-1 bg-red-100 text-red-500 rounded-2xl font-bold text-xl flex flex-col items-center justify-center hover:bg-red-200 transition-colors active:scale-95"
+                 className="flex-1 bg-red-100 dark:bg-red-900/30 text-red-500 dark:text-red-400 rounded-2xl font-bold text-xl flex flex-col items-center justify-center hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors active:scale-95"
                >
                  <X size={32} className="mb-1" />
                  需复习
                </button>
                <button 
                  onClick={() => handleTestResult(true)}
-                 className="flex-1 bg-green-100 text-green-600 rounded-2xl font-bold text-xl flex flex-col items-center justify-center hover:bg-green-200 transition-colors active:scale-95"
+                 className="flex-1 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-2xl font-bold text-xl flex flex-col items-center justify-center hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors active:scale-95"
                >
                  <Check size={32} className="mb-1" />
                  记住了
@@ -221,7 +221,7 @@ export const StudyPage = () => {
                <button 
                  onClick={() => currentCardIndex > 0 && setCurrentCardIndex(p => p - 1)}
                  disabled={currentCardIndex === 0}
-                 className="flex-1 bg-slate-100 text-slate-400 rounded-2xl font-bold text-lg disabled:opacity-50"
+                 className="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 rounded-2xl font-bold text-lg disabled:opacity-50 transition-colors"
                >
                  上一个
                </button>
@@ -242,11 +242,11 @@ export const StudyPage = () => {
   if (testCompleted) {
     return (
       <div className="max-w-md mx-auto p-8 flex flex-col items-center justify-center h-[80vh] text-center animate-in zoom-in duration-300">
-        <div className="w-28 h-28 bg-yellow-100 text-yellow-500 rounded-full flex items-center justify-center mb-8 animate-bounce">
+        <div className="w-28 h-28 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-500 dark:text-yellow-400 rounded-full flex items-center justify-center mb-8 animate-bounce transition-colors">
           <Star size={56} fill="currentColor" />
         </div>
-        <h2 className="text-3xl font-bold text-slate-800 mb-4">学习完成！</h2>
-        <p className="text-slate-500 mb-10 text-lg">坚持学习，每天进步一点点！</p>
+        <h2 className="text-3xl font-bold text-slate-800 dark:text-white mb-4 transition-colors">学习完成！</h2>
+        <p className="text-slate-500 dark:text-slate-400 mb-10 text-lg transition-colors">坚持学习，每天进步一点点！</p>
         <button 
           onClick={() => setStudyMode('list')}
           className="w-full bg-brand-primary text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-lg hover:scale-105 transition-transform"
@@ -263,12 +263,12 @@ export const StudyPage = () => {
       {/* Custom Modal for No Reviews */}
       {showNoReviewModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center scale-100 animate-in zoom-in-95 duration-200">
-            <div className="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center scale-100 animate-in zoom-in-95 duration-200 transition-colors">
+            <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 text-green-500 dark:text-green-400 rounded-full flex items-center justify-center mx-auto mb-6 transition-colors">
               <Smile size={48} />
             </div>
-            <h3 className="text-2xl font-black text-brand-dark mb-3">太棒了！</h3>
-            <p className="text-slate-500 mb-8 font-medium">暂时没有需要复习的拼音。<br/>休息一下，稍后再来吧！</p>
+            <h3 className="text-2xl font-black text-brand-dark dark:text-brand-primary mb-3 transition-colors">太棒了！</h3>
+            <p className="text-slate-500 dark:text-slate-400 mb-8 font-medium transition-colors">暂时没有需要复习的拼音。<br/>休息一下，稍后再来吧！</p>
             <button 
               onClick={() => setShowNoReviewModal(false)}
               className="w-full bg-brand-primary text-white py-3.5 rounded-xl font-bold text-lg hover:bg-brand-dark transition-colors"
@@ -280,10 +280,10 @@ export const StudyPage = () => {
       )}
 
       {/* Header Area */}
-      <div className="bg-white rounded-3xl p-6 mb-8 shadow-sm border border-slate-100 relative overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 mb-8 shadow-sm border border-slate-100 dark:border-slate-800 relative overflow-hidden transition-colors">
         <div className="relative z-10">
-          <h1 className="text-2xl font-black text-brand-dark mb-2">拼音学习中心</h1>
-          <p className="text-slate-500 mb-6">掌握 {charts.length} 个基础拼音，轻松闯关</p>
+          <h1 className="text-2xl font-black text-brand-dark dark:text-brand-primary mb-2 transition-colors">拼音学习中心</h1>
+          <p className="text-slate-500 dark:text-slate-400 mb-6 transition-colors">掌握 {charts.length} 个基础拼音，轻松闯关</p>
           
           <div className="flex gap-3">
              <button 
@@ -293,57 +293,57 @@ export const StudyPage = () => {
                <BrainCircuit size={20} />
                <span>智能复习</span>
              </button>
-             <div className="flex-1 bg-slate-50 rounded-xl border border-slate-100 flex flex-col items-center justify-center p-2">
-                <span className="text-xs text-slate-400 font-bold">已掌握</span>
+             <div className="flex-1 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center p-2 transition-colors">
+                <span className="text-xs text-slate-400 dark:text-slate-500 font-bold transition-colors">已掌握</span>
                 <span className="text-xl font-black text-brand-primary">
-                  {progress.filter(p => p.is_mastered).length} <span className="text-sm text-slate-300">/ {charts.length}</span>
+                  {progress.filter(p => p.is_mastered).length} <span className="text-sm text-slate-300 dark:text-slate-600">/ {charts.length}</span>
                 </span>
              </div>
           </div>
         </div>
         {/* Decor */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-brand-primary/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute top-0 right-0 w-32 h-32 bg-brand-primary/5 dark:bg-brand-primary/10 rounded-full -translate-y-1/2 translate-x-1/2 transition-colors" />
       </div>
 
       <div className="space-y-6">
         
         {/* 1. Initial Consonants (声母) */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden transition-colors">
            <div 
-             className="p-5 flex items-center justify-between cursor-pointer active:bg-slate-50"
+             className="p-5 flex items-center justify-between cursor-pointer active:bg-slate-50 dark:active:bg-slate-800 transition-colors"
              onClick={() => setExpandedSection(expandedSection === 'shengmu' ? '' : 'shengmu')}
            >
              <div className="flex items-center gap-3">
-               <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center font-bold text-2xl">🅱️</div>
+               <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-2xl flex items-center justify-center font-bold text-2xl transition-colors">🅱️</div>
                <div>
-                 <h3 className="font-bold text-lg text-slate-800">声母</h3>
-                 <p className="text-xs text-slate-400 font-bold">{pinyinData.initials.length} 个拼音</p>
+                 <h3 className="font-bold text-lg text-slate-800 dark:text-white transition-colors">声母</h3>
+                 <p className="text-xs text-slate-400 dark:text-slate-500 font-bold transition-colors">{pinyinData.initials.length} 个拼音</p>
                </div>
              </div>
-             <ChevronDown size={20} className={`text-slate-300 transition-transform ${expandedSection === 'shengmu' ? 'rotate-180' : ''}`} />
+             <ChevronDown size={20} className={`text-slate-300 dark:text-slate-600 transition-transform ${expandedSection === 'shengmu' ? 'rotate-180' : ''}`} />
            </div>
            
            {expandedSection === 'shengmu' && (
              <div className="px-5 pb-5 animate-in slide-in-from-top-2">
                 <div className="mb-4">
                   <div className="flex justify-between text-xs mb-1.5 font-bold">
-                    <span className="text-slate-400">掌握进度</span>
+                    <span className="text-slate-400 dark:text-slate-500 transition-colors">掌握进度</span>
                     <span className="text-brand-primary">{getProgressPercentage(pinyinData.initials)}%</span>
                   </div>
-                  <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden transition-colors">
                     <div className="h-full bg-brand-primary transition-all duration-500" style={{ width: `${getProgressPercentage(pinyinData.initials)}%` }} />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                    <button 
                      onClick={() => startStudy(pinyinData.initials, 'learn', '声母')}
-                     className="py-3 rounded-xl bg-slate-50 text-slate-600 font-bold text-sm hover:bg-slate-100 flex items-center justify-center gap-2"
+                     className="py-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-sm hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center gap-2 transition-colors"
                    >
                      <BookOpen size={18} /> 学习卡片
                    </button>
                    <button 
                      onClick={() => startStudy(pinyinData.initials, 'test', '声母')}
-                     className="py-3 rounded-xl bg-brand-primary/10 text-brand-primary font-bold text-sm hover:bg-brand-primary hover:text-white transition-colors flex items-center justify-center gap-2"
+                     className="py-3 rounded-xl bg-brand-primary/10 dark:bg-brand-primary/20 text-brand-primary font-bold text-sm hover:bg-brand-primary hover:text-white transition-colors flex items-center justify-center gap-2"
                    >
                      <Sparkles size={18} /> 记忆测试
                    </button>
@@ -353,40 +353,40 @@ export const StudyPage = () => {
         </div>
 
         {/* 2. Finals (韵母) - Has Subgroups */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden transition-colors">
            <div 
-             className="p-5 flex items-center justify-between cursor-pointer active:bg-slate-50"
+             className="p-5 flex items-center justify-between cursor-pointer active:bg-slate-50 dark:active:bg-slate-800 transition-colors"
              onClick={() => setExpandedSection(expandedSection === 'yunmu' ? '' : 'yunmu')}
            >
              <div className="flex items-center gap-3">
-               <div className="w-12 h-12 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center font-bold text-2xl">🅰️</div>
+               <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-2xl flex items-center justify-center font-bold text-2xl transition-colors">🅰️</div>
                <div>
-                 <h3 className="font-bold text-lg text-slate-800">韵母</h3>
-                 <p className="text-xs text-slate-400 font-bold">{pinyinData.finals.all.length} 个拼音</p>
+                 <h3 className="font-bold text-lg text-slate-800 dark:text-white transition-colors">韵母</h3>
+                 <p className="text-xs text-slate-400 dark:text-slate-500 font-bold transition-colors">{pinyinData.finals.all.length} 个拼音</p>
                </div>
              </div>
-             <ChevronDown size={20} className={`text-slate-300 transition-transform ${expandedSection === 'yunmu' ? 'rotate-180' : ''}`} />
+             <ChevronDown size={20} className={`text-slate-300 dark:text-slate-600 transition-transform ${expandedSection === 'yunmu' ? 'rotate-180' : ''}`} />
            </div>
            
            {expandedSection === 'yunmu' && (
              <div className="px-5 pb-5 space-y-4 animate-in slide-in-from-top-2">
                 {/* Subgroups Loop */}
                 {Object.entries(pinyinData.finals.groups).map(([groupName, items]) => (
-                  <div key={groupName} className="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                  <div key={groupName} className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-100 dark:border-slate-700 transition-colors">
                     <div className="flex justify-between items-center mb-3">
-                      <span className="font-bold text-slate-700">{groupName} <span className="text-slate-400 text-xs ml-1">({items.length})</span></span>
+                      <span className="font-bold text-slate-700 dark:text-slate-200 transition-colors">{groupName} <span className="text-slate-400 dark:text-slate-500 text-xs ml-1">({items.length})</span></span>
                       <span className="text-xs font-bold text-brand-primary">{getProgressPercentage(items)}%</span>
                     </div>
                     <div className="flex gap-2">
                        <button 
                          onClick={() => startStudy(items, 'learn', groupName)}
-                         className="flex-1 py-2 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-600 shadow-sm"
+                         className="flex-1 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-300 shadow-sm transition-colors"
                        >
                          学习卡片
                        </button>
                        <button 
                          onClick={() => startStudy(items, 'test', groupName)}
-                         className="flex-1 py-2 bg-white border border-brand-primary/20 text-brand-primary rounded-lg text-xs font-bold shadow-sm"
+                         className="flex-1 py-2 bg-white dark:bg-slate-700 border border-brand-primary/20 dark:border-brand-primary/40 text-brand-primary rounded-lg text-xs font-bold shadow-sm transition-colors"
                        >
                          记忆测试
                        </button>
@@ -398,42 +398,42 @@ export const StudyPage = () => {
         </div>
 
         {/* 3. Overall Recognition (整体认读) */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden transition-colors">
            <div 
-             className="p-5 flex items-center justify-between cursor-pointer active:bg-slate-50"
+             className="p-5 flex items-center justify-between cursor-pointer active:bg-slate-50 dark:active:bg-slate-800 transition-colors"
              onClick={() => setExpandedSection(expandedSection === 'zhengti' ? '' : 'zhengti')}
            >
              <div className="flex items-center gap-3">
-               <div className="w-12 h-12 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center font-bold text-2xl">🇨🇳</div>
+               <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-2xl flex items-center justify-center font-bold text-2xl transition-colors">🇨🇳</div>
                <div>
-                 <h3 className="font-bold text-lg text-slate-800">整体认读</h3>
-                 <p className="text-xs text-slate-400 font-bold">{pinyinData.overall.length} 个拼音</p>
+                 <h3 className="font-bold text-lg text-slate-800 dark:text-white transition-colors">整体认读</h3>
+                 <p className="text-xs text-slate-400 dark:text-slate-500 font-bold transition-colors">{pinyinData.overall.length} 个拼音</p>
                </div>
              </div>
-             <ChevronDown size={20} className={`text-slate-300 transition-transform ${expandedSection === 'zhengti' ? 'rotate-180' : ''}`} />
+             <ChevronDown size={20} className={`text-slate-300 dark:text-slate-600 transition-transform ${expandedSection === 'zhengti' ? 'rotate-180' : ''}`} />
            </div>
            
            {expandedSection === 'zhengti' && (
              <div className="px-5 pb-5 animate-in slide-in-from-top-2">
                 <div className="mb-4">
                   <div className="flex justify-between text-xs mb-1.5 font-bold">
-                    <span className="text-slate-400">掌握进度</span>
+                    <span className="text-slate-400 dark:text-slate-500 transition-colors">掌握进度</span>
                     <span className="text-brand-primary">{getProgressPercentage(pinyinData.overall)}%</span>
                   </div>
-                  <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden transition-colors">
                     <div className="h-full bg-brand-primary transition-all duration-500" style={{ width: `${getProgressPercentage(pinyinData.overall)}%` }} />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                    <button 
                      onClick={() => startStudy(pinyinData.overall, 'learn', '整体认读')}
-                     className="py-3 rounded-xl bg-slate-50 text-slate-600 font-bold text-sm hover:bg-slate-100 flex items-center justify-center gap-2"
+                     className="py-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-sm hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center gap-2 transition-colors"
                    >
                      <BookOpen size={18} /> 学习卡片
                    </button>
                    <button 
                      onClick={() => startStudy(pinyinData.overall, 'test', '整体认读')}
-                     className="py-3 rounded-xl bg-brand-primary/10 text-brand-primary font-bold text-sm hover:bg-brand-primary hover:text-white transition-colors flex items-center justify-center gap-2"
+                     className="py-3 rounded-xl bg-brand-primary/10 dark:bg-brand-primary/20 text-brand-primary font-bold text-sm hover:bg-brand-primary hover:text-white transition-colors flex items-center justify-center gap-2"
                    >
                      <Sparkles size={18} /> 记忆测试
                    </button>

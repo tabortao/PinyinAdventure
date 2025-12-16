@@ -31,9 +31,9 @@ export const Layout = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col font-sans transition-colors duration-300">
       {/* Top Navbar */}
-      <nav className="bg-brand-primary text-white shadow-lg sticky top-0 z-50">
+      <nav className="bg-brand-primary dark:bg-slate-900 text-white shadow-lg sticky top-0 z-50 transition-colors duration-300">
         <div className="max-w-4xl mx-auto px-4 h-14 md:h-16 flex items-center justify-between">
           
           {/* Left: Brand + Desktop Nav */}
@@ -65,43 +65,7 @@ export const Layout = () => {
               </div>
             )}
 
-            {user ? (
-              <div className="relative">
-                <button 
-                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex items-center gap-2 hover:bg-white/10 px-2 py-1 rounded-lg transition-colors"
-                >
-                  <div className="w-7 h-7 md:w-8 md:h-8 bg-white/20 rounded-full flex items-center justify-center">
-                    <User size={16} className="md:w-[18px] md:h-[18px]" />
-                  </div>
-                  <span className="hidden md:inline text-sm font-bold truncate max-w-[100px]">
-                    {profile?.username}
-                  </span>
-                </button>
-
-                {/* User Dropdown */}
-                {isUserMenuOpen && (
-                  <>
-                    <div 
-                      className="fixed inset-0 z-10" 
-                      onClick={() => setIsUserMenuOpen(false)} 
-                    />
-                    <div className="absolute right-0 top-full mt-2 w-40 bg-white rounded-xl shadow-xl border border-slate-100 py-1 text-slate-700 z-20 animate-in fade-in zoom-in duration-200 origin-top-right">
-                       <div className="px-4 py-2 border-b border-slate-100 text-xs text-slate-400 font-bold md:hidden">
-                         {profile?.username}
-                       </div>
-                       <button 
-                         onClick={() => { signOut(); setIsUserMenuOpen(false); }}
-                         className="w-full text-left px-4 py-3 text-sm font-bold hover:bg-red-50 hover:text-red-500 flex items-center gap-2 transition-colors"
-                       >
-                         <LogOut size={16} />
-                         退出登录
-                       </button>
-                    </div>
-                  </>
-                )}
-              </div>
-            ) : (
+            {!user && (
               <Link to="/login" className="text-sm font-bold hover:underline">登录</Link>
             )}
           </div>
@@ -109,17 +73,17 @@ export const Layout = () => {
       </nav>
 
       {/* Main Content */}
-      <main className="flex-1 relative pb-20 md:pb-0">
+      <main className="flex-1 relative pb-20 md:pb-0 dark:bg-slate-950 transition-colors duration-300">
         <Outlet />
       </main>
 
       {/* Mobile Bottom Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around items-center h-16 z-50 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 dark:border-slate-800 border-t border-slate-200 flex justify-around items-center h-16 z-50 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] transition-colors duration-300">
         {navItems.map((item) => (
           <Link 
             key={item.path}
             to={item.path}
-            className={`flex flex-col items-center justify-center w-full h-full transition-colors ${isActive(item.path) ? 'text-brand-primary' : 'text-slate-400 hover:text-slate-600'}`}
+            className={`flex flex-col items-center justify-center w-full h-full transition-colors ${isActive(item.path) ? 'text-brand-primary dark:text-brand-primary' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-400'}`}
           >
             <div className={`transition-transform duration-200 ${isActive(item.path) ? 'scale-110' : 'scale-100'}`}>
                {item.icon}
