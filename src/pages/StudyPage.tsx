@@ -14,7 +14,7 @@ export const StudyPage = () => {
   
   // State for study modes
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
-  const [studyMode, setStudyMode] = useState<'browse' | 'test' | 'review'>('browse');
+  const [studyMode, setStudyMode] = useState<'list' | 'learn' | 'test' | 'review'>('list');
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
   const [testCompleted, setTestCompleted] = useState(false);
@@ -75,7 +75,7 @@ export const StudyPage = () => {
   };
 
   // Handlers
-  const startStudy = (items: PinyinChart[], mode: 'browse' | 'test', groupName: string) => {
+  const startStudy = (items: PinyinChart[], mode: 'learn' | 'test', groupName: string) => {
     if (!items || items.length === 0) {
       alert("该分类下暂时没有内容");
       return;
@@ -248,7 +248,7 @@ export const StudyPage = () => {
         <h2 className="text-3xl font-bold text-slate-800 mb-4">学习完成！</h2>
         <p className="text-slate-500 mb-10 text-lg">坚持学习，每天进步一点点！</p>
         <button 
-          onClick={() => setStudyMode('browse')}
+          onClick={() => setStudyMode('list')}
           className="w-full bg-brand-primary text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-lg hover:scale-105 transition-transform"
         >
           返回学习列表
@@ -336,7 +336,7 @@ export const StudyPage = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                    <button 
-                     onClick={() => startStudy(pinyinData.initials, 'browse', '声母')}
+                     onClick={() => startStudy(pinyinData.initials, 'learn', '声母')}
                      className="py-3 rounded-xl bg-slate-50 text-slate-600 font-bold text-sm hover:bg-slate-100 flex items-center justify-center gap-2"
                    >
                      <BookOpen size={18} /> 学习卡片
@@ -379,7 +379,7 @@ export const StudyPage = () => {
                     </div>
                     <div className="flex gap-2">
                        <button 
-                         onClick={() => startStudy(items, 'browse', groupName)}
+                         onClick={() => startStudy(items, 'learn', groupName)}
                          className="flex-1 py-2 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-600 shadow-sm"
                        >
                          学习卡片
@@ -426,7 +426,7 @@ export const StudyPage = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                    <button 
-                     onClick={() => startStudy(pinyinData.overall, 'browse', '整体认读')}
+                     onClick={() => startStudy(pinyinData.overall, 'learn', '整体认读')}
                      className="py-3 rounded-xl bg-slate-50 text-slate-600 font-bold text-sm hover:bg-slate-100 flex items-center justify-center gap-2"
                    >
                      <BookOpen size={18} /> 学习卡片
