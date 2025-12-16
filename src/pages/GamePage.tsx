@@ -6,7 +6,7 @@ import { PinyinKeyboard } from '../components/game/PinyinKeyboard';
 import { applyTone, checkAnswer } from '../lib/pinyinUtils';
 import { useAuth } from '../context/AuthContext';
 import { useSettings } from '../context/SettingsContext';
-import { X, Check, ArrowRight, RefreshCcw, Home, Sparkles, BrainCircuit, Trophy } from 'lucide-react';
+import { X, Check, ArrowRight, RefreshCcw, Home, Sparkles, BrainCircuit, Trophy, HelpCircle, Hand } from 'lucide-react';
 
 const POSITIVE_FEEDBACK_EN = ['Awesome!', 'Fantastic!', 'Perfect!', 'Unstoppable!', 'Brilliant!'];
 const POSITIVE_FEEDBACK_CN = ['太棒了！', '真厉害！', '全对！', '势不可挡！', '天才！'];
@@ -30,6 +30,7 @@ export const GamePage = () => {
   const [isReviewMode, setIsReviewMode] = useState(false);
   const [combo, setCombo] = useState(0);
   const [feedbackMsg, setFeedbackMsg] = useState('');
+  const [showTutorial, setShowTutorial] = useState(false);
 
   useEffect(() => {
     if (!levelId) return;
@@ -79,6 +80,12 @@ export const GamePage = () => {
 
         setQuestions(targetQs);
         setGameState('playing');
+
+        // Show tutorial only for Level 1, Chapter 1, Question 1
+        if (lvl && lvl.grade === 1 && lvl.chapter === 1) {
+            setShowTutorial(true);
+        }
+
       } catch (e) {
         console.error(e);
         alert('加载失败');
@@ -103,6 +110,9 @@ export const GamePage = () => {
   const handleConfirm = async () => {
     if (!input) return;
     
+    // Hide tutorial if showing
+    if (showTutorial) setShowTutorial(false);
+
     const currentQ = questions[currentIndex];
     const isCorrect = checkAnswer(input, currentQ.pinyin);
     
@@ -211,7 +221,25 @@ export const GamePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-brand-background flex flex-col overflow-hidden">
+    <div className="min-h-screen bg-brand-background flex flex-col overflow-hidden relative">
+      {/* Tutorial Overlay */}
+      {showTutorial && currentIndex === 0 && (
+          <div className="absolute inset-0 z-50 bg-black/60 flex flex-col items-center justify-center animate-in fade-in duration-500" onClick={() => setShowTutorial(false)}>
+             <div className="bg-white p-6 rounded-3xl max-w-sm mx-4 text-center shadow-2xl border-4 border-brand-secondary animate-bounce">
+                <div className="text-5xl mb-4">👆</div>
+                <h3 className="text-2xl font-bold text-brand-secondary mb-2">新手引导</h3>
+                <p className="text-slate-600 mb-4">
+                   看着上面的汉字 <br/>
+                   点击下方的 <b>拼音键盘</b> <br/>
+                   输入正确的拼音并按下 <b>确定</b>
+                </p>
+                <button className="bg-brand-primary text-white px-6 py-2 rounded-full font-bold animate-pulse">
+                  知道了
+                </button>
+             </div>
+          </div>
+      )}
+
       {/* Header */}
       <div className="bg-white p-3 md:p-4 shadow-sm flex items-center justify-between z-20">
         <button onClick={() => navigate('/')} className="text-slate-400 hover:text-slate-600 p-2">
@@ -247,7 +275,15 @@ export const GamePage = () => {
               </div>
             </div>
           )}
-        <div className="bg-white w-full max-w-sm aspect-square md:aspect-[4/3] rounded-3xl shadow-lg border-b-8 border-slate-200 flex items-center justify-center mb-4 md:mb-8 relative overflow-hidden transition-all mx-4">
+        <div className="bg-white w-full max-w-sm aspect-square md:aspect-[4/3] rounded-3xl shadow-lg border-b-8 border-slate-200 flex flex-col items-center justify-center mb-4 md:mb-8 relative overflow-hidden transition-all mx-4">
+          
+          {/* Hint Emoji Display for Level 1 early stages */}
+          {currentQ.hint_emoji && gameState === 'playing' && (
+             <div className="mb-4 text-4xl md:text-6xl animate-in zoom-in duration-300">
+                {currentQ.hint_emoji}
+             </div>
+          )}
+
           <span className={`${getContentSize(currentQ.content)} font-bold text-slate-800 select-none transition-all px-4 text-center break-words leading-tight`}>
             {currentQ.content}
           </span>

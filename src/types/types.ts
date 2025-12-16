@@ -13,6 +13,7 @@ export interface Level {
   chapter: number;
   name: string;
   description: string | null;
+  icon?: string;
 }
 
 export type QuestionType = 'character' | 'word' | 'sentence';
@@ -24,6 +25,7 @@ export interface Question {
   content: string;
   pinyin: string;
   audio_url: string | null;
+  hint_emoji?: string;
 }
 
 export interface UserProgress {
