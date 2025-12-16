@@ -130,7 +130,8 @@ export const GamePage = () => {
       // Random Chinese encouragement
       setFeedbackMsg(ENCOURAGE_FEEDBACK_CN[Math.floor(Math.random() * ENCOURAGE_FEEDBACK_CN.length)]);
       if (user) {
-        await recordMistake(user.id, currentQ.id, input);
+        // Record mistake in background, don't block gameplay
+        recordMistake(user.id, currentQ.id, input).catch(e => console.error("Failed to record mistake:", e));
       }
     }
 

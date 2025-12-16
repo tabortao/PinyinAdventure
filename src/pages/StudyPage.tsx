@@ -248,7 +248,10 @@ export const StudyPage = () => {
         <h2 className="text-3xl font-bold text-slate-800 dark:text-white mb-4 transition-colors">学习完成！</h2>
         <p className="text-slate-500 dark:text-slate-400 mb-10 text-lg transition-colors">坚持学习，每天进步一点点！</p>
         <button 
-          onClick={() => setStudyMode('list')}
+          onClick={() => {
+            setStudyMode('list');
+            setTestCompleted(false);
+          }}
           className="w-full bg-brand-primary text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-lg hover:scale-105 transition-transform"
         >
           返回学习列表

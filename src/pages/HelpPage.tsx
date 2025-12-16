@@ -97,7 +97,7 @@ export const HelpPage = () => {
         <div className="flex flex-col items-center gap-2">
             <span className="text-slate-400 text-xs font-bold">作者：Tabor</span>
             <div className="inline-block px-4 py-1 rounded-full bg-slate-100 text-slate-400 text-xs font-bold font-mono">
-              v1.6.0
+              v1.6.1
             </div>
         </div>
         
