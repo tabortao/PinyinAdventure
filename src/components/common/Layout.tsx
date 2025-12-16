@@ -1,6 +1,6 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { LogOut, User, Trophy, Menu, X, Settings, Gamepad2, BookX, HelpCircle } from 'lucide-react';
+import { LogOut, User, Trophy, Menu, X, Settings, Gamepad2, BookX, HelpCircle, BookOpen } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { getTotalScore } from '../../db/api';
 
@@ -24,7 +24,8 @@ export const Layout = () => {
   const isActive = (path: string) => location.pathname === path;
 
   const navItems = [
-    { name: '闯关地图', path: '/', icon: <Gamepad2 size={24} /> },
+    { name: '学习', path: '/study', icon: <BookOpen size={24} /> },
+    { name: '闯关', path: '/', icon: <Gamepad2 size={24} /> },
     { name: '错音本', path: '/mistakes', icon: <BookX size={24} /> },
     { name: '设置', path: '/settings', icon: <Settings size={24} /> },
   ];

@@ -1,53 +1,98 @@
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, BookOpen, BrainCircuit, Gamepad2, Layers, Smartphone, Sparkles, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export const HelpPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="max-w-2xl mx-auto p-4 md:p-0">
+    <div className="max-w-3xl mx-auto px-4 py-6 pb-24 md:pb-6">
       <button 
         onClick={() => navigate('/settings')} 
-        className="flex items-center text-slate-500 hover:text-brand-primary mb-6 transition-colors"
+        className="flex items-center text-slate-500 hover:text-brand-primary mb-6 transition-colors font-bold text-sm"
       >
-        <ArrowLeft size={20} className="mr-1" /> 返回设置
+        <ArrowLeft size={18} className="mr-1" /> 返回设置
       </button>
       
-      <h1 className="text-3xl font-bold text-brand-dark mb-8">帮助与说明</h1>
+      <div className="text-center mb-10">
+        <h1 className="text-3xl font-black text-brand-dark mb-2">帮助与说明</h1>
+        <div className="w-16 h-1.5 bg-brand-primary rounded-full mx-auto opacity-50"></div>
+      </div>
       
-      <div className="space-y-6">
-        <section className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-          <h2 className="text-xl font-bold text-brand-secondary mb-3">项目简介</h2>
-          <p className="text-slate-600 leading-relaxed">
-            "智能拼音大闯关" 是一款专为小学生设计的互动式拼音学习应用。
-            我们结合了游戏化教学理念，通过趣味闯关的方式，帮助孩子轻松掌握汉语拼音的声母、韵母及整体认读音节。
-          </p>
-        </section>
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Project Intro */}
+        <div className="col-span-1 md:col-span-2 bg-gradient-to-br from-brand-primary/5 to-blue-50 p-6 rounded-3xl border border-brand-primary/10 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-brand-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+          <div className="relative z-10">
+            <div className="flex items-center gap-3 mb-4">
+               <div className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-brand-primary">
+                 <BookOpen size={20} />
+               </div>
+               <h2 className="text-xl font-bold text-brand-dark">项目简介</h2>
+            </div>
+            <p className="text-slate-600 leading-relaxed font-medium">
+              "智能拼音大闯关" 是一款专为小学生设计的互动式拼音学习应用。
+              我们结合了游戏化教学理念，通过趣味闯关的方式，帮助孩子轻松掌握汉语拼音的声母、韵母及整体认读音节。
+            </p>
+          </div>
+        </div>
 
-        <section className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-          <h2 className="text-xl font-bold text-brand-secondary mb-3">设计理念</h2>
-          <ul className="list-disc list-inside text-slate-600 space-y-2">
-            <li><strong>寓教于乐</strong>：将枯燥的拼音练习转化为生动的闯关游戏。</li>
-            <li><strong>科学记忆</strong>：基于艾宾浩斯遗忘曲线，智能安排复习计划。</li>
-            <li><strong>即时反馈</strong>：通过音效、动画和连击系统，提供正向激励。</li>
-            <li><strong>全平台适配</strong>：无论手机、平板还是电脑，都能获得最佳体验。</li>
-          </ul>
-        </section>
+        {/* Philosophy */}
+        <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+           <div className="flex items-center gap-3 mb-4">
+             <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center text-purple-600">
+               <BrainCircuit size={20} />
+             </div>
+             <h2 className="text-lg font-bold text-slate-800">设计理念</h2>
+           </div>
+           <ul className="space-y-3">
+             {[
+               { icon: <Gamepad2 size={16} />, text: '寓教于乐：游戏化闯关体验' },
+               { icon: <Zap size={16} />, text: '科学记忆：艾宾浩斯智能复习' },
+               { icon: <Sparkles size={16} />, text: '即时反馈：动画激励系统' },
+               { icon: <Smartphone size={16} />, text: '多端同步：手机电脑无缝切换' },
+             ].map((item, i) => (
+               <li key={i} className="flex items-center gap-3 text-slate-600 text-sm font-bold">
+                 <span className="text-slate-400">{item.icon}</span>
+                 {item.text}
+               </li>
+             ))}
+           </ul>
+        </div>
 
-        <section className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-          <h2 className="text-xl font-bold text-brand-secondary mb-3">功能特点</h2>
-           <ul className="list-disc list-inside text-slate-600 space-y-2">
-            <li><strong>智能题库</strong>：涵盖人教版小学全阶段识字表。</li>
-            <li><strong>错题本</strong>：自动记录错误，针对性强化训练。</li>
-            <li><strong>多模式练习</strong>：支持单字、词语、句子多种挑战模式。</li>
-            <li><strong>AI 助教</strong>：智能生成复习关卡，查漏补缺。</li>
-          </ul>
-        </section>
+        {/* Features */}
+        <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+           <div className="flex items-center gap-3 mb-4">
+             <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600">
+               <Layers size={20} />
+             </div>
+             <h2 className="text-lg font-bold text-slate-800">功能特点</h2>
+           </div>
+           <ul className="space-y-3">
+             <li className="flex items-start gap-2">
+               <div className="w-1.5 h-1.5 rounded-full bg-brand-secondary mt-1.5"></div>
+               <span className="text-slate-600 text-sm"><strong className="text-slate-800">智能题库</strong>：涵盖人教版小学全阶段识字表。</span>
+             </li>
+             <li className="flex items-start gap-2">
+               <div className="w-1.5 h-1.5 rounded-full bg-brand-secondary mt-1.5"></div>
+               <span className="text-slate-600 text-sm"><strong className="text-slate-800">错题本</strong>：自动记录错误，针对性强化训练。</span>
+             </li>
+             <li className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-brand-secondary mt-1.5"></div>
+                <span className="text-slate-600 text-sm"><strong className="text-slate-800">多模式</strong>：支持单字、词语、句子挑战。</span>
+             </li>
+             <li className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-brand-secondary mt-1.5"></div>
+                <span className="text-slate-600 text-sm"><strong className="text-slate-800">AI 助教</strong>：智能生成复习关卡，查漏补缺。</span>
+             </li>
+           </ul>
+        </div>
+      </div>
 
-        <section className="text-center text-slate-400 text-sm pt-4">
-          <p>当前版本: v1.5.0</p>
-          <p>© 2025 智能拼音大闯关 Team</p>
-        </section>
+      <div className="mt-10 text-center space-y-2">
+        <div className="inline-block px-4 py-1 rounded-full bg-slate-100 text-slate-400 text-xs font-bold font-mono">
+          v1.5.0
+        </div>
+        <p className="text-slate-300 text-xs">© 2025 智能拼音大闯关 Team</p>
       </div>
     </div>
   );

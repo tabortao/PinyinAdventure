@@ -36,7 +36,6 @@ export interface UserProgress {
   score: number;
   completed_at: string;
 }
-
 export interface Mistake {
   id: string;
   user_id: string;
@@ -47,4 +46,27 @@ export interface Mistake {
   next_review_at: string;
   review_stage: number;
   question?: Question; // Joined
+}
+
+export interface PinyinChart {
+  id: string;
+  category: string; // 'final', 'initial', 'overall'
+  group_name: string;
+  pinyin: string;
+  mnemonic: string;
+  emoji: string;
+  example_word: string;
+  example_pinyin: string;
+  sort_order: number;
+}
+
+export interface UserPinyinProgress {
+  id: string;
+  user_id: string;
+  pinyin_char: string;
+  study_count: number;
+  is_mastered: boolean;
+  last_studied_at: string;
+  next_review_at: string;
+  mastery_level: number;
 }

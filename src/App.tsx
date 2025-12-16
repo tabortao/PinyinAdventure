@@ -9,6 +9,7 @@ import { HomePage } from './pages/HomePage';
 import { GamePage } from './pages/GamePage';
 import { MistakesPage } from './pages/MistakesPage';
 import { SettingsPage } from './pages/SettingsPage';
+import { StudyPage } from './pages/StudyPage';
 import { HelpPage } from './pages/HelpPage';
 
 const App: React.FC = () => {
@@ -22,6 +23,7 @@ const App: React.FC = () => {
             <Route element={<RouteGuard />}>
               <Route element={<Layout />}>
                 <Route path="/" element={<HomePage />} />
+                <Route path="/study" element={<StudyPage />} />
                 <Route path="/mistakes" element={<MistakesPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/help" element={<HelpPage />} />

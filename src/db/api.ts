@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import { Level, Question, UserProgress, Mistake } from '../types/types';
+import { Level, Question, UserProgress, Mistake, PinyinChart, UserPinyinProgress } from '../types/types';
 
 // Levels
 export const getLevels = async (grade?: number) => {
@@ -194,4 +194,103 @@ export const reviewMistakeSuccess = async (mistakeId: string, currentStage: numb
       .eq('id', mistakeId);
     if (error) throw error;
   }
+};
+
+// Pinyin Study API
+
+export const getPinyinCharts = async () => {
+  const { data, error } = await supabase
+    .from('pinyin_charts')
+    .select('*')
+    .order('sort_order');
+  
+  if (error) {
+    console.error('Error fetching pinyin charts:', error);
+    return [];
+  }
+  return data as PinyinChart[];
+};
+
+export const getUserPinyinProgress = async (userId: string) => {
+  const { data, error } = await supabase
+    .from('user_pinyin_progress')
+    .select('*')
+    .eq('user_id', userId);
+  
+  if (error) {
+    console.error('Error fetching pinyin progress:', error);
+    return [];
+  }
+  return data as UserPinyinProgress[];
+};
+
+export const updatePinyinProgress = async (userId: string, pinyinId: string, isMastered: boolean) => {
+  // First check if record exists
+  const { data: existing } = await supabase
+    .from('user_pinyin_progress')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('pinyin_char', pinyinId)
+    .maybeSingle();
+
+  const now = new Date();
+  // Simple review interval logic (can be enhanced)
+  const nextReview = new Date();
+  if (isMastered) {
+    nextReview.setDate(now.getDate() + 3); // Review in 3 days
+  } else {
+    nextReview.setDate(now.getDate() + 1); // Review tomorrow
+  }
+
+  if (existing) {
+    const { error } = await supabase
+      .from('user_pinyin_progress')
+      .update({
+        study_count: existing.study_count + 1,
+        is_mastered: isMastered,
+        last_studied_at: now.toISOString(),
+        next_review_at: nextReview.toISOString(),
+        mastery_level: isMastered ? Math.min(existing.mastery_level + 1, 5) : Math.max(existing.mastery_level - 1, 0)
+      })
+      .eq('id', existing.id);
+    return !error;
+  } else {
+    const { error } = await supabase
+      .from('user_pinyin_progress')
+      .insert({
+        user_id: userId,
+        pinyin_char: pinyinId,
+        study_count: 1,
+        is_mastered: isMastered,
+        last_studied_at: now.toISOString(),
+        next_review_at: nextReview.toISOString(),
+        mastery_level: isMastered ? 1 : 0
+      });
+    return !error;
+  }
+};
+
+export const getPinyinReviewList = async (userId: string) => {
+  const now = new Date().toISOString();
+  
+  // Get items due for review or not mastered
+  const { data, error } = await supabase
+    .from('user_pinyin_progress')
+    .select('*, pinyin_chart:pinyin_charts(*)')
+    .eq('user_id', userId)
+    .or(`is_mastered.eq.false,next_review_at.lte.${now}`)
+    .limit(20);
+
+  if (error) {
+    console.error('Error fetching review list:', error);
+    return [];
+  }
+  
+  // Transform to include pinyin details directly
+  return data.map((item: any) => ({
+    ...item.pinyin_chart,
+    progress_id: item.id,
+    study_count: item.study_count,
+    is_mastered: item.is_mastered
+  })) as (PinyinChart & { progress_id: string, study_count: number, is_mastered: boolean })[];
 };

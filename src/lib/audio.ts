@@ -42,3 +42,13 @@ class AudioEngine {
 }
 
 export const audioEngine = new AudioEngine();
+
+export const playCorrectSound = async () => {
+  await audioEngine.init();
+  audioEngine.playWin();
+};
+
+export const playWrongSound = async () => {
+  await audioEngine.init();
+  audioEngine.playLose();
+};

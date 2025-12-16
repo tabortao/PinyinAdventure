@@ -80,15 +80,15 @@ export const HomePage = () => {
     <div className="max-w-4xl mx-auto pb-20 px-4 md:px-0">
       {/* Hero Banner with Filter */}
       <div className="text-center mb-8 bg-brand-primary/5 p-6 rounded-3xl relative">
-        <h1 className="text-2xl md:text-4xl font-bold text-brand-dark mb-2">拼音闯关大冒险</h1>
-        <p className="text-slate-500 text-xs md:text-sm">选择年级，开始你的拼音之旅！</p>
+        <h1 className="text-2xl md:text-4xl font-bold text-brand-dark mb-4 md:mb-2">拼音闯关大冒险</h1>
+        <p className="text-slate-500 text-xs md:text-sm mb-2 md:mb-0">选择年级，开始你的拼音之旅！</p>
         
-        {/* Filter Toggle */}
-        <div className="absolute top-4 right-4 md:top-6 md:right-6">
-          <div className="relative">
+        {/* Filter Toggle - Centered on mobile, absolute top-right on desktop */}
+        <div className="md:absolute md:top-6 md:right-6 flex justify-center mt-3 md:mt-0">
+          <div className="relative inline-block text-left">
              <button 
                onClick={() => setIsFilterOpen(!isFilterOpen)}
-               className="flex items-center gap-1 bg-white border border-brand-primary/20 text-brand-primary px-3 py-1.5 rounded-full text-sm font-bold shadow-sm hover:bg-brand-primary/5 transition-all"
+               className="flex items-center gap-1 bg-white border border-brand-primary/20 text-brand-primary px-4 py-2 rounded-full text-sm font-bold shadow-sm hover:bg-brand-primary/5 transition-all"
              >
                <Filter size={14} />
                <span>Level {selectedGrade}</span>
@@ -96,7 +96,7 @@ export const HomePage = () => {
              </button>
              
              {isFilterOpen && (
-               <div className="absolute right-0 top-full mt-2 bg-white rounded-xl shadow-xl border border-slate-100 p-2 min-w-[120px] z-10 animate-in fade-in zoom-in duration-200">
+               <div className="absolute left-1/2 -translate-x-1/2 md:left-auto md:right-0 md:translate-x-0 top-full mt-2 bg-white rounded-xl shadow-xl border border-slate-100 p-2 min-w-[150px] z-10 animate-in fade-in zoom-in duration-200">
                  {[1, 2, 3, 4, 5, 6].map(g => (
                    <button 
                      key={g}
