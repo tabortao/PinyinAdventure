@@ -3,7 +3,7 @@ import { getLevels, getUserProgress, getTotalScore } from '../db/api';
 import { useAuth } from '../context/AuthContext';
 import { Level, UserProgress } from '../types/types';
 import { Link } from 'react-router-dom';
-import { Star, Lock, Play, Trophy, BrainCircuit, RefreshCcw } from 'lucide-react';
+import { Star, Lock, Play, Trophy, BrainCircuit, RefreshCcw, Filter, ChevronDown } from 'lucide-react';
 
 export const HomePage = () => {
   const { user } = useAuth();
@@ -11,6 +11,8 @@ export const HomePage = () => {
   const [progress, setProgress] = useState<UserProgress[]>([]);
   const [totalScore, setTotalScore] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [selectedGrade, setSelectedGrade] = useState<number | 'all'>('all');
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,15 +41,19 @@ export const HomePage = () => {
     return acc;
   }, {} as Record<number, Level[]>);
 
+  const displayedGrades = selectedGrade === 'all' 
+    ? Object.keys(levelsByGrade).map(Number).sort((a,b) => a-b)
+    : [selectedGrade];
+
   const isUnlocked = (grade: number, chapter: number) => {
     if (grade === 1 && chapter === 1) return true;
     const flatIndex = levels.findIndex(l => l.grade === grade && l.chapter === chapter);
     if (flatIndex <= 0) return true;
     
-    // Simple logic: if previous level in the database list is passed
-    // But since we grouped by grade visually, let's keep it simple: 
-    // Just check if the immediate previous level ID exists in progress with stars > 0
-    // Or just unlock all for demo if user wants? No, let's keep gamification.
+    // Check if previous level (by order in db) is completed (stars > 0)
+    // Note: Since we inserted new sub-levels for Grade 1, the order in DB matters.
+    // We fetched levels sorted by grade, chapter.
+    // So levels[flatIndex - 1] should be the correct previous one.
     const prevLevel = levels[flatIndex - 1];
     return progress.some(p => p.level_id === prevLevel.id && p.stars > 0);
   };
@@ -63,26 +69,62 @@ export const HomePage = () => {
   if (loading) return <div className="text-center py-20 text-brand-primary">正在加载关卡...</div>;
 
   return (
-    <div className="max-w-4xl mx-auto pb-20">
-      <div className="text-center mb-8 bg-brand-primary/5 p-6 rounded-3xl">
-        <h1 className="text-4xl font-bold text-brand-dark mb-2">拼音闯关大冒险</h1>
+    <div className="max-w-4xl mx-auto pb-20 px-4 md:px-0">
+      <div className="text-center mb-8 bg-brand-primary/5 p-6 rounded-3xl relative">
+        <h1 className="text-3xl md:text-4xl font-bold text-brand-dark mb-2">拼音闯关大冒险</h1>
         <div className="flex justify-center items-center gap-2 text-brand-secondary font-bold text-xl">
           <Trophy className="fill-brand-secondary" />
           <span>总积分: {totalScore}</span>
         </div>
-        <p className="text-slate-500 mt-2 text-sm">完成关卡，收集星星，成为拼音大师！</p>
+        
+        {/* Filter Toggle */}
+        <div className="absolute top-4 right-4 md:top-6 md:right-6">
+          <div className="relative">
+             <button 
+               onClick={() => setIsFilterOpen(!isFilterOpen)}
+               className="flex items-center gap-1 bg-white border border-brand-primary/20 text-brand-primary px-3 py-1.5 rounded-full text-sm font-bold shadow-sm hover:bg-brand-primary/5 transition-all"
+             >
+               <Filter size={14} />
+               <span>{selectedGrade === 'all' ? '全部' : `Level ${selectedGrade}`}</span>
+               <ChevronDown size={14} className={`transition-transform ${isFilterOpen ? 'rotate-180' : ''}`} />
+             </button>
+             
+             {isFilterOpen && (
+               <div className="absolute right-0 top-full mt-2 bg-white rounded-xl shadow-xl border border-slate-100 p-2 min-w-[120px] z-10 animate-in fade-in zoom-in duration-200">
+                 <button 
+                   onClick={() => { setSelectedGrade('all'); setIsFilterOpen(false); }}
+                   className={`w-full text-left px-3 py-2 rounded-lg text-sm font-bold hover:bg-slate-50 ${selectedGrade === 'all' ? 'text-brand-primary bg-brand-primary/5' : 'text-slate-600'}`}
+                 >
+                   全部显示
+                 </button>
+                 {[1, 2, 3, 4, 5, 6].map(g => (
+                   <button 
+                     key={g}
+                     onClick={() => { setSelectedGrade(g); setIsFilterOpen(false); }}
+                     className={`w-full text-left px-3 py-2 rounded-lg text-sm font-bold hover:bg-slate-50 ${selectedGrade === g ? 'text-brand-primary bg-brand-primary/5' : 'text-slate-600'}`}
+                   >
+                     Level {g}
+                   </button>
+                 ))}
+               </div>
+             )}
+          </div>
+        </div>
       </div>
 
-      {Object.entries(levelsByGrade).map(([grade, gradeLevels]) => (
-        <div key={grade} className="mb-10">
+      {displayedGrades.map((grade) => {
+        const gradeLevels = levelsByGrade[grade];
+        if (!gradeLevels) return null;
+
+        return (
+        <div key={grade} className="mb-10 animate-in slide-in-from-bottom-4 fade-in duration-500">
           <h2 className="text-xl font-bold text-brand-secondary mb-4 flex items-center gap-2 ml-1">
             <span className="bg-brand-secondary text-white px-3 py-1 rounded-full text-xs uppercase tracking-wider shadow-sm">
               Level {grade}
             </span>
-            <span className="text-slate-400 text-sm font-normal">年级课程</span>
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
             {gradeLevels.map((level) => {
               const unlocked = isUnlocked(level.grade, level.chapter);
               const stars = getStars(level.id);
@@ -96,10 +138,10 @@ export const HomePage = () => {
                     : 'border-slate-200 bg-slate-50 opacity-80'
                   }
                 `}>
-                  <div className="p-4">
+                  <div className="p-3 md:p-4">
                     <div className="flex justify-between items-center mb-3">
                       <div className={`
-                        w-10 h-10 rounded-lg flex items-center justify-center text-lg font-bold
+                        w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center text-base md:text-lg font-bold
                         ${unlocked ? 'bg-brand-primary/10 text-brand-primary' : 'bg-slate-200 text-slate-400'}
                       `}>
                         {level.chapter}
@@ -118,19 +160,19 @@ export const HomePage = () => {
                       </div>
                     </div>
                     
-                    <h3 className="font-bold text-md text-slate-800 mb-1 truncate">{level.name}</h3>
-                    <p className="text-xs text-slate-500 mb-4 truncate">{level.description}</p>
+                    <h3 className="font-bold text-sm md:text-md text-slate-800 mb-1 truncate">{level.name}</h3>
+                    <p className="text-[10px] md:text-xs text-slate-500 mb-4 truncate">{level.description}</p>
                     
                     {unlocked ? (
                       <Link 
                         to={`/game/${level.id}`}
-                        className="flex items-center justify-center gap-2 w-full bg-brand-primary text-white py-2 rounded-lg text-sm font-bold hover:bg-brand-dark transition-colors"
+                        className="flex items-center justify-center gap-2 w-full bg-brand-primary text-white py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-bold hover:bg-brand-dark transition-colors"
                       >
                         <Play size={14} fill="currentColor" />
                         开始
                       </Link>
                     ) : (
-                      <button disabled className="flex items-center justify-center gap-2 w-full bg-slate-200 text-slate-400 py-2 rounded-lg text-sm font-bold cursor-not-allowed">
+                      <button disabled className="flex items-center justify-center gap-2 w-full bg-slate-200 text-slate-400 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-bold cursor-not-allowed">
                         <Lock size={14} />
                         未解锁
                       </button>
@@ -142,22 +184,22 @@ export const HomePage = () => {
             
             {/* AI Review Level Card */}
             <div className="relative rounded-xl overflow-hidden border border-brand-accent/30 bg-gradient-to-br from-white to-pink-50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 hover:border-brand-accent">
-               <div className="p-4 h-full flex flex-col">
+               <div className="p-3 md:p-4 h-full flex flex-col">
                   <div className="flex justify-between items-center mb-3">
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg font-bold bg-brand-accent/10 text-brand-accent">
-                      <BrainCircuit size={20} />
+                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center text-lg font-bold bg-brand-accent/10 text-brand-accent">
+                      <BrainCircuit size={18} />
                     </div>
                     <div className="bg-brand-accent text-white text-[10px] px-2 py-0.5 rounded-full">
                       AI 推荐
                     </div>
                   </div>
                   
-                  <h3 className="font-bold text-md text-slate-800 mb-1">AI 智能复习</h3>
-                  <p className="text-xs text-slate-500 mb-4">根据Level {grade} 错题定制</p>
+                  <h3 className="font-bold text-sm md:text-md text-slate-800 mb-1">AI 智能复习</h3>
+                  <p className="text-[10px] md:text-xs text-slate-500 mb-4">根据Level {grade} 错题定制</p>
                   
                   <Link 
                     to={`/game/review-${grade}`}
-                    className="mt-auto flex items-center justify-center gap-2 w-full bg-brand-accent text-white py-2 rounded-lg text-sm font-bold hover:bg-pink-600 transition-colors"
+                    className="mt-auto flex items-center justify-center gap-2 w-full bg-brand-accent text-white py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-bold hover:bg-pink-600 transition-colors"
                   >
                     <RefreshCcw size={14} />
                     巩固练习
@@ -167,7 +209,7 @@ export const HomePage = () => {
 
           </div>
         </div>
-      ))}
+      )})}
     </div>
   );
 };
