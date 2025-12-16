@@ -31,6 +31,7 @@ export interface UserProgress {
   user_id: string;
   level_id: number;
   stars: number;
+  score: number;
   completed_at: string;
 }
 

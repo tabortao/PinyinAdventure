@@ -29,7 +29,7 @@ export const getQuestionsByLevel = async (levelId: number) => {
   return data as Question[];
 };
 
-export const getRandomQuestionsByGrade = async (grade: number, type: QuestionType, count: number = 10) => {
+export const getRandomQuestionsByGrade = async (grade: number, type: string, count: number = 10) => {
   // First get all level IDs for this grade
   const { data: levels } = await supabase
     .from('levels')
@@ -69,16 +69,51 @@ export const getUserProgress = async (userId: string) => {
   return data as UserProgress[];
 };
 
-export const saveUserProgress = async (userId: string, levelId: number, stars: number) => {
-  // Upsert progress
+export const saveUserProgress = async (userId: string, levelId: number, stars: number, score: number) => {
+  // First check existing progress to not overwrite higher score/stars if we want strict max logic
+  // But requirement says "re-play score not cumulative", usually implies we just update the record with latest or max.
+  // Let's implement MAX logic: Keep highest stars and highest score independently or together.
+  // Standard game logic: High Score.
+  
+  const { data: existing } = await supabase
+    .from('user_progress')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('level_id', levelId)
+    .maybeSingle();
+
+  let newStars = stars;
+  let newScore = score;
+
+  if (existing) {
+    newStars = Math.max(existing.stars, stars);
+    newScore = Math.max(existing.score || 0, score);
+  }
+
   const { data, error } = await supabase
     .from('user_progress')
-    .upsert({ user_id: userId, level_id: levelId, stars, completed_at: new Date().toISOString() }, { onConflict: 'user_id,level_id' })
+    .upsert({ 
+      user_id: userId, 
+      level_id: levelId, 
+      stars: newStars, 
+      score: newScore,
+      completed_at: new Date().toISOString() 
+    }, { onConflict: 'user_id,level_id' })
     .select()
     .single();
   
   if (error) throw error;
   return data as UserProgress;
+};
+
+export const getTotalScore = async (userId: string) => {
+  const { data, error } = await supabase
+    .from('user_progress')
+    .select('score')
+    .eq('user_id', userId);
+  
+  if (error) throw error;
+  return data?.reduce((acc, curr) => acc + (curr.score || 0), 0) || 0;
 };
 
 // Mistakes / Ebbinghaus
