@@ -1,0 +1,60 @@
+import { useSettings } from '../context/SettingsContext';
+import { ArrowLeft, Check } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
+export const SettingsPage = () => {
+  const { mode, setMode } = useSettings();
+  const navigate = useNavigate();
+
+  const modes = [
+    { id: 'all', label: '混合模式 (默认)', desc: '包含所有类型的题目' },
+    { id: 'character', label: '汉字模式', desc: '只练习单个汉字的拼音' },
+    { id: 'word', label: '词语模式', desc: '练习双字或多字词语' },
+    { id: 'sentence', label: '句子模式', desc: '挑战长句拼读' },
+  ];
+
+  return (
+    <div className="max-w-2xl mx-auto">
+      <button 
+        onClick={() => navigate('/')} 
+        className="flex items-center text-slate-500 hover:text-brand-primary mb-6 transition-colors"
+      >
+        <ArrowLeft size={20} className="mr-1" /> 返回
+      </button>
+      
+      <h1 className="text-3xl font-bold text-brand-dark mb-8">游戏设置</h1>
+      
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div className="p-6 border-b border-slate-100">
+          <h2 className="text-xl font-bold text-slate-800 mb-2">练习模式</h2>
+          <p className="text-slate-500 text-sm">选择在闯关中出现的题目类型。注意：如果没有对应类型的题目，关卡可能会显示为空。</p>
+        </div>
+        
+        <div className="divide-y divide-slate-100">
+          {modes.map((m) => (
+            <button
+              key={m.id}
+              onClick={() => setMode(m.id as any)}
+              className={`w-full text-left p-6 flex items-center justify-between transition-colors hover:bg-slate-50
+                ${mode === m.id ? 'bg-brand-primary/5' : ''}
+              `}
+            >
+              <div>
+                <div className={`font-bold text-lg mb-1 ${mode === m.id ? 'text-brand-primary' : 'text-slate-700'}`}>
+                  {m.label}
+                </div>
+                <div className="text-slate-500 text-sm">{m.desc}</div>
+              </div>
+              
+              {mode === m.id && (
+                <div className="bg-brand-primary text-white p-1 rounded-full">
+                  <Check size={20} />
+                </div>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
