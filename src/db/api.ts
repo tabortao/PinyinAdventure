@@ -29,6 +29,36 @@ export const getQuestionsByLevel = async (levelId: number) => {
   return data as Question[];
 };
 
+export const getRandomQuestionsByGrade = async (grade: number, type: QuestionType, count: number = 10) => {
+  // First get all level IDs for this grade
+  const { data: levels } = await supabase
+    .from('levels')
+    .select('id')
+    .eq('grade', grade);
+  
+  if (!levels || levels.length === 0) return [];
+  const levelIds = levels.map(l => l.id);
+
+  // Then fetch questions of specific type from these levels
+  // Note: Random ordering in SQL via supabase-js is tricky without RPC, 
+  // so we'll fetch a batch and shuffle client-side or use a simple randomizer if data is huge.
+  // For MVP, fetching 'character' type might be large, but 'sentence' is manageable.
+  // Let's use a limit.
+  const { data, error } = await supabase
+    .from('questions')
+    .select('*')
+    .in('level_id', levelIds)
+    .eq('type', type)
+    .limit(50); // Fetch a pool to randomize from
+
+  if (error) throw error;
+  
+  if (!data) return [];
+
+  // Shuffle and slice
+  return data.sort(() => 0.5 - Math.random()).slice(0, count) as Question[];
+};
+
 // Progress
 export const getUserProgress = async (userId: string) => {
   const { data, error } = await supabase

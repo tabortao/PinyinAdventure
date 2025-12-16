@@ -27,7 +27,7 @@
     "lucide-react": "^0.556.0",
     "maath": "^0.10.8",
     "matter-js": "^0.20.0",
-    "miaoda-sc-plugin": "^1.0.34",
+    "miaoda-sc-plugin": "1.0.38",
     "phaser": "^3.90.0",
     "phaser-raycaster": "^0.10.11",
     "pixi.js": "^8.14.3",
@@ -42,7 +42,7 @@
     "zustand": "^5.0.9"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.3.8",
+    "@biomejs/biome": "2.3.4",
     "@types/matter-js": "^0.20.2",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",

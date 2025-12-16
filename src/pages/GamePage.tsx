@@ -1,12 +1,12 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getQuestionsByLevel, getLevelById, saveUserProgress, recordMistake } from '../db/api';
+import { getQuestionsByLevel, getLevelById, saveUserProgress, recordMistake, getRandomQuestionsByGrade } from '../db/api';
 import { Question, Level } from '../types/types';
 import { PinyinKeyboard } from '../components/game/PinyinKeyboard';
 import { applyTone, checkAnswer } from '../lib/pinyinUtils';
 import { useAuth } from '../context/AuthContext';
 import { useSettings } from '../context/SettingsContext';
-import { X, Check, ArrowRight, RefreshCcw, Home } from 'lucide-react';
+import { X, Check, ArrowRight, RefreshCcw, Home, Sparkles } from 'lucide-react';
 
 export const GamePage = () => {
   const { levelId } = useParams();
@@ -22,6 +22,7 @@ export const GamePage = () => {
   const [lastResult, setLastResult] = useState<'correct' | 'wrong' | null>(null);
   const [score, setScore] = useState(0); // Count of correct answers
   const [mistakes, setMistakes] = useState<number[]>([]); // IDs of wrong questions
+  const [isAiGenerated, setIsAiGenerated] = useState(false); // Flag for UI
 
   useEffect(() => {
     if (!levelId) return;
@@ -33,18 +34,36 @@ export const GamePage = () => {
         ]);
         setLevel(lvl);
         
-        // Filter questions based on mode
-        const filteredQs = mode === 'all' 
-          ? qs 
-          : qs.filter(q => q.type === mode);
-        
-        if (filteredQs.length === 0) {
-          alert('当前模式下该关卡没有对应题目，请在设置中切换模式。');
-          navigate('/');
-          return;
+        let targetQs: Question[] = [];
+
+        // 1. Try to get questions from the current level matching the mode
+        if (mode === 'all') {
+          targetQs = qs;
+        } else {
+          targetQs = qs.filter(q => q.type === mode);
         }
 
-        setQuestions(filteredQs);
+        // 2. If no questions found (e.g. Sentence mode selected but level has no sentences),
+        // Trigger "AI Generation" (Fallback to random pool from the same grade)
+        if (targetQs.length === 0 && lvl) {
+          setIsAiGenerated(true);
+          // Wait a bit to simulate "AI Thinking"
+          setGameState('loading');
+          
+          // Fetch fallback questions
+          const fallbackQs = await getRandomQuestionsByGrade(lvl.grade, mode as any, 10);
+          
+          if (fallbackQs.length === 0) {
+             alert('AI题库正在扩充中，请稍后尝试或切换其他模式。');
+             navigate('/');
+             return;
+          }
+          targetQs = fallbackQs;
+        } else {
+          setIsAiGenerated(false);
+        }
+
+        setQuestions(targetQs);
         setGameState('playing');
       } catch (e) {
         console.error(e);
@@ -53,7 +72,7 @@ export const GamePage = () => {
       }
     };
     loadGame();
-  }, [levelId, navigate]);
+  }, [levelId, navigate, mode]);
 
   const handleInput = (char: string) => {
     setInput(prev => prev + char);
@@ -186,6 +205,15 @@ export const GamePage = () => {
       {/* Game Area */}
       <div className="flex-1 flex flex-col items-center justify-center p-4 relative">
         {/* Question Card */}
+          {/* AI Banner */}
+          {isAiGenerated && gameState !== 'feedback' && (
+            <div className="absolute top-0 left-0 right-0 flex justify-center z-10 -mt-2">
+              <div className="bg-brand-secondary/90 text-white text-xs px-3 py-1 rounded-full flex items-center gap-1 shadow-sm animate-pulse">
+                <Sparkles size={12} />
+                AI 智能生成题目中...
+              </div>
+            </div>
+          )}
         <div className="bg-white w-full max-w-sm aspect-square rounded-3xl shadow-lg border-b-8 border-slate-200 flex items-center justify-center mb-8 relative overflow-hidden">
           <span className="text-9xl font-bold text-slate-800 select-none">
             {currentQ.content}

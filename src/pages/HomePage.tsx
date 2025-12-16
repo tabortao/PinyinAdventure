@@ -70,52 +70,52 @@ export const HomePage = () => {
             {grade} 年级
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {gradeLevels.map((level) => {
               const unlocked = isUnlocked(level.grade, level.chapter);
               const stars = getStars(level.id);
 
               return (
                 <div key={level.id} className={`
-                  relative rounded-2xl overflow-hidden border-2 transition-all duration-300
+                  relative rounded-xl overflow-hidden border transition-all duration-300
                   ${unlocked 
-                    ? 'border-brand-primary/30 bg-white hover:shadow-xl hover:-translate-y-1 hover:border-brand-primary' 
+                    ? 'border-brand-primary/30 bg-white hover:shadow-lg hover:-translate-y-1 hover:border-brand-primary' 
                     : 'border-slate-200 bg-slate-50 opacity-80'
                   }
                 `}>
-                  <div className="p-6">
-                    <div className="flex justify-between items-start mb-4">
+                  <div className="p-4">
+                    <div className="flex justify-between items-center mb-3">
                       <div className={`
-                        w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold
+                        w-10 h-10 rounded-lg flex items-center justify-center text-lg font-bold
                         ${unlocked ? 'bg-brand-primary/10 text-brand-primary' : 'bg-slate-200 text-slate-400'}
                       `}>
                         {level.chapter}
                       </div>
-                      <div className="flex gap-1">
+                      <div className="flex gap-0.5">
                         {[1, 2, 3].map(i => (
                           <Star 
                             key={i} 
-                            size={16} 
+                            size={14} 
                             className={`${i <= stars ? 'fill-yellow-400 text-yellow-400' : 'text-slate-200'}`}
                           />
                         ))}
                       </div>
                     </div>
                     
-                    <h3 className="font-bold text-lg text-slate-800 mb-2">{level.name}</h3>
-                    <p className="text-sm text-slate-500 mb-6">{level.description}</p>
+                    <h3 className="font-bold text-md text-slate-800 mb-1 truncate">{level.name}</h3>
+                    <p className="text-xs text-slate-500 mb-4 truncate">{level.description}</p>
                     
                     {unlocked ? (
                       <Link 
                         to={`/game/${level.id}`}
-                        className="flex items-center justify-center gap-2 w-full bg-brand-primary text-white py-3 rounded-xl font-bold hover:bg-brand-dark transition-colors"
+                        className="flex items-center justify-center gap-2 w-full bg-brand-primary text-white py-2 rounded-lg text-sm font-bold hover:bg-brand-dark transition-colors"
                       >
-                        <Play size={18} fill="currentColor" />
-                        开始挑战
+                        <Play size={14} fill="currentColor" />
+                        开始
                       </Link>
                     ) : (
-                      <button disabled className="flex items-center justify-center gap-2 w-full bg-slate-200 text-slate-400 py-3 rounded-xl font-bold cursor-not-allowed">
-                        <Lock size={18} />
+                      <button disabled className="flex items-center justify-center gap-2 w-full bg-slate-200 text-slate-400 py-2 rounded-lg text-sm font-bold cursor-not-allowed">
+                        <Lock size={14} />
                         未解锁
                       </button>
                     )}
