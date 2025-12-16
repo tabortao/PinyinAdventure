@@ -169,15 +169,15 @@ export const GamePage = () => {
     else if (percentage > 0) stars = 1;
 
     return (
-      <div className="min-h-screen bg-brand-background flex items-center justify-center p-4">
-        <div className="bg-white rounded-3xl shadow-xl p-8 max-w-md w-full text-center border-4 border-brand-primary/20 animate-in fade-in zoom-in duration-300">
+      <div className="min-h-screen bg-brand-background dark:bg-slate-950 flex items-center justify-center p-4 transition-colors">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl p-8 max-w-md w-full text-center border-4 border-brand-primary/20 dark:border-brand-primary/30 animate-in fade-in zoom-in duration-300 transition-colors">
           <div className="text-6xl mb-4 animate-bounce">
             {stars === 3 ? '🏆' : stars === 2 ? '🥈' : '🥉'}
           </div>
           <h2 className="text-3xl font-bold text-brand-secondary mb-2">
             {stars === 3 ? '太棒了！' : stars === 2 ? '做得好！' : '继续加油！'}
           </h2>
-          <p className="text-slate-500 mb-2">
+          <p className="text-slate-500 dark:text-slate-400 mb-2 transition-colors">
             你答对了 {score} / {questions.length} 题
           </p>
           <div className="text-2xl font-bold text-brand-primary mb-8">
@@ -186,8 +186,8 @@ export const GamePage = () => {
 
           <div className="flex justify-center gap-2 mb-8">
             {[1, 2, 3].map(i => (
-              <div key={i} className={`p-2 rounded-full ${i <= stars ? 'bg-yellow-100' : 'bg-slate-100'}`}>
-                <div className={`w-8 h-8 rounded-full ${i <= stars ? 'bg-yellow-400' : 'bg-slate-300'}`} />
+              <div key={i} className={`p-2 rounded-full transition-colors ${i <= stars ? 'bg-yellow-100 dark:bg-yellow-900/30' : 'bg-slate-100 dark:bg-slate-800'}`}>
+                <div className={`w-8 h-8 rounded-full transition-colors ${i <= stars ? 'bg-yellow-400' : 'bg-slate-300 dark:bg-slate-600'}`} />
               </div>
             ))}
           </div>
@@ -201,7 +201,7 @@ export const GamePage = () => {
             </button>
             <button 
               onClick={() => window.location.reload()} 
-              className="w-full bg-slate-100 text-slate-600 py-3 rounded-xl font-bold hover:bg-slate-200 transition-transform active:scale-95"
+              className="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 py-3 rounded-xl font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-all active:scale-95"
             >
               再试一次
             </button>
@@ -221,14 +221,14 @@ export const GamePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-brand-background flex flex-col overflow-hidden relative">
+    <div className="min-h-screen bg-brand-background dark:bg-slate-950 flex flex-col overflow-hidden relative transition-colors">
       {/* Tutorial Overlay */}
       {showTutorial && currentIndex === 0 && (
           <div className="absolute inset-0 z-50 bg-black/60 flex flex-col items-center justify-center animate-in fade-in duration-500" onClick={() => setShowTutorial(false)}>
-             <div className="bg-white p-6 rounded-3xl max-w-sm mx-4 text-center shadow-2xl border-4 border-brand-secondary animate-bounce">
+             <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl max-w-sm mx-4 text-center shadow-2xl border-4 border-brand-secondary animate-bounce transition-colors">
                 <div className="text-5xl mb-4">👆</div>
                 <h3 className="text-2xl font-bold text-brand-secondary mb-2">新手引导</h3>
-                <p className="text-slate-600 mb-4">
+                <p className="text-slate-600 dark:text-slate-300 mb-4 transition-colors">
                    看着上面的汉字 <br/>
                    点击下方的 <b>拼音键盘</b> <br/>
                    输入正确的拼音并按下 <b>确定</b>
@@ -241,25 +241,25 @@ export const GamePage = () => {
       )}
 
       {/* Header */}
-      <div className="bg-white p-3 md:p-4 shadow-sm flex items-center justify-between z-20">
-        <button onClick={() => navigate('/')} className="text-slate-400 hover:text-slate-600 p-2">
+      <div className="bg-white dark:bg-slate-900 p-3 md:p-4 shadow-sm flex items-center justify-between z-20 transition-colors">
+        <button onClick={() => navigate('/')} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 p-2 transition-colors">
           <X />
         </button>
         <div className="flex-1 mx-2 md:mx-6 flex flex-col justify-center">
-          <div className="flex justify-between text-xs text-slate-400 mb-1">
+          <div className="flex justify-between text-xs text-slate-400 dark:text-slate-500 mb-1 transition-colors">
              <span className="flex items-center gap-1">
                {combo > 1 && <span className="text-orange-500 font-bold animate-pulse">🔥 {combo} 连击</span>}
              </span>
              <span className="font-bold text-brand-secondary">得分: {score}</span>
           </div>
-          <div className="h-2 md:h-3 bg-slate-100 rounded-full overflow-hidden">
+          <div className="h-2 md:h-3 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden transition-colors">
             <div 
               className="h-full bg-brand-primary transition-all duration-500" 
               style={{ width: `${progressPercent}%` }}
             />
           </div>
         </div>
-        <div className="text-slate-400 text-sm font-medium w-10 text-right">
+        <div className="text-slate-400 dark:text-slate-500 text-sm font-medium w-10 text-right transition-colors">
           {currentIndex + 1}/{questions.length}
         </div>
       </div>
@@ -275,7 +275,7 @@ export const GamePage = () => {
               </div>
             </div>
           )}
-        <div className="bg-white w-full max-w-sm aspect-square md:aspect-[4/3] rounded-3xl shadow-lg border-b-8 border-slate-200 flex flex-col items-center justify-center mb-4 md:mb-8 relative overflow-hidden transition-all mx-4">
+        <div className="bg-white dark:bg-slate-900 w-full max-w-sm aspect-square md:aspect-[4/3] rounded-3xl shadow-lg border-b-8 border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center mb-4 md:mb-8 relative overflow-hidden transition-all mx-4">
           
           {/* Hint Emoji Display for Level 1 early stages */}
           {currentQ.hint_emoji && gameState === 'playing' && (
@@ -284,7 +284,7 @@ export const GamePage = () => {
              </div>
           )}
 
-          <span className={`${getContentSize(currentQ.content)} font-bold text-slate-800 select-none transition-all px-4 text-center break-words leading-tight`}>
+          <span className={`${getContentSize(currentQ.content)} font-bold text-slate-800 dark:text-white select-none transition-all px-4 text-center break-words leading-tight`}>
             {currentQ.content}
           </span>
           
@@ -317,17 +317,17 @@ export const GamePage = () => {
 
         {/* Input Display */}
         <div className={`
-          w-full max-w-sm bg-white rounded-xl p-3 md:p-4 text-center mb-2 md:mb-6 shadow-sm border-2 transition-all mx-4
-          ${input ? 'border-brand-primary' : 'border-slate-200'}
+          w-full max-w-sm bg-white dark:bg-slate-900 rounded-xl p-3 md:p-4 text-center mb-2 md:mb-6 shadow-sm border-2 transition-all mx-4
+          ${input ? 'border-brand-primary' : 'border-slate-200 dark:border-slate-700'}
         `}>
-          <span className="text-2xl md:text-3xl font-mono text-slate-700 min-h-[2rem] md:min-h-[2.5rem] block break-all">
-            {input || <span className="text-slate-300 text-base md:text-xl">请输入拼音 (空格隔开)</span>}
+          <span className="text-2xl md:text-3xl font-mono text-slate-700 dark:text-white min-h-[2rem] md:min-h-[2.5rem] block break-all transition-colors">
+            {input || <span className="text-slate-300 dark:text-slate-600 text-base md:text-xl transition-colors">请输入拼音 (空格隔开)</span>}
           </span>
         </div>
       </div>
 
       {/* Keyboard */}
-      <div className="bg-white pt-2 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-30 pb-safe">
+      <div className="bg-white dark:bg-slate-900 pt-2 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-30 pb-safe transition-colors">
         <PinyinKeyboard 
           onInput={handleInput}
           onDelete={handleDelete}

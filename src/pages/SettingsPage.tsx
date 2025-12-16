@@ -28,7 +28,7 @@ export const SettingsPage = () => {
     <div className="max-w-2xl mx-auto py-8 px-4">
       <WechatModal isOpen={showWechatModal} onClose={() => setShowWechatModal(false)} />
       
-      <h1 className="text-3xl font-bold text-brand-dark dark:text-brand-primary mb-8 transition-colors">游戏设置</h1>
+      <h1 className="text-3xl font-bold text-brand-dark dark:text-brand-primary mb-8 transition-colors">设置</h1>
       
       {/* Theme Settings */}
       <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden mb-6 transition-colors">

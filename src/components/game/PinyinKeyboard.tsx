@@ -78,7 +78,7 @@ export const PinyinKeyboard = ({ onInput, onDelete, onConfirm, onTone, disabled 
         ${wide ? 'flex-[1.5]' : 'flex-1'}
         ${action 
           ? 'bg-brand-secondary text-white' 
-          : 'bg-white text-slate-700 hover:bg-slate-50'
+          : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-600'
         }
         ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
       `}
@@ -88,7 +88,7 @@ export const PinyinKeyboard = ({ onInput, onDelete, onConfirm, onTone, disabled 
   );
 
   return (
-    <div className="w-full max-w-2xl mx-auto bg-slate-100 p-2 md:p-4 rounded-t-3xl md:rounded-3xl shadow-inner pb-6 md:pb-4">
+    <div className="w-full max-w-2xl mx-auto bg-slate-100 dark:bg-slate-800 p-2 md:p-4 rounded-t-3xl md:rounded-3xl shadow-inner pb-6 md:pb-4 transition-colors">
       {/* Tone Bar */}
       <div className="flex gap-2 mb-3">
         {[1, 2, 3, 4, 0].map((tone) => (
@@ -96,7 +96,7 @@ export const PinyinKeyboard = ({ onInput, onDelete, onConfirm, onTone, disabled 
             key={tone}
             onClick={() => onTone(tone)}
             disabled={disabled}
-            className="flex-1 h-9 md:h-10 bg-brand-primary/10 hover:bg-brand-primary/20 text-brand-primary rounded-lg border-2 border-brand-primary/30 font-bold text-lg flex items-center justify-center transition-all active:scale-95"
+            className="flex-1 h-9 md:h-10 bg-brand-primary/10 dark:bg-brand-primary/20 hover:bg-brand-primary/20 dark:hover:bg-brand-primary/30 text-brand-primary rounded-lg border-2 border-brand-primary/30 dark:border-brand-primary/50 font-bold text-lg flex items-center justify-center transition-all active:scale-95"
           >
             {tone === 0 ? '·' : ['-', '/', 'V', '\\'][tone-1]}
           </button>
@@ -114,7 +114,7 @@ export const PinyinKeyboard = ({ onInput, onDelete, onConfirm, onTone, disabled 
             {i === 2 && (
               <button
                 onClick={onDelete}
-                className="flex-[1.5] bg-slate-200 text-slate-600 rounded-lg shadow-md font-bold active:scale-95 text-xl"
+                className="flex-[1.5] bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-200 rounded-lg shadow-md font-bold active:scale-95 text-xl transition-colors"
               >
                 ⌫
               </button>

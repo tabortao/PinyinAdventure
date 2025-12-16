@@ -129,8 +129,8 @@ export const MistakesPage = () => {
     <div className="max-w-4xl mx-auto">
       <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-800 mb-2">错音本 (智能复习)</h1>
-          <p className="text-slate-500">基于艾宾浩斯记忆曲线，今日需复习 {mistakes.length} 个难点。</p>
+          <h1 className="text-3xl font-bold text-brand-dark dark:text-brand-primary mb-2 transition-colors">错音本 (智能复习)</h1>
+          <p className="text-slate-500 dark:text-slate-400 transition-colors">基于艾宾浩斯记忆曲线，今日需复习 {mistakes.length} 个难点。</p>
         </div>
         
         {mistakes.length > 0 ? (
@@ -141,7 +141,7 @@ export const MistakesPage = () => {
             <RefreshCw /> 开始复习
           </button>
         ) : (
-          <div className="bg-green-100 text-green-700 px-6 py-2 rounded-lg flex items-center gap-2">
+          <div className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-6 py-2 rounded-lg flex items-center gap-2 transition-colors">
             <Trophy size={18} />
             目前没有需要复习的内容！
           </div>
@@ -151,9 +151,9 @@ export const MistakesPage = () => {
       {mistakes.length > 0 ? (
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {mistakes.map((m) => (
-            <div key={m.id} className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-              <div className="text-4xl font-bold text-center mb-2 text-slate-700">{m.question?.content}</div>
-              <div className="text-xs text-center text-slate-400 flex justify-center items-center gap-1">
+            <div key={m.id} className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-all">
+              <div className="text-4xl font-bold text-center mb-2 text-slate-700 dark:text-white transition-colors">{m.question?.content}</div>
+              <div className="text-xs text-center text-slate-400 dark:text-slate-500 flex justify-center items-center gap-1 transition-colors">
                 <Calendar size={12} />
                 Stage: {m.review_stage}
               </div>
@@ -161,10 +161,10 @@ export const MistakesPage = () => {
           ))}
         </div>
       ) : (
-        <div className="text-center py-20 bg-white rounded-3xl border-2 border-dashed border-slate-200">
-          <div className="text-6xl mb-4">🌟</div>
-          <h3 className="text-xl font-bold text-slate-600 mb-2">太棒了！</h3>
-          <p className="text-slate-400 mb-6">你已经完成了所有的复习任务。</p>
+        <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-700 transition-colors">
+          <div className="text-6xl mb-4 animate-bounce">🌟</div>
+          <h3 className="text-xl font-bold text-slate-600 dark:text-slate-300 mb-2 transition-colors">太棒了！</h3>
+          <p className="text-slate-400 dark:text-slate-500 mb-6 transition-colors">你已经完成了所有的复习任务。</p>
           <Link to="/" className="text-brand-primary font-bold hover:underline">去闯关挑战更多汉字 &rarr;</Link>
         </div>
       )}
