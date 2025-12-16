@@ -75,7 +75,7 @@ export const Layout = () => {
                     <User size={16} className="md:w-[18px] md:h-[18px]" />
                   </div>
                   <span className="hidden md:inline text-sm font-bold truncate max-w-[100px]">
-                    {profile?.username || '学员'}
+                    {profile?.username}
                   </span>
                 </button>
 

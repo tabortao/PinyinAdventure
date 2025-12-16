@@ -1,11 +1,66 @@
-import { ArrowLeft, BookOpen, BrainCircuit, Gamepad2, Layers, Smartphone, Sparkles, Zap } from 'lucide-react';
+import { ArrowLeft, BookOpen, BrainCircuit, Gamepad2, Layers, Smartphone, Sparkles, Zap, MessageCircle, Copy, Check, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 export const HelpPage = () => {
   const navigate = useNavigate();
+  const [showWechatModal, setShowWechatModal] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText('tabor2024');
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-6 pb-24 md:pb-6">
+    <div className="max-w-3xl mx-auto px-4 py-6 pb-24 md:pb-6 relative">
+      {/* Wechat Modal */}
+      {showWechatModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl relative animate-in zoom-in-95 duration-200">
+            <button 
+              onClick={() => setShowWechatModal(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"
+            >
+              <X size={24} />
+            </button>
+            
+            <div className="text-center">
+              <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MessageCircle size={32} />
+              </div>
+              <h3 className="text-xl font-black text-slate-800 mb-2">交流反馈</h3>
+              <p className="text-slate-500 text-sm mb-6 leading-relaxed">
+                添加作者微信，交流反馈或建议。<br/>
+                微信号：<span className="font-bold text-slate-700 select-all">tabor2024</span>
+              </p>
+              
+              <button 
+                onClick={handleCopy}
+                className={`w-full py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all ${
+                  copied 
+                    ? 'bg-green-500 text-white' 
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                }`}
+              >
+                {copied ? (
+                  <>
+                    <Check size={20} />
+                    已复制
+                  </>
+                ) : (
+                  <>
+                    <Copy size={20} />
+                    复制微信号
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <button 
         onClick={() => navigate('/settings')} 
         className="flex items-center text-slate-500 hover:text-brand-primary mb-6 transition-colors font-bold text-sm"
@@ -88,10 +143,22 @@ export const HelpPage = () => {
         </div>
       </div>
 
-      <div className="mt-10 text-center space-y-2">
-        <div className="inline-block px-4 py-1 rounded-full bg-slate-100 text-slate-400 text-xs font-bold font-mono">
-          v1.5.0
+      <div className="mt-10 text-center space-y-4">
+        <div className="flex flex-col items-center gap-2">
+            <span className="text-slate-400 text-xs font-bold">作者：Tabor</span>
+            <div className="inline-block px-4 py-1 rounded-full bg-slate-100 text-slate-400 text-xs font-bold font-mono">
+              v1.6.0
+            </div>
         </div>
+        
+        <button 
+          onClick={() => setShowWechatModal(true)}
+          className="inline-flex items-center gap-2 text-brand-primary text-sm font-bold hover:underline"
+        >
+           <MessageCircle size={16} />
+           微信反馈
+        </button>
+
         <p className="text-slate-300 text-xs">© 2025 智能拼音大闯关 Team</p>
       </div>
     </div>
