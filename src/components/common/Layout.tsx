@@ -1,25 +1,22 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { LogOut, User, Trophy, Menu, X, Settings, Gamepad2, BookX } from 'lucide-react';
+import { LogOut, User, Trophy, Menu, X, Settings, Gamepad2, BookX, HelpCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { getTotalScore } from '../../db/api';
 
 export const Layout = () => {
   const { profile, signOut, user } = useAuth();
   const location = useLocation();
-  const navigate = useNavigate();
   const [totalScore, setTotalScore] = useState(0);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
-  // Fetch score in layout to keep it updated globally (or fetch on mount/interval)
+  // Fetch score
   useEffect(() => {
     if (user) {
       getTotalScore(user.id).then(setTotalScore);
-      // Optional: Polling or Subscription
       const interval = setInterval(() => {
         getTotalScore(user.id).then(setTotalScore);
-      }, 5000); // Update every 5s for quick feedback
+      }, 5000);
       return () => clearInterval(interval);
     }
   }, [user, location.pathname]); 
@@ -27,29 +24,35 @@ export const Layout = () => {
   const isActive = (path: string) => location.pathname === path;
 
   const navItems = [
-    { name: '闯关地图', path: '/', icon: <Gamepad2 size={20} /> },
-    { name: '错音本', path: '/mistakes', icon: <BookX size={20} /> },
-    { name: '设置', path: '/settings', icon: <Settings size={20} /> },
+    { name: '闯关地图', path: '/', icon: <Gamepad2 size={24} /> },
+    { name: '错音本', path: '/mistakes', icon: <BookX size={24} /> },
+    { name: '设置', path: '/settings', icon: <Settings size={24} /> },
   ];
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
-      {/* Navbar */}
+      {/* Top Navbar */}
       <nav className="bg-brand-primary text-white shadow-lg sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 h-14 md:h-16 flex items-center justify-between">
           
-          {/* Left: Hamburger (Mobile) + Brand */}
-          <div className="flex items-center gap-3">
-             <button 
-               className="md:hidden p-1 hover:bg-white/10 rounded-lg transition-colors"
-               onClick={() => setIsSidebarOpen(true)}
-             >
-               <Menu size={24} />
-             </button>
+          {/* Left: Brand + Desktop Nav */}
+          <div className="flex items-center gap-6">
              <Link to="/" className="text-lg md:text-2xl font-bold tracking-tight flex items-center gap-2">
-               <span className="hidden md:inline">智能拼音大闯关</span>
-               <span className="md:hidden">拼音大闯关</span>
+               <span>智能拼音大闯关</span>
              </Link>
+
+             {/* Desktop Nav Links */}
+             <div className="hidden md:flex items-center gap-6 ml-4">
+               {navItems.map(item => (
+                 <Link 
+                   key={item.path} 
+                   to={item.path}
+                   className={`flex items-center gap-2 text-sm font-bold transition-colors ${isActive(item.path) ? 'text-white' : 'text-white/70 hover:text-white'}`}
+                 >
+                   {item.name}
+                 </Link>
+               ))}
+             </div>
           </div>
 
           {/* Right: Score + User */}
@@ -104,59 +107,26 @@ export const Layout = () => {
         </div>
       </nav>
 
-      {/* Mobile Sidebar Overlay */}
-      <div 
-        className={`fixed inset-0 z-50 bg-black/50 backdrop-blur-sm transition-opacity duration-300 md:hidden ${isSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
-        onClick={() => setIsSidebarOpen(false)}
-      >
-        <div 
-          className={`absolute left-0 top-0 bottom-0 w-64 bg-white shadow-2xl transition-transform duration-300 flex flex-col ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
-          onClick={e => e.stopPropagation()}
-        >
-          <div className="p-4 border-b flex justify-between items-center bg-brand-primary text-white h-14">
-            <h2 className="font-bold text-lg">菜单</h2>
-            <button onClick={() => setIsSidebarOpen(false)}>
-              <X size={24} />
-            </button>
-          </div>
-          <div className="flex-1 p-4 space-y-2">
-            {navItems.map((item) => (
-              <Link 
-                key={item.path}
-                to={item.path}
-                onClick={() => setIsSidebarOpen(false)}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${isActive(item.path) ? 'bg-brand-primary text-white shadow-md' : 'text-slate-600 hover:bg-slate-50'}`}
-              >
-                {item.icon}
-                {item.name}
-              </Link>
-            ))}
-          </div>
-          <div className="p-4 border-t text-xs text-center text-slate-400">
-            v1.3.0 • 2025
-          </div>
-        </div>
-      </div>
-
-      {/* Desktop Sub-nav */}
-      <div className="hidden md:flex justify-center bg-white border-b border-slate-200 shadow-sm">
-         <div className="flex gap-8">
-           {navItems.map((item) => (
-              <Link 
-                key={item.path}
-                to={item.path}
-                className={`flex items-center gap-2 py-3 border-b-2 font-bold transition-all text-sm ${isActive(item.path) ? 'border-brand-primary text-brand-primary' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
-              >
-                {item.icon}
-                {item.name}
-              </Link>
-           ))}
-         </div>
-      </div>
-
-      <main className="flex-1 relative">
+      {/* Main Content */}
+      <main className="flex-1 relative pb-20 md:pb-0">
         <Outlet />
       </main>
+
+      {/* Mobile Bottom Navigation */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around items-center h-16 z-50 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+        {navItems.map((item) => (
+          <Link 
+            key={item.path}
+            to={item.path}
+            className={`flex flex-col items-center justify-center w-full h-full transition-colors ${isActive(item.path) ? 'text-brand-primary' : 'text-slate-400 hover:text-slate-600'}`}
+          >
+            <div className={`transition-transform duration-200 ${isActive(item.path) ? 'scale-110' : 'scale-100'}`}>
+               {item.icon}
+            </div>
+            <span className="text-[10px] font-bold mt-1">{item.name}</span>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import { useSettings } from '../context/SettingsContext';
-import { ArrowLeft, Check } from 'lucide-react';
+import { ArrowLeft, Check, ChevronRight, HelpCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export const SettingsPage = () => {
@@ -24,7 +24,7 @@ export const SettingsPage = () => {
       
       <h1 className="text-3xl font-bold text-brand-dark mb-8">游戏设置</h1>
       
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-6">
         <div className="p-6 border-b border-slate-100">
           <h2 className="text-xl font-bold text-slate-800 mb-2">练习模式</h2>
           <p className="text-slate-500 text-sm">选择在闯关中出现的题目类型。注意：如果没有对应类型的题目，关卡可能会显示为空。</p>
@@ -54,6 +54,26 @@ export const SettingsPage = () => {
             </button>
           ))}
         </div>
+      </div>
+
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+         <button
+           onClick={() => navigate('/help')}
+           className="w-full text-left p-6 flex items-center justify-between transition-colors hover:bg-slate-50 group"
+         >
+           <div className="flex items-center gap-4">
+             <div className="bg-blue-100 text-blue-500 p-2 rounded-lg">
+                <HelpCircle size={24} />
+             </div>
+             <div>
+               <div className="font-bold text-lg text-slate-700 mb-1 group-hover:text-brand-primary transition-colors">帮助与说明</div>
+               <div className="text-slate-500 text-sm">了解项目简介、设计理念与版本信息</div>
+             </div>
+           </div>
+           <div className="text-slate-300 group-hover:text-brand-primary transition-colors">
+              <ChevronRight size={24} />
+           </div>
+         </button>
       </div>
     </div>
   );

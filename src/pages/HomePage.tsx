@@ -126,9 +126,6 @@ export const HomePage = () => {
              <span className="bg-brand-secondary text-white px-3 py-1 rounded-full text-xs uppercase tracking-wider shadow-sm font-bold">
               Level {grade}
             </span>
-            <h2 className="text-xl font-bold text-slate-700">
-               {grade === 1 ? '拼音入门' : `${grade} 年级进阶`}
-            </h2>
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
