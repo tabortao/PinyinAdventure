@@ -14,14 +14,7 @@ export const SettingsPage = () => {
   ];
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <button 
-        onClick={() => navigate('/')} 
-        className="flex items-center text-slate-500 hover:text-brand-primary mb-6 transition-colors"
-      >
-        <ArrowLeft size={20} className="mr-1" /> 返回
-      </button>
-      
+    <div className="max-w-2xl mx-auto py-8">
       <h1 className="text-3xl font-bold text-brand-dark mb-8">游戏设置</h1>
       
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-6">

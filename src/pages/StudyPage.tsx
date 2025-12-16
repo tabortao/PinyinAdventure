@@ -4,6 +4,7 @@ import { PinyinChart, UserPinyinProgress } from '../types/types';
 import { getPinyinCharts, getUserPinyinProgress, updatePinyinProgress, getPinyinReviewList } from '../db/api';
 import { BrainCircuit, Check, X, Volume2, BookOpen, Star, Sparkles, ChevronDown, Smile } from 'lucide-react';
 import { playCorrectSound, playWrongSound } from '../lib/audio';
+import { getPinyinTTS } from '../lib/pinyinTTS';
 
 export const StudyPage = () => {
   const { user } = useAuth();
@@ -134,22 +135,25 @@ export const StudyPage = () => {
   };
 
   const playAudio = (text: string) => {
-    const utterance = new SpeechSynthesisUtterance(text);
+    const textToSpeak = getPinyinTTS(text);
+    const utterance = new SpeechSynthesisUtterance(textToSpeak);
     utterance.lang = 'zh-CN';
     utterance.rate = 0.8;
     window.speechSynthesis.speak(utterance);
   };
 
   // 1. Study/Test/Review Mode UI
-  if (studyMode !== 'browse' && !testCompleted && reviewList.length > 0) {
+  if (studyMode !== 'list' && !testCompleted && reviewList.length > 0) {
     const currentItem = reviewList[currentCardIndex];
     const isTest = studyMode === 'test' || studyMode === 'review';
+    // For learn mode, always show details. For test modes, check showAnswer state.
+    const showDetails = studyMode === 'learn' || showAnswer;
 
     return (
       <div className="max-w-md mx-auto p-4 flex flex-col h-[calc(100vh-80px)] md:h-[calc(100vh-140px)]">
         {/* Header */}
         <div className="flex justify-between items-center mb-4">
-          <button onClick={() => setStudyMode('browse')} className="text-slate-400 hover:text-brand-primary font-bold text-sm flex items-center gap-1">
+          <button onClick={() => setStudyMode('list')} className="text-slate-400 hover:text-brand-primary font-bold text-sm flex items-center gap-1">
              <X size={24} /> 退出
           </button>
           <div className="text-brand-secondary font-bold text-lg">
@@ -161,28 +165,28 @@ export const StudyPage = () => {
         <div className="flex-1 bg-white rounded-3xl shadow-xl border border-slate-100 p-6 flex flex-col items-center justify-center relative overflow-hidden mb-6">
           
           {/* Top Hint */}
-          <div className={`transition-all duration-300 flex flex-col items-center ${isTest && !showAnswer ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
+          <div className={`transition-all duration-300 flex flex-col items-center ${!showDetails ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
              <div className="text-6xl mb-4 animate-in zoom-in">{currentItem.emoji}</div>
              <div className="text-brand-primary/80 font-bold text-xl mb-6 text-center">{currentItem.mnemonic}</div>
           </div>
 
-          {/* Main Pinyin */}
-          <div className="text-[8rem] md:text-[10rem] font-black text-brand-dark mb-4 tracking-wider leading-none">
+          {/* Main Pinyin - BIGGER FONT */}
+          <div className="text-[120px] md:text-[200px] font-black text-brand-dark mb-4 tracking-wider leading-none select-none text-center break-words max-w-full">
             {currentItem.pinyin}
           </div>
 
           {/* Action: Play Audio */}
           <button 
             onClick={(e) => { e.stopPropagation(); playAudio(currentItem.pinyin); }}
-            className="mb-8 w-16 h-16 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center hover:bg-brand-primary hover:text-white transition-all shadow-sm active:scale-95"
+            className="mb-8 w-20 h-20 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center hover:bg-brand-primary hover:text-white transition-all shadow-sm active:scale-95"
           >
-            <Volume2 size={32} />
+            <Volume2 size={40} />
           </button>
 
           {/* Example Word */}
-          <div className={`transition-all duration-300 text-center ${isTest && !showAnswer ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
-            <div className="text-lg text-slate-400 mb-1 font-bold">{currentItem.example_pinyin}</div>
-            <div className="text-3xl font-bold text-slate-700">{currentItem.example_word}</div>
+          <div className={`transition-all duration-300 text-center ${!showDetails ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+            <div className="text-xl text-slate-400 mb-2 font-bold">{currentItem.example_pinyin}</div>
+            <div className="text-4xl font-bold text-slate-700">{currentItem.example_word}</div>
           </div>
         </div>
 
