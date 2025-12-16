@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { PinyinChart, UserPinyinProgress } from '../types/types';
 import { getPinyinCharts, getUserPinyinProgress, updatePinyinProgress, getPinyinReviewList } from '../db/api';
-import { BrainCircuit, Check, X, Volume2, BookOpen, Star, Sparkles, ChevronDown } from 'lucide-react';
+import { BrainCircuit, Check, X, Volume2, BookOpen, Star, Sparkles, ChevronDown, Smile } from 'lucide-react';
 import { playCorrectSound, playWrongSound } from '../lib/audio';
 
 export const StudyPage = () => {
@@ -18,11 +18,14 @@ export const StudyPage = () => {
   const [showAnswer, setShowAnswer] = useState(false);
   const [testCompleted, setTestCompleted] = useState(false);
   
+  // Custom Modal State
+  const [showNoReviewModal, setShowNoReviewModal] = useState(false);
+  
   // UI State for sections
   const [expandedSection, setExpandedSection] = useState<string>('yunmu'); // default expand yunmu as it has subcategories
   
   // Review specific state
-  const [reviewList, setReviewList] = useState<PinyinChart[]>([]);
+  const [reviewList, setReviewList] = useState<(PinyinChart & { progress_id?: string })[]>([]);
 
   useEffect(() => {
     fetchData();
@@ -72,9 +75,12 @@ export const StudyPage = () => {
 
   // Handlers
   const startStudy = (items: PinyinChart[], mode: 'browse' | 'test', groupName: string) => {
-    if (items.length === 0) return;
-    setSelectedGroup(groupName);
-    setReviewList(items); 
+    if (!items || items.length === 0) {
+      alert("该分类下暂时没有内容");
+      return;
+    }
+    setSelectedGroup(groupName); // Just for title/tracking
+    setReviewList(items); // Using reviewList for generic study
     setStudyMode(mode);
     setCurrentCardIndex(0);
     setShowAnswer(false);
@@ -85,18 +91,17 @@ export const StudyPage = () => {
     if (!user) return;
     setLoading(true);
     const list = await getPinyinReviewList(user.id);
+    setLoading(false);
+    
     if (list.length === 0) {
-      alert("太棒了！暂时没有需要复习的拼音。");
-      setLoading(false);
+      setShowNoReviewModal(true);
       return;
     }
-    // Transform review items to PinyinChart type for the view
     setReviewList(list);
     setStudyMode('review');
     setCurrentCardIndex(0);
     setShowAnswer(false);
     setTestCompleted(false);
-    setLoading(false);
   };
 
   const handleNextCard = () => {
@@ -162,7 +167,7 @@ export const StudyPage = () => {
           </div>
 
           {/* Main Pinyin */}
-          <div className="text-9xl font-black text-brand-dark mb-8 tracking-wider">
+          <div className="text-[8rem] md:text-[10rem] font-black text-brand-dark mb-4 tracking-wider leading-none">
             {currentItem.pinyin}
           </div>
 
@@ -250,7 +255,26 @@ export const StudyPage = () => {
 
   // 3. Main Dashboard
   return (
-    <div className="max-w-4xl mx-auto p-4 pb-24">
+    <div className="max-w-4xl mx-auto p-4 pb-24 relative">
+      {/* Custom Modal for No Reviews */}
+      {showNoReviewModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center scale-100 animate-in zoom-in-95 duration-200">
+            <div className="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Smile size={48} />
+            </div>
+            <h3 className="text-2xl font-black text-brand-dark mb-3">太棒了！</h3>
+            <p className="text-slate-500 mb-8 font-medium">暂时没有需要复习的拼音。<br/>休息一下，稍后再来吧！</p>
+            <button 
+              onClick={() => setShowNoReviewModal(false)}
+              className="w-full bg-brand-primary text-white py-3.5 rounded-xl font-bold text-lg hover:bg-brand-dark transition-colors"
+            >
+              我知道了
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Header Area */}
       <div className="bg-white rounded-3xl p-6 mb-8 shadow-sm border border-slate-100 relative overflow-hidden">
         <div className="relative z-10">
@@ -286,7 +310,7 @@ export const StudyPage = () => {
              onClick={() => setExpandedSection(expandedSection === 'shengmu' ? '' : 'shengmu')}
            >
              <div className="flex items-center gap-3">
-               <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center font-bold">b</div>
+               <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center font-bold text-2xl">🅱️</div>
                <div>
                  <h3 className="font-bold text-lg text-slate-800">声母</h3>
                  <p className="text-xs text-slate-400 font-bold">{pinyinData.initials.length} 个拼音</p>
@@ -331,7 +355,7 @@ export const StudyPage = () => {
              onClick={() => setExpandedSection(expandedSection === 'yunmu' ? '' : 'yunmu')}
            >
              <div className="flex items-center gap-3">
-               <div className="w-10 h-10 bg-green-100 text-green-600 rounded-xl flex items-center justify-center font-bold">a</div>
+               <div className="w-12 h-12 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center font-bold text-2xl">🅰️</div>
                <div>
                  <h3 className="font-bold text-lg text-slate-800">韵母</h3>
                  <p className="text-xs text-slate-400 font-bold">{pinyinData.finals.all.length} 个拼音</p>
@@ -354,13 +378,13 @@ export const StudyPage = () => {
                          onClick={() => startStudy(items, 'browse', groupName)}
                          className="flex-1 py-2 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-600 shadow-sm"
                        >
-                         学习
+                         学习卡片
                        </button>
                        <button 
                          onClick={() => startStudy(items, 'test', groupName)}
                          className="flex-1 py-2 bg-white border border-brand-primary/20 text-brand-primary rounded-lg text-xs font-bold shadow-sm"
                        >
-                         测试
+                         记忆测试
                        </button>
                     </div>
                   </div>
@@ -376,9 +400,9 @@ export const StudyPage = () => {
              onClick={() => setExpandedSection(expandedSection === 'zhengti' ? '' : 'zhengti')}
            >
              <div className="flex items-center gap-3">
-               <div className="w-10 h-10 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center font-bold">zi</div>
+               <div className="w-12 h-12 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center font-bold text-2xl">🇨🇳</div>
                <div>
-                 <h3 className="font-bold text-lg text-slate-800">整体认读音节</h3>
+                 <h3 className="font-bold text-lg text-slate-800">整体认读</h3>
                  <p className="text-xs text-slate-400 font-bold">{pinyinData.overall.length} 个拼音</p>
                </div>
              </div>
