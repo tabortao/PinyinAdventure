@@ -1,10 +1,11 @@
 import { useSettings, Theme } from '../context/SettingsContext';
 import { useAuth } from '../context/AuthContext';
-import { ArrowLeft, Check, ChevronRight, HelpCircle, MessageCircle, Moon, Sun, Monitor, LogOut, Database, Download, Upload, Brain } from 'lucide-react';
+import { ArrowLeft, Check, ChevronRight, HelpCircle, MessageCircle, Moon, Sun, Monitor, LogOut, Database, Download, Upload, Brain, Wifi, Loader2, Server } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState, useRef } from 'react';
 import { WechatModal } from '../components/common/WechatModal';
 import { exportData, importData } from '../db/localDB';
+import { AI_PROVIDERS, testConnection } from '../lib/ai';
 
 export const SettingsPage = () => {
   const { mode, setMode, theme, setTheme, aiConfig, setAiConfig } = useSettings();
@@ -12,6 +13,36 @@ export const SettingsPage = () => {
   const navigate = useNavigate();
   const [showWechatModal, setShowWechatModal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [testing, setTesting] = useState(false);
+  const [testResult, setTestResult] = useState<{success: boolean, message: string} | null>(null);
+
+  const handleProviderChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const providerId = e.target.value;
+    const provider = AI_PROVIDERS.find(p => p.id === providerId);
+    if (provider) {
+      setAiConfig({
+        ...aiConfig,
+        provider: providerId,
+        host: provider.host,
+        model: provider.model
+      });
+    } else {
+      setAiConfig({ ...aiConfig, provider: providerId });
+    }
+  };
+
+  const handleTestConnection = async () => {
+    setTesting(true);
+    setTestResult(null);
+    try {
+      const result = await testConnection(aiConfig);
+      setTestResult(result);
+    } catch (e) {
+      setTestResult({ success: false, message: '测试出错' });
+    } finally {
+      setTesting(false);
+    }
+  };
 
   const handleExport = async () => {
     if (!user) return;
@@ -106,10 +137,27 @@ export const SettingsPage = () => {
             <Brain className="text-brand-primary" size={24} />
             <h2 className="text-xl font-bold text-slate-800 dark:text-white transition-colors">AI 模型配置</h2>
           </div>
-          <p className="text-slate-500 dark:text-slate-400 text-sm transition-colors">配置 AI 以启用智能复习功能。支持 OpenAI 格式的接口。</p>
+          <p className="text-slate-500 dark:text-slate-400 text-sm transition-colors">配置 AI 以启用智能复习功能。支持多种服务商。</p>
         </div>
         
         <div className="p-6 space-y-4">
+           {/* Provider Select */}
+           <div>
+             <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-2">
+               <Server size={14} />
+               服务商
+             </label>
+             <select
+               value={aiConfig.provider || 'custom'}
+               onChange={handleProviderChange}
+               className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all appearance-none"
+             >
+               {AI_PROVIDERS.map(p => (
+                 <option key={p.id} value={p.id}>{p.name}</option>
+               ))}
+             </select>
+           </div>
+
            {/* Host */}
            <div>
              <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">API Host</label>
@@ -117,7 +165,7 @@ export const SettingsPage = () => {
                type="text" 
                value={aiConfig.host}
                onChange={(e) => setAiConfig({...aiConfig, host: e.target.value})}
-               placeholder="https://api.openai.com"
+               placeholder="https://api.openai.com/v1"
                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all"
              />
            </div>
@@ -144,6 +192,27 @@ export const SettingsPage = () => {
                placeholder="gpt-3.5-turbo"
                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all"
              />
+           </div>
+
+           {/* Test Connection */}
+           <div className="pt-2">
+             <button
+               onClick={handleTestConnection}
+               disabled={testing || !aiConfig.apiKey}
+               className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all
+                 ${testing ? 'bg-slate-100 dark:bg-slate-800 text-slate-400' : 'bg-brand-primary/10 text-brand-primary hover:bg-brand-primary/20'}
+               `}
+             >
+               {testing ? <Loader2 size={18} className="animate-spin" /> : <Wifi size={18} />}
+               {testing ? '测试中...' : '测试连接'}
+             </button>
+             
+             {testResult && (
+                <div className={`mt-3 p-3 rounded-lg text-sm flex items-start gap-2 ${testResult.success ? 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400' : 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400'}`}>
+                   {testResult.success ? <Check size={16} className="mt-0.5" /> : <Wifi size={16} className="mt-0.5" />}
+                   <span>{testResult.message}</span>
+                </div>
+             )}
            </div>
         </div>
       </div>

@@ -1,10 +1,54 @@
 import { Question } from '../types/types';
 
 export interface AIConfig {
+  provider?: string;
   host: string;
   apiKey: string;
   model: string;
 }
+
+export const AI_PROVIDERS = [
+  { id: 'custom', name: '自定义 (OpenAI兼容)', host: 'https://api.openai.com/v1', model: 'gpt-3.5-turbo' },
+  { id: 'silicon', name: '硅基流动 (SiliconFlow)', host: 'https://api.siliconflow.cn/v1', model: 'deepseek-ai/DeepSeek-V3' },
+  { id: 'deepseek', name: 'DeepSeek (官方)', host: 'https://api.deepseek.com', model: 'deepseek-chat' },
+  { id: 'zhipu', name: '智谱AI (BigModel)', host: 'https://open.bigmodel.cn/api/paas/v4', model: 'glm-4-flash' },
+  { id: 'gemini', name: 'Google Gemini', host: 'https://generativelanguage.googleapis.com/v1beta/openai', model: 'gemini-1.5-flash' },
+];
+
+export const testConnection = async (config: AIConfig): Promise<{ success: boolean; message: string }> => {
+  if (!config.apiKey || !config.host) {
+    return { success: false, message: '配置不完整' };
+  }
+
+  const baseUrl = config.host.replace(/\/$/, '');
+  const url = `${baseUrl}/chat/completions`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${config.apiKey}`
+      },
+      body: JSON.stringify({
+        model: config.model,
+        messages: [
+          { role: 'user', content: 'Hi' }
+        ],
+        max_tokens: 5
+      })
+    });
+
+    if (!response.ok) {
+      const err = await response.text();
+      return { success: false, message: `连接失败: ${response.status} ${err.slice(0, 100)}` };
+    }
+
+    return { success: true, message: '连接成功！' };
+  } catch (e: any) {
+    return { success: false, message: `网络错误: ${e.message}` };
+  }
+};
 
 export const generateReviewQuestions = async (
   mistakes: { question: Question, wrong_pinyin: string }[],
@@ -34,8 +78,10 @@ export const generateReviewQuestions = async (
 4. 只返回JSON，不要有markdown标记。
 `;
 
+  const baseUrl = config.host.replace(/\/$/, '');
+  
   try {
-    const response = await fetch(`${config.host}/v1/chat/completions`, {
+    const response = await fetch(`${baseUrl}/chat/completions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { BookOpen, Gamepad2, Map, Trophy, BookX, Settings } from 'lucide-react';
+import { BookOpen, Gamepad2, Map, Trophy } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export const HomePage = () => {
@@ -8,7 +8,7 @@ export const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-4 pb-24 transition-colors">
-       <div className="max-w-md mx-auto pt-6 md:pt-10">
+       <div className="max-w-2xl mx-auto pt-6 md:pt-10">
           <div className="text-center mb-10">
             <h1 className="text-3xl font-black text-brand-dark dark:text-white mb-2 tracking-tight">
               拼音学习助手
@@ -18,7 +18,7 @@ export const HomePage = () => {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
              {/* Study - Pinyin Basics */}
              <button 
                onClick={() => navigate('/study')}
@@ -26,7 +26,7 @@ export const HomePage = () => {
              >
                 <div className="absolute right-0 top-0 w-24 h-24 bg-blue-500/5 rounded-bl-[100px] transition-transform group-hover:scale-150" />
                 
-                <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 text-blue-500 dark:text-blue-400 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm relative z-10">
+                <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 text-blue-500 dark:text-blue-400 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm relative z-10 shrink-0">
                    <BookOpen size={32} />
                 </div>
                 <div className="relative z-10">
@@ -42,7 +42,7 @@ export const HomePage = () => {
              >
                 <div className="absolute right-0 top-0 w-24 h-24 bg-purple-500/5 rounded-bl-[100px] transition-transform group-hover:scale-150" />
                 
-                <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 text-purple-500 dark:text-purple-400 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm relative z-10">
+                <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 text-purple-500 dark:text-purple-400 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm relative z-10 shrink-0">
                    <Gamepad2 size={32} />
                 </div>
                 <div className="relative z-10">
@@ -54,48 +54,16 @@ export const HomePage = () => {
              {/* Adventure - Original Game */}
              <button 
                onClick={() => navigate('/adventure')}
-               className="w-full bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 p-6 rounded-3xl flex items-center gap-5 hover:border-brand-primary hover:shadow-lg transition-all group text-left relative overflow-hidden"
+               className="w-full bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 p-6 rounded-3xl flex items-center gap-5 hover:border-brand-primary hover:shadow-lg transition-all group text-left relative overflow-hidden md:col-span-2"
              >
                 <div className="absolute right-0 top-0 w-24 h-24 bg-orange-500/5 rounded-bl-[100px] transition-transform group-hover:scale-150" />
                 
-                <div className="w-16 h-16 bg-orange-100 dark:bg-orange-900/30 text-orange-500 dark:text-orange-400 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm relative z-10">
+                <div className="w-16 h-16 bg-orange-100 dark:bg-orange-900/30 text-orange-500 dark:text-orange-400 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm relative z-10 shrink-0">
                    <Map size={32} />
                 </div>
                 <div className="relative z-10">
                    <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-1 group-hover:text-brand-primary transition-colors">拼音大冒险</h3>
                    <p className="text-sm text-slate-400 dark:text-slate-500 font-medium">循序渐进的关卡挑战</p>
-                </div>
-             </button>
-
-             {/* Mistakes - Review */}
-             <button 
-               onClick={() => navigate('/mistakes')}
-               className="w-full bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 p-6 rounded-3xl flex items-center gap-5 hover:border-brand-primary hover:shadow-lg transition-all group text-left relative overflow-hidden"
-             >
-                <div className="absolute right-0 top-0 w-24 h-24 bg-red-500/5 rounded-bl-[100px] transition-transform group-hover:scale-150" />
-                
-                <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 text-red-500 dark:text-red-400 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm relative z-10">
-                   <BookX size={32} />
-                </div>
-                <div className="relative z-10">
-                   <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-1 group-hover:text-brand-primary transition-colors">错音本</h3>
-                   <p className="text-sm text-slate-400 dark:text-slate-500 font-medium">复习巩固薄弱点</p>
-                </div>
-             </button>
-
-             {/* Settings */}
-             <button 
-               onClick={() => navigate('/settings')}
-               className="w-full bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 p-6 rounded-3xl flex items-center gap-5 hover:border-brand-primary hover:shadow-lg transition-all group text-left relative overflow-hidden"
-             >
-                <div className="absolute right-0 top-0 w-24 h-24 bg-slate-500/5 rounded-bl-[100px] transition-transform group-hover:scale-150" />
-                
-                <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm relative z-10">
-                   <Settings size={32} />
-                </div>
-                <div className="relative z-10">
-                   <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-1 group-hover:text-brand-primary transition-colors">设置</h3>
-                   <p className="text-sm text-slate-400 dark:text-slate-500 font-medium">个性化偏好设置</p>
                 </div>
              </button>
 

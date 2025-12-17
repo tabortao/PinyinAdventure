@@ -5,6 +5,7 @@ type GameMode = 'all' | QuestionType;
 export type Theme = 'system' | 'light' | 'dark';
 
 export interface AIConfig {
+  provider?: string;
   host: string;
   apiKey: string;
   model: string;
@@ -24,7 +25,7 @@ const SettingsContext = createContext<SettingsContextType>({
   setMode: () => {},
   theme: 'system',
   setTheme: () => {},
-  aiConfig: { host: '', apiKey: '', model: '' },
+  aiConfig: { provider: 'custom', host: '', apiKey: '', model: '' },
   setAiConfig: () => {},
 });
 
@@ -35,7 +36,7 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
   });
   const [aiConfig, setAiConfig] = useState<AIConfig>(() => {
     const saved = localStorage.getItem('aiConfig');
-    return saved ? JSON.parse(saved) : { host: 'https://api.openai.com', apiKey: '', model: 'gpt-3.5-turbo' };
+    return saved ? JSON.parse(saved) : { provider: 'custom', host: 'https://api.openai.com/v1', apiKey: '', model: 'gpt-3.5-turbo' };
   });
 
   useEffect(() => {
