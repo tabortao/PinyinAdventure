@@ -1,10 +1,22 @@
 import { initDB, seedDatabase } from './localDB';
-import { Level, Question, UserProgress, Mistake, PinyinChart, UserPinyinProgress } from '../types/types';
+import { Level, Question, UserProgress, Mistake, PinyinChart, UserPinyinProgress, UserQuizProgress } from '../types/types';
 
 // Initialize DB on module load or first call
 // We can expose an init function
 export const initializeApp = async () => {
   await seedDatabase();
+};
+
+export const getTotalScore = async (userId: string) => {
+  const db = await initDB();
+  const progress = await db.getAllFromIndex('user_progress', 'by-user', userId);
+  const quizProgress = await db.getAllFromIndex('user_quiz_progress', 'by-user', userId);
+
+  let total = 0;
+  progress.forEach(p => total += (p.score || 0));
+  quizProgress.forEach(p => total += (p.score || 0));
+  
+  return total;
 };
 
 // Levels

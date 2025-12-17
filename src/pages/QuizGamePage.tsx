@@ -5,7 +5,6 @@ import { useAuth } from '../context/AuthContext';
 import { getQuizQuestions, saveUserQuizProgress, recordMistake } from '../db/api';
 import { Question } from '../types/types';
 import * as Tone from 'tone';
-import { Button } from '../components/ui/button';
 
 interface QuizQuestion extends Question {
   options: string[];
@@ -28,8 +27,8 @@ export const QuizGamePage = () => {
   const [timeLeft, setTimeLeft] = useState(10);
   const [totalTime, setTotalTime] = useState(0); // Cumulative time in seconds
   
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const gameTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<any>(null);
+  const gameTimerRef = useRef<any>(null);
 
   useEffect(() => {
     if (levelId) {
@@ -200,40 +199,44 @@ export const QuizGamePage = () => {
 
   if (questions.length === 0) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-4">
-        <h2 className="text-xl font-bold mb-4 dark:text-white">暂无题目</h2>
-        <Button onClick={() => navigate('/study')}>返回学习</Button>
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-4 transition-colors">
+        <h2 className="text-xl font-bold mb-4 text-slate-800 dark:text-white">暂无题目</h2>
+        <button 
+          onClick={() => navigate('/study')}
+          className="px-6 py-3 bg-brand-primary text-white rounded-xl font-bold hover:bg-brand-secondary transition-colors shadow-sm"
+        >
+          返回学习
+        </button>
       </div>
     );
   }
 
   if (isFinished) {
     return (
-      <div className="min-h-screen bg-brand-primary flex flex-col items-center justify-center p-4 relative overflow-hidden">
+      <div className="min-h-screen bg-brand-primary flex flex-col items-center justify-center p-4 relative overflow-hidden transition-colors">
         {/* Background Patterns */}
         <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-          <div className="absolute top-10 left-10 text-9xl">A</div>
-          <div className="absolute bottom-20 right-20 text-9xl">O</div>
+          <div className="absolute top-10 left-10 text-9xl text-white">A</div>
+          <div className="absolute bottom-20 right-20 text-9xl text-white">O</div>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-xl w-full max-w-md text-center z-10 animate-in zoom-in duration-300">
-          <h2 className="text-3xl font-bold text-brand-dark dark:text-white mb-2">挑战完成!</h2>
-          <div className="text-6xl font-black text-brand-primary mb-6">{score} <span className="text-2xl text-slate-400">/ 10</span></div>
+        <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-xl w-full max-w-md text-center z-10 animate-in zoom-in duration-300 border border-slate-100 dark:border-slate-800 transition-colors">
+          <h2 className="text-3xl font-bold text-brand-dark dark:text-white mb-2 transition-colors">挑战完成!</h2>
+          <div className="text-6xl font-black text-brand-primary mb-6">{score} <span className="text-2xl text-slate-400 dark:text-slate-500">/ 10</span></div>
           
           <div className="space-y-4">
-            <Button 
+            <button 
               onClick={nextLevel}
-              className="w-full py-6 text-lg font-bold rounded-2xl shadow-lg bg-brand-primary hover:bg-brand-secondary text-white"
+              className="w-full py-4 text-lg font-bold rounded-2xl shadow-lg bg-brand-primary hover:bg-brand-secondary text-white transition-all active:scale-95"
             >
               下一关
-            </Button>
-            <Button 
-              variant="outline"
+            </button>
+            <button 
               onClick={() => navigate('/study')}
-              className="w-full py-6 text-lg font-bold rounded-2xl border-2"
+              className="w-full py-4 text-lg font-bold rounded-2xl border-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors active:scale-95"
             >
               返回学习
-            </Button>
+            </button>
           </div>
         </div>
       </div>
@@ -251,7 +254,7 @@ export const QuizGamePage = () => {
         </button>
         <div className="font-bold text-slate-700 dark:text-white">第 {levelId} 关</div>
         <div className="flex items-center gap-2">
-           <div className={`px-3 py-1 rounded-full font-mono font-bold ${timeLeft <= 3 ? 'bg-red-100 text-red-500' : 'bg-blue-100 text-blue-500'}`}>
+           <div className={`px-3 py-1 rounded-full font-mono font-bold ${timeLeft <= 3 ? 'bg-red-100 dark:bg-red-900/30 text-red-500 dark:text-red-400' : 'bg-blue-100 dark:bg-blue-900/30 text-blue-500 dark:text-blue-400'}`}>
              {timeLeft}s
            </div>
            <div className="font-bold text-brand-primary">{score}分</div>
@@ -272,7 +275,7 @@ export const QuizGamePage = () => {
         {/* Character Card */}
         <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-lg p-12 mb-12 w-full aspect-square flex items-center justify-center border-4 border-slate-100 dark:border-slate-700">
           <span className="text-9xl font-black text-slate-800 dark:text-white select-none">
-            {currentQuestion.character}
+            {currentQuestion.content}
           </span>
         </div>
 
