@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Volume2, Clock } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { getQuizQuestions, saveUserQuizProgress, recordMistake } from '../db/api';
-import { Question } from '../types/types';
+import { getQuizQuestions, saveUserQuizProgress, recordMistake, getLevelById } from '../db/api';
+import { Question, Level } from '../types/types';
 import * as Tone from 'tone';
 
 interface QuizQuestion extends Question {
@@ -16,6 +16,7 @@ export const QuizGamePage = () => {
   const { user } = useAuth();
   
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
+  const [levelInfo, setLevelInfo] = useState<Level | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [score, setScore] = useState(0);
@@ -50,8 +51,12 @@ export const QuizGamePage = () => {
   const loadQuestions = async () => {
     try {
       setLoading(true);
-      const data = await getQuizQuestions(Number(levelId), 10);
+      const [data, level] = await Promise.all([
+        getQuizQuestions(Number(levelId), 10),
+        getLevelById(Number(levelId))
+      ]);
       setQuestions(data);
+      setLevelInfo(level);
     } catch (error) {
       console.error('Failed to load quiz questions', error);
     } finally {
@@ -252,7 +257,7 @@ export const QuizGamePage = () => {
         <button onClick={() => navigate('/quiz-levels')} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors">
           <ArrowLeft className="text-slate-600 dark:text-slate-300" />
         </button>
-        <div className="font-bold text-slate-700 dark:text-white">第 {levelId} 关</div>
+        <div className="font-bold text-slate-700 dark:text-white">第 {levelInfo?.chapter || levelId} 关</div>
         <div className="flex items-center gap-2">
            <div className={`px-3 py-1 rounded-full font-mono font-bold ${timeLeft <= 3 ? 'bg-red-100 dark:bg-red-900/30 text-red-500 dark:text-red-400' : 'bg-blue-100 dark:bg-blue-900/30 text-blue-500 dark:text-blue-400'}`}>
              {timeLeft}s

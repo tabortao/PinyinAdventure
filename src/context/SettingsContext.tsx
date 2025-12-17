@@ -30,7 +30,7 @@ const SettingsContext = createContext<SettingsContextType>({
 });
 
 export const SettingsProvider = ({ children }: { children: React.ReactNode }) => {
-  const [mode, setMode] = useState<GameMode>('all');
+  const [mode, setMode] = useState<GameMode>('character');
   const [theme, setTheme] = useState<Theme>(() => {
     return (localStorage.getItem('theme') as Theme) || 'system';
   });

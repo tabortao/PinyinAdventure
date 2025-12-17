@@ -116,6 +116,17 @@ export const StudyPage = () => {
     setTestCompleted(false);
   };
 
+  const startRandomTest = () => {
+    if (charts.length === 0) return;
+    const shuffled = [...charts].sort(() => 0.5 - Math.random());
+    const selected = shuffled.slice(0, 30);
+    setReviewList(selected);
+    setStudyMode('test');
+    setCurrentCardIndex(0);
+    setShowAnswer(false);
+    setTestCompleted(false);
+  };
+
   const handleNextCard = () => {
     if (currentCardIndex < reviewList.length - 1) {
       setCurrentCardIndex(prev => prev + 1);
@@ -299,16 +310,26 @@ export const StudyPage = () => {
           <h1 className="text-2xl font-black text-brand-dark dark:text-brand-primary mb-2 transition-colors">拼音基础</h1>
           <p className="text-slate-500 dark:text-slate-400 mb-6 transition-colors">掌握 {charts.length} 个基础拼音，轻松闯关</p>
           
-          <div className="flex gap-3">
-             <button 
-               onClick={startReview}
-               className="flex-1 bg-gradient-to-r from-pink-500 to-rose-500 text-white px-4 py-3 rounded-xl font-bold shadow-md hover:shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2"
-             >
-               <BrainCircuit size={20} />
-               <span>智能复习</span>
-             </button>
-             <div className="flex-1 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center p-2 transition-colors">
-                <span className="text-xs text-slate-400 dark:text-slate-500 font-bold transition-colors">已掌握</span>
+          <div className="flex flex-col gap-3">
+             <div className="flex gap-3">
+               <button 
+                 onClick={startReview}
+                 className="flex-1 bg-gradient-to-r from-pink-500 to-rose-500 text-white px-4 py-3 rounded-xl font-bold shadow-md hover:shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2"
+               >
+                 <BrainCircuit size={20} />
+                 <span>智能复习</span>
+               </button>
+               <button 
+                  onClick={startRandomTest}
+                  className="flex-1 bg-gradient-to-r from-violet-500 to-purple-500 text-white px-4 py-3 rounded-xl font-bold shadow-md hover:shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2"
+                >
+                  <Sparkles size={20} />
+                  <span>随机测试</span>
+                </button>
+             </div>
+
+             <div className="w-full bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-800 flex items-center justify-between px-4 py-3 transition-colors">
+                <span className="text-sm text-slate-400 dark:text-slate-500 font-bold transition-colors">已掌握基础拼音</span>
                 <span className="text-xl font-black text-brand-primary">
                   {progress.filter(p => p.is_mastered).length} <span className="text-sm text-slate-300 dark:text-slate-600">/ {charts.length}</span>
                 </span>

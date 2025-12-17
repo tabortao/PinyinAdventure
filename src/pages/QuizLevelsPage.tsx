@@ -74,7 +74,7 @@ export const QuizLevelsPage = () => {
       <div className="sticky top-0 z-10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 p-4 shadow-sm transition-colors">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <button 
-            onClick={() => navigate('/study')}
+            onClick={() => navigate('/')}
             className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
           >
             <ArrowLeft className="text-slate-600 dark:text-slate-300" />
