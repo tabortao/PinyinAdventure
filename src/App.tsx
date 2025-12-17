@@ -6,6 +6,7 @@ import { RouteGuard } from './components/common/RouteGuard';
 import { Layout } from './components/common/Layout';
 // import { LoginPage } from './pages/LoginPage';
 import { HomePage } from './pages/HomePage';
+import { AdventurePage } from './pages/AdventurePage';
 import { GamePage } from './pages/GamePage';
 import { MistakesPage } from './pages/MistakesPage';
 import { SettingsPage } from './pages/SettingsPage';
@@ -25,6 +26,7 @@ const App: React.FC = () => {
             <Route element={<RouteGuard />}>
               <Route element={<Layout />}>
                 <Route path="/" element={<HomePage />} />
+                <Route path="/adventure" element={<AdventurePage />} />
                 <Route path="/study" element={<StudyPage />} />
                 <Route path="/mistakes" element={<MistakesPage />} />
                 <Route path="/settings" element={<SettingsPage />} />

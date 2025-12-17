@@ -296,7 +296,7 @@ export const StudyPage = () => {
       {/* Header Area */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 mb-8 shadow-sm border border-slate-100 dark:border-slate-800 relative overflow-hidden transition-colors">
         <div className="relative z-10">
-          <h1 className="text-2xl font-black text-brand-dark dark:text-brand-primary mb-2 transition-colors">拼音学习中心</h1>
+          <h1 className="text-2xl font-black text-brand-dark dark:text-brand-primary mb-2 transition-colors">拼音基础</h1>
           <p className="text-slate-500 dark:text-slate-400 mb-6 transition-colors">掌握 {charts.length} 个基础拼音，轻松闯关</p>
           
           <div className="flex gap-3">
@@ -456,27 +456,7 @@ export const StudyPage = () => {
            )}
         </div>
 
-        {/* 4. Quiz Game Entry */}
-        <div className="bg-gradient-to-br from-indigo-500 to-purple-600 dark:from-indigo-600 dark:to-purple-800 rounded-3xl p-6 shadow-lg text-white relative overflow-hidden group cursor-pointer transition-all hover:scale-[1.02] border border-transparent dark:border-indigo-500/30" onClick={() => navigate('/quiz-levels')}>
-           <div className="relative z-10 flex justify-between items-center">
-             <div>
-               <div className="flex items-center gap-2 mb-2">
-                 <span className="bg-white/20 px-2 py-0.5 rounded text-xs font-bold">新模式</span>
-                 <h2 className="text-2xl font-black">看字识音</h2>
-               </div>
-               <p className="text-white/80 text-sm mb-4 max-w-[200px]">挑战快速反应！根据汉字选择正确的拼音。</p>
-               <button className="bg-white text-indigo-600 px-6 py-2 rounded-full font-bold shadow-md hover:bg-indigo-50 transition-colors">
-                 开始挑战
-               </button>
-             </div>
-             <div className="w-24 h-24 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm border-2 border-white/20 shadow-inner group-hover:rotate-12 transition-transform duration-500">
-               <span className="text-5xl">👀</span>
-             </div>
-           </div>
-           {/* Decor */}
-           <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl" />
-           <div className="absolute top-0 left-0 w-full h-full bg-black/0 group-hover:bg-black/5 transition-colors" />
-        </div>
+
 
       </div>
     </div>

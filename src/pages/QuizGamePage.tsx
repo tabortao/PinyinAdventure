@@ -213,7 +213,7 @@ export const QuizGamePage = () => {
 
   if (isFinished) {
     return (
-      <div className="min-h-screen bg-brand-primary flex flex-col items-center justify-center p-4 relative overflow-hidden transition-colors">
+      <div className="min-h-screen bg-brand-primary dark:bg-slate-950 flex flex-col items-center justify-center p-4 relative overflow-hidden transition-colors">
         {/* Background Patterns */}
         <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
           <div className="absolute top-10 left-10 text-9xl text-white">A</div>
