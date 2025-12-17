@@ -4,11 +4,19 @@ import { QuestionType } from '../types/types';
 type GameMode = 'all' | QuestionType;
 export type Theme = 'system' | 'light' | 'dark';
 
+export interface AIConfig {
+  host: string;
+  apiKey: string;
+  model: string;
+}
+
 interface SettingsContextType {
   mode: GameMode;
   setMode: (mode: GameMode) => void;
   theme: Theme;
   setTheme: (theme: Theme) => void;
+  aiConfig: AIConfig;
+  setAiConfig: (config: AIConfig) => void;
 }
 
 const SettingsContext = createContext<SettingsContextType>({
@@ -16,6 +24,8 @@ const SettingsContext = createContext<SettingsContextType>({
   setMode: () => {},
   theme: 'system',
   setTheme: () => {},
+  aiConfig: { host: '', apiKey: '', model: '' },
+  setAiConfig: () => {},
 });
 
 export const SettingsProvider = ({ children }: { children: React.ReactNode }) => {
@@ -23,6 +33,14 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
   const [theme, setTheme] = useState<Theme>(() => {
     return (localStorage.getItem('theme') as Theme) || 'system';
   });
+  const [aiConfig, setAiConfig] = useState<AIConfig>(() => {
+    const saved = localStorage.getItem('aiConfig');
+    return saved ? JSON.parse(saved) : { host: 'https://api.openai.com', apiKey: '', model: 'gpt-3.5-turbo' };
+  });
+
+  useEffect(() => {
+    localStorage.setItem('aiConfig', JSON.stringify(aiConfig));
+  }, [aiConfig]);
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -59,7 +77,7 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
   };
 
   return (
-    <SettingsContext.Provider value={{ mode, setMode, theme, setTheme }}>
+    <SettingsContext.Provider value={{ mode, setMode, theme, setTheme, aiConfig, setAiConfig }}>
       {children}
     </SettingsContext.Provider>
   );

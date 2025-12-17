@@ -1,13 +1,13 @@
 import { useSettings, Theme } from '../context/SettingsContext';
 import { useAuth } from '../context/AuthContext';
-import { ArrowLeft, Check, ChevronRight, HelpCircle, MessageCircle, Moon, Sun, Monitor, LogOut, Database, Download, Upload } from 'lucide-react';
+import { ArrowLeft, Check, ChevronRight, HelpCircle, MessageCircle, Moon, Sun, Monitor, LogOut, Database, Download, Upload, Brain } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState, useRef } from 'react';
 import { WechatModal } from '../components/common/WechatModal';
 import { exportData, importData } from '../db/localDB';
 
 export const SettingsPage = () => {
-  const { mode, setMode, theme, setTheme } = useSettings();
+  const { mode, setMode, theme, setTheme, aiConfig, setAiConfig } = useSettings();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [showWechatModal, setShowWechatModal] = useState(false);
@@ -96,6 +96,55 @@ export const SettingsPage = () => {
               <span className="text-sm font-bold">{t.label}</span>
             </button>
           ))}
+        </div>
+      </div>
+
+      {/* AI Config */}
+      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden mb-6 transition-colors">
+        <div className="p-6 border-b border-slate-100 dark:border-slate-800">
+          <div className="flex items-center gap-2 mb-2">
+            <Brain className="text-brand-primary" size={24} />
+            <h2 className="text-xl font-bold text-slate-800 dark:text-white transition-colors">AI 模型配置</h2>
+          </div>
+          <p className="text-slate-500 dark:text-slate-400 text-sm transition-colors">配置 AI 以启用智能复习功能。支持 OpenAI 格式的接口。</p>
+        </div>
+        
+        <div className="p-6 space-y-4">
+           {/* Host */}
+           <div>
+             <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">API Host</label>
+             <input 
+               type="text" 
+               value={aiConfig.host}
+               onChange={(e) => setAiConfig({...aiConfig, host: e.target.value})}
+               placeholder="https://api.openai.com"
+               className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all"
+             />
+           </div>
+           
+           {/* Key */}
+           <div>
+             <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">API Key</label>
+             <input 
+               type="password" 
+               value={aiConfig.apiKey}
+               onChange={(e) => setAiConfig({...aiConfig, apiKey: e.target.value})}
+               placeholder="sk-..."
+               className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all"
+             />
+           </div>
+
+           {/* Model */}
+           <div>
+             <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Model Name</label>
+             <input 
+               type="text" 
+               value={aiConfig.model}
+               onChange={(e) => setAiConfig({...aiConfig, model: e.target.value})}
+               placeholder="gpt-3.5-turbo"
+               className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all"
+             />
+           </div>
         </div>
       </div>
 

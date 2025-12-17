@@ -18,7 +18,7 @@ export const HomePage = () => {
             </p>
           </div>
           
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
              {/* Study - Pinyin Basics */}
              <button 
                onClick={() => navigate('/study')}
@@ -67,28 +67,37 @@ export const HomePage = () => {
                 </div>
              </button>
 
-             {/* Extra Grid for Mistakes / Settings */}
-             <div className="grid grid-cols-2 gap-4">
-               <button 
-                 onClick={() => navigate('/mistakes')}
-                 className="w-full bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 p-4 rounded-3xl flex flex-col items-center gap-3 hover:border-brand-primary hover:shadow-lg transition-all group relative overflow-hidden"
-               >
-                  <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 text-red-500 dark:text-red-400 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
-                     <BookX size={24} />
-                  </div>
-                  <span className="font-bold text-slate-700 dark:text-slate-200">错音本</span>
-               </button>
+             {/* Mistakes - Review */}
+             <button 
+               onClick={() => navigate('/mistakes')}
+               className="w-full bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 p-6 rounded-3xl flex items-center gap-5 hover:border-brand-primary hover:shadow-lg transition-all group text-left relative overflow-hidden"
+             >
+                <div className="absolute right-0 top-0 w-24 h-24 bg-red-500/5 rounded-bl-[100px] transition-transform group-hover:scale-150" />
+                
+                <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 text-red-500 dark:text-red-400 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm relative z-10">
+                   <BookX size={32} />
+                </div>
+                <div className="relative z-10">
+                   <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-1 group-hover:text-brand-primary transition-colors">错音本</h3>
+                   <p className="text-sm text-slate-400 dark:text-slate-500 font-medium">复习巩固薄弱点</p>
+                </div>
+             </button>
 
-               <button 
-                 onClick={() => navigate('/settings')}
-                 className="w-full bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 p-4 rounded-3xl flex flex-col items-center gap-3 hover:border-brand-primary hover:shadow-lg transition-all group relative overflow-hidden"
-               >
-                  <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
-                     <Settings size={24} />
-                  </div>
-                  <span className="font-bold text-slate-700 dark:text-slate-200">设置</span>
-               </button>
-             </div>
+             {/* Settings */}
+             <button 
+               onClick={() => navigate('/settings')}
+               className="w-full bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 p-6 rounded-3xl flex items-center gap-5 hover:border-brand-primary hover:shadow-lg transition-all group text-left relative overflow-hidden"
+             >
+                <div className="absolute right-0 top-0 w-24 h-24 bg-slate-500/5 rounded-bl-[100px] transition-transform group-hover:scale-150" />
+                
+                <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm relative z-10">
+                   <Settings size={32} />
+                </div>
+                <div className="relative z-10">
+                   <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-1 group-hover:text-brand-primary transition-colors">设置</h3>
+                   <p className="text-sm text-slate-400 dark:text-slate-500 font-medium">个性化偏好设置</p>
+                </div>
+             </button>
 
           </div>
        </div>

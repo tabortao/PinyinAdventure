@@ -6,7 +6,8 @@ import { PinyinKeyboard } from '../components/game/PinyinKeyboard';
 import { applyTone, checkAnswer } from '../lib/pinyinUtils';
 import { useAuth } from '../context/AuthContext';
 import { useSettings } from '../context/SettingsContext';
-import { X, Check, ArrowRight, RefreshCcw, Home, Sparkles, BrainCircuit, Trophy, HelpCircle, Hand } from 'lucide-react';
+import { generateReviewQuestions } from '../lib/ai';
+import { X, Check, ArrowRight, RefreshCcw, Home, Sparkles, BrainCircuit, Trophy, HelpCircle, Hand, AlertTriangle } from 'lucide-react';
 
 const POSITIVE_FEEDBACK_EN = ['Awesome!', 'Fantastic!', 'Perfect!', 'Unstoppable!', 'Brilliant!'];
 const POSITIVE_FEEDBACK_CN = ['太棒了！', '真厉害！', '全对！', '势不可挡！', '天才！'];
@@ -15,7 +16,7 @@ const ENCOURAGE_FEEDBACK_CN = ['没关系，下次一定行', '加油，再试�
 export const GamePage = () => {
   const { levelId } = useParams();
   const { user } = useAuth();
-  const { mode } = useSettings();
+  const { mode, aiConfig } = useSettings();
   const navigate = useNavigate();
   
   const [level, setLevel] = useState<Level | null>(null);
@@ -44,10 +45,43 @@ export const GamePage = () => {
           setIsReviewMode(true);
           const grade = parseInt(levelId.split('-')[1]);
           if (!user) { navigate('/login'); return; }
-          const reviewQs = await getRandomQuestionsByGrade(grade, mode as any, 10);
-          setLevel({ id: -1, grade, chapter: 99, name: 'AI 智能复习', description: '定制强化练习' });
-          setQuestions(reviewQs);
-          setIsAiGenerated(true);
+
+          setGameState('loading');
+          
+          let targetQs: Question[] = [];
+          
+          try {
+             const allMistakes = await getMistakes(user.id);
+             const validMistakes = allMistakes.filter(m => !!m.question) as any[];
+
+             // 1. Try AI Generation
+             if (validMistakes.length > 0 && aiConfig.apiKey) {
+                 const topMistakes = validMistakes.slice(0, 5); 
+                 const generated = await generateReviewQuestions(topMistakes, aiConfig, 5);
+                 if (generated.length > 0) {
+                     targetQs = generated;
+                     setIsAiGenerated(true);
+                 }
+             }
+             
+             // 2. Fallback to existing mistakes
+             if (targetQs.length === 0 && validMistakes.length > 0) {
+                 targetQs = validMistakes.map(m => m.question);
+                 targetQs = targetQs.sort(() => 0.5 - Math.random()).slice(0, 10);
+                 setIsAiGenerated(false);
+             }
+          } catch (err) {
+             console.error("Review loading error", err);
+          }
+          
+          // 3. Last fallback: Random questions
+          if (targetQs.length === 0) {
+             targetQs = await getRandomQuestionsByGrade(grade, mode as any, 10);
+             setIsAiGenerated(false);
+          }
+          
+          setLevel({ id: -1, grade, chapter: 99, name: 'AI 智能复习', description: '基于艾宾浩斯曲线为您定制' });
+          setQuestions(targetQs);
           setGameState('playing');
           return;
         }
@@ -213,6 +247,22 @@ export const GamePage = () => {
   }
 
   const currentQ = questions[currentIndex];
+  
+  if (!currentQ && gameState !== 'loading') {
+    return (
+      <div className="min-h-screen bg-brand-background dark:bg-slate-950 flex flex-col items-center justify-center p-4 transition-colors">
+        <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-xl text-center max-w-sm w-full border border-slate-100 dark:border-slate-800">
+           <AlertTriangle size={48} className="text-yellow-500 mx-auto mb-4" />
+           <h2 className="text-xl font-bold text-slate-800 dark:text-white mb-2">题目加载异常</h2>
+           <p className="text-slate-500 dark:text-slate-400 mb-6">没有找到合适的题目，可能是因为：<br/>1. 错音本为空<br/>2. 网络连接问题<br/>3. AI 服务异常</p>
+           <button onClick={() => navigate('/')} className="w-full bg-brand-primary text-white px-6 py-3 rounded-xl font-bold hover:bg-brand-dark transition-colors">
+             返回首页
+           </button>
+        </div>
+      </div>
+    );
+  }
+
   const progressPercent = ((currentIndex) / questions.length) * 100;
   
   const getContentSize = (text: string) => {
