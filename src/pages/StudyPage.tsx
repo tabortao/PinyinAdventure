@@ -1,15 +1,19 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { PinyinChart, UserPinyinProgress } from '../types/types';
-import { getPinyinCharts, getUserPinyinProgress, updatePinyinProgress, getPinyinReviewList } from '../db/api';
-import { BrainCircuit, Check, X, Volume2, BookOpen, Star, Sparkles, ChevronDown, Smile } from 'lucide-react';
+import { getPinyinCharts, getUserPinyinProgress, updatePinyinProgress, getPinyinReviewList, getUserQuizProgress } from '../db/api';
+import { BrainCircuit, Check, X, Volume2, BookOpen, Star, Sparkles, ChevronDown, Smile, Play } from 'lucide-react';
 import { playCorrectSound, playWrongSound } from '../lib/audio';
 import { getPinyinTTS } from '../lib/pinyinTTS';
 
+import { useNavigate } from 'react-router-dom';
+
 export const StudyPage = () => {
   const { user } = useAuth();
+  const navigate = useNavigate(); // Hook must be at top level of component
   const [charts, setCharts] = useState<PinyinChart[]>([]);
   const [progress, setProgress] = useState<UserPinyinProgress[]>([]);
+  const [quizLevel, setQuizLevel] = useState(1);
   const [loading, setLoading] = useState(true);
   
   // State for study modes
@@ -35,12 +39,19 @@ export const StudyPage = () => {
   const fetchData = async () => {
     if (!user) return;
     setLoading(true);
-    const [c, p] = await Promise.all([
+    const [c, p, qp] = await Promise.all([
       getPinyinCharts(),
-      getUserPinyinProgress(user.id)
+      getUserPinyinProgress(user.id),
+      getUserQuizProgress(user.id)
     ]);
     setCharts(c);
     setProgress(p);
+
+    if (qp && qp.length > 0) {
+      const maxLevel = Math.max(...qp.map(i => i.level_id));
+      setQuizLevel(maxLevel + 1);
+    }
+
     setLoading(false);
   };
 
@@ -443,6 +454,28 @@ export const StudyPage = () => {
                 </div>
              </div>
            )}
+        </div>
+
+        {/* 4. Quiz Game Entry */}
+        <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl p-6 shadow-lg text-white relative overflow-hidden group cursor-pointer transition-all hover:scale-[1.02]" onClick={() => navigate(`/quiz-game/${quizLevel}`)}>
+           <div className="relative z-10 flex justify-between items-center">
+             <div>
+               <div className="flex items-center gap-2 mb-2">
+                 <span className="bg-white/20 px-2 py-0.5 rounded text-xs font-bold">新模式</span>
+                 <h2 className="text-2xl font-black">看字识音</h2>
+               </div>
+               <p className="text-white/80 text-sm mb-4 max-w-[200px]">挑战快速反应！根据汉字选择正确的拼音。</p>
+               <button className="bg-white text-indigo-600 px-6 py-2 rounded-full font-bold shadow-md hover:bg-indigo-50 transition-colors">
+                 {quizLevel > 1 ? `继续挑战 (第${quizLevel}关)` : '开始挑战'}
+               </button>
+             </div>
+             <div className="w-24 h-24 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm border-2 border-white/20 shadow-inner group-hover:rotate-12 transition-transform duration-500">
+               <span className="text-5xl">👀</span>
+             </div>
+           </div>
+           {/* Decor */}
+           <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl" />
+           <div className="absolute top-0 left-0 w-full h-full bg-black/0 group-hover:bg-black/5 transition-colors" />
         </div>
 
       </div>

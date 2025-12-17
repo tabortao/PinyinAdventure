@@ -1,6 +1,6 @@
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
 import { supabase } from './supabase'; // Keep for initial seeding
-import { Level, Question, UserProgress, Mistake, PinyinChart, UserPinyinProgress } from '../types/types';
+import { Level, Question, UserProgress, Mistake, PinyinChart, UserPinyinProgress, UserQuizProgress } from '../types/types';
 
 interface AppDB extends DBSchema {
   levels: {
@@ -33,10 +33,15 @@ interface AppDB extends DBSchema {
     value: UserPinyinProgress;
     indexes: { 'by-user-pinyin': [string, string]; 'by-user': string };
   };
+  user_quiz_progress: {
+    key: number;
+    value: UserQuizProgress;
+    indexes: { 'by-user-level': [string, number]; 'by-user': string };
+  };
 }
 
 const DB_NAME = 'pinyin-game-db';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 let dbPromise: Promise<IDBPDatabase<AppDB>>;
 
@@ -77,6 +82,12 @@ export const initDB = () => {
         if (!db.objectStoreNames.contains('user_pinyin_progress')) {
           const store = db.createObjectStore('user_pinyin_progress', { keyPath: 'id', autoIncrement: true });
           store.createIndex('by-user-pinyin', ['user_id', 'pinyin_char'], { unique: true });
+          store.createIndex('by-user', 'user_id');
+        }
+        // User Quiz Progress (Added in v2)
+        if (!db.objectStoreNames.contains('user_quiz_progress')) {
+          const store = db.createObjectStore('user_quiz_progress', { keyPath: 'id', autoIncrement: true });
+          store.createIndex('by-user-level', ['user_id', 'level_id'], { unique: true });
           store.createIndex('by-user', 'user_id');
         }
       },
@@ -137,11 +148,13 @@ export const exportData = async (userId: string) => {
   const progress = await db.getAllFromIndex('user_progress', 'by-user', userId);
   const mistakes = await db.getAllFromIndex('mistakes', 'by-user', userId);
   const pinyinProgress = await db.getAllFromIndex('user_pinyin_progress', 'by-user', userId);
+  const quizProgress = await db.getAllFromIndex('user_quiz_progress', 'by-user', userId);
 
   return JSON.stringify({
     user_progress: progress,
     mistakes: mistakes,
     user_pinyin_progress: pinyinProgress,
+    user_quiz_progress: quizProgress,
     version: 1,
     exported_at: new Date().toISOString()
   });
@@ -208,6 +221,22 @@ export const importData = async (json: string, userId: string) => {
         item.user_id = userId;
         const index = tx.store.index('by-user-pinyin');
         const existing = await index.get([userId, item.pinyin_char]);
+        if (existing) {
+          item.id = existing.id;
+        } else {
+          delete item.id;
+        }
+        await tx.store.put(item);
+      }
+      await tx.done;
+    }
+
+    if (data.user_quiz_progress && Array.isArray(data.user_quiz_progress)) {
+      const tx = db.transaction('user_quiz_progress', 'readwrite');
+      for (const item of data.user_quiz_progress) {
+        item.user_id = userId;
+        const index = tx.store.index('by-user-level');
+        const existing = await index.get([userId, item.level_id]);
         if (existing) {
           item.id = existing.id;
         } else {

@@ -11,6 +11,7 @@ import { MistakesPage } from './pages/MistakesPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { StudyPage } from './pages/StudyPage';
 import { HelpPage } from './pages/HelpPage';
+import { QuizGamePage } from './pages/QuizGamePage';
 
 const App: React.FC = () => {
   return (
@@ -28,8 +29,9 @@ const App: React.FC = () => {
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/help" element={<HelpPage />} />
               </Route>
-              {/* Game page without layout (full screen immersion) */}
+              {/* Game pages without layout (full screen immersion) */}
               <Route path="/game/:levelId" element={<GamePage />} />
+              <Route path="/quiz-game/:levelId" element={<QuizGamePage />} />
             </Route>
 
             <Route path="*" element={<Navigate to="/" replace />} />

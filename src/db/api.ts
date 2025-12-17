@@ -89,12 +89,95 @@ export const saveUserProgress = async (userId: string, levelId: number, stars: n
   return item;
 };
 
-export const getTotalScore = async (userId: string) => {
-  const progress = await getUserProgress(userId);
-  return progress.reduce((acc, curr) => acc + (curr.score || 0), 0) || 0;
+export const getUserQuizProgress = async (userId: string) => {
+  const db = await initDB();
+  return await db.getAllFromIndex('user_quiz_progress', 'by-user', userId);
 };
 
-// Mistakes / Ebbinghaus
+export const saveUserQuizProgress = async (userId: string, levelId: number, score: number) => {
+  const db = await initDB();
+  
+  // Find existing
+  const index = db.transaction('user_quiz_progress').store.index('by-user-level');
+  const existing = await index.get([userId, levelId]);
+
+  let newScore = score;
+  let id: string | number | undefined = undefined;
+
+  if (existing) {
+    newScore = Math.max(existing.score || 0, score);
+    id = existing.id;
+  }
+
+  const item: UserQuizProgress = {
+    id: id as (string | number),
+    user_id: userId,
+    level_id: levelId,
+    score: newScore,
+    completed_at: new Date().toISOString()
+  };
+  
+  if (!id) delete (item as any).id;
+
+  const tx = db.transaction('user_quiz_progress', 'readwrite');
+  await tx.store.put(item);
+  await tx.done;
+  
+  return item;
+};
+
+export const getQuizQuestions = async (levelId: number, count: number = 10) => {
+  const db = await initDB();
+  // Get questions for this level
+  const questions = await db.getAllFromIndex('questions', 'by-level', levelId);
+  let candidates = questions.filter(q => q.type === 'character');
+
+  // If not enough, fetch from same grade levels
+  if (candidates.length < count) {
+     const level = await db.get('levels', levelId);
+     if (level) {
+       const levels = await db.getAllFromIndex('levels', 'by-grade', level.grade);
+       const otherLevelIds = levels.map(l => l.id).filter(id => id !== levelId);
+       
+       // Optimization: Randomly pick a few levels to fetch from instead of all
+       // Or just fetch all questions from random other level
+       for (const lId of otherLevelIds) {
+         if (candidates.length >= count) break;
+         const qs = await db.getAllFromIndex('questions', 'by-level', lId);
+         candidates = candidates.concat(qs.filter(q => q.type === 'character'));
+       }
+     }
+  }
+
+  // Deduplicate by ID
+  candidates = Array.from(new Map(candidates.map(item => [item.id, item])).values());
+  
+  // Shuffle and pick count
+  candidates = candidates.sort(() => 0.5 - Math.random()).slice(0, count);
+
+  // For each question, generate 3 distractors
+  // Source of distractors: pinyin_charts
+  const charts = await db.getAll('pinyin_charts');
+  
+  const results = candidates.map(q => {
+    const correct = q.pinyin;
+    // Filter charts to remove correct one
+    const others = charts.filter(c => c.pinyin !== correct);
+    // Shuffle and pick 3
+    const distractors = others.sort(() => 0.5 - Math.random()).slice(0, 3).map(c => c.pinyin);
+    
+    // Combine and shuffle options
+    const options = [correct, ...distractors].sort(() => 0.5 - Math.random());
+    
+    return {
+      ...q,
+      options
+    };
+  });
+  
+  return results;
+};
+
 export const getMistakes = async (userId: string) => {
   const db = await initDB();
   const now = new Date().toISOString();

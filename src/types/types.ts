@@ -70,3 +70,11 @@ export interface UserPinyinProgress {
   next_review_at: string;
   mastery_level: number;
 }
+export interface UserQuizProgress {
+  id: string | number;
+  user_id: string;
+  level_id: number;
+  score: number;
+  completed_at: string;
+}
+
