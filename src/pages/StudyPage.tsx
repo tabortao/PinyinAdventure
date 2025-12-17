@@ -457,7 +457,7 @@ export const StudyPage = () => {
         </div>
 
         {/* 4. Quiz Game Entry */}
-        <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl p-6 shadow-lg text-white relative overflow-hidden group cursor-pointer transition-all hover:scale-[1.02]" onClick={() => navigate(`/quiz-game/${quizLevel}`)}>
+        <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl p-6 shadow-lg text-white relative overflow-hidden group cursor-pointer transition-all hover:scale-[1.02]" onClick={() => navigate('/quiz-levels')}>
            <div className="relative z-10 flex justify-between items-center">
              <div>
                <div className="flex items-center gap-2 mb-2">
@@ -466,7 +466,7 @@ export const StudyPage = () => {
                </div>
                <p className="text-white/80 text-sm mb-4 max-w-[200px]">挑战快速反应！根据汉字选择正确的拼音。</p>
                <button className="bg-white text-indigo-600 px-6 py-2 rounded-full font-bold shadow-md hover:bg-indigo-50 transition-colors">
-                 {quizLevel > 1 ? `继续挑战 (第${quizLevel}关)` : '开始挑战'}
+                 开始挑战
                </button>
              </div>
              <div className="w-24 h-24 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm border-2 border-white/20 shadow-inner group-hover:rotate-12 transition-transform duration-500">

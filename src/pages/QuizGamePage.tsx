@@ -202,10 +202,10 @@ export const QuizGamePage = () => {
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-4 transition-colors">
         <h2 className="text-xl font-bold mb-4 text-slate-800 dark:text-white">暂无题目</h2>
         <button 
-          onClick={() => navigate('/study')}
+          onClick={() => navigate('/quiz-levels')}
           className="px-6 py-3 bg-brand-primary text-white rounded-xl font-bold hover:bg-brand-secondary transition-colors shadow-sm"
         >
-          返回学习
+          返回关卡列表
         </button>
       </div>
     );
@@ -232,10 +232,10 @@ export const QuizGamePage = () => {
               下一关
             </button>
             <button 
-              onClick={() => navigate('/study')}
+              onClick={() => navigate('/quiz-levels')}
               className="w-full py-4 text-lg font-bold rounded-2xl border-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors active:scale-95"
             >
-              返回学习
+              返回关卡列表
             </button>
           </div>
         </div>
@@ -249,7 +249,7 @@ export const QuizGamePage = () => {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col">
       {/* Header */}
       <div className="bg-white dark:bg-slate-900 p-4 shadow-sm flex items-center justify-between">
-        <button onClick={() => navigate('/study')} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors">
+        <button onClick={() => navigate('/quiz-levels')} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors">
           <ArrowLeft className="text-slate-600 dark:text-slate-300" />
         </button>
         <div className="font-bold text-slate-700 dark:text-white">第 {levelId} 关</div>
