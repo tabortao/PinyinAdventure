@@ -40,24 +40,23 @@ export const QuizLevelsPage = () => {
 
   // Helper to check status
   const getLevelStatus = (levelId: number) => {
-    // Level 1 is always unlocked
-    if (levelId === 1) return { status: 'unlocked', score: 0 };
+    const level = levels.find(l => l.id === levelId);
+    // Level 1 or Chapter 1 of any grade is always unlocked
+    if (levelId === 1 || (level && level.chapter === 1)) return { status: 'unlocked', score: 0 };
 
     const p = progress.find(item => item.level_id === levelId);
     if (p) return { status: 'completed', score: p.score };
 
     // Check previous level
-    // This assumes sequential IDs which might not be robust if we have gaps or other level sets.
-    // Better logic: Find the level before this one in the SAME grade list?
-    // Or just check if levelId - 1 is completed.
-    // Given my seed data is sequential:
     const prevLevelProgress = progress.find(item => item.level_id === levelId - 1);
-    if (prevLevelProgress || levelId === 1) { // Redundant levelId=1 check but safe
+    if (prevLevelProgress) { 
        return { status: 'unlocked', score: 0 };
     }
     
     return { status: 'locked', score: 0 };
   };
+
+  const EMOJIS = ['🍎', '🍊', '🍇', '🍉', '🍌', '🍍', '🍑', '🍒', '🍓', '🥝'];
 
   const currentGradeLevels = levelsByGrade[selectedGrade] || [];
 
@@ -100,7 +99,7 @@ export const QuizLevelsPage = () => {
                   : "bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
               )}
             >
-              {grade}年级
+              Level {grade}
             </button>
           ))}
         </div>
@@ -124,14 +123,14 @@ export const QuizLevelsPage = () => {
                        : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-brand-primary/50 hover:shadow-xl hover:-translate-y-1 cursor-pointer"
                    )}
                  >
-                    {/* Level Number */}
+                    {/* Level Number/Emoji */}
                     <div className={cn(
-                      "w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xl shadow-inner mb-2",
+                      "w-12 h-12 rounded-2xl flex items-center justify-center font-black text-2xl shadow-inner mb-2",
                       isLocked 
-                        ? "bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600" 
+                        ? "bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 grayscale" 
                         : "bg-brand-primary/10 text-brand-primary"
                     )}>
-                      {level.chapter}
+                      {EMOJIS[(level.chapter - 1) % EMOJIS.length]}
                     </div>
 
                     {/* Status Icon */}
@@ -156,7 +155,7 @@ export const QuizLevelsPage = () => {
                         "text-xs font-bold uppercase tracking-wider",
                         isLocked ? "text-slate-400 dark:text-slate-600" : "text-slate-500 dark:text-slate-400"
                       )}>
-                        Level {level.chapter}
+                        PART {level.chapter}
                       </div>
                     </div>
                  </button>

@@ -182,7 +182,7 @@ export const StudyPage = () => {
           </div>
 
           {/* Main Pinyin - BIGGER FONT */}
-          <div className="text-[120px] md:text-[200px] font-black text-brand-dark dark:text-brand-primary mb-4 tracking-wider leading-none select-none text-center break-words max-w-full transition-colors duration-300">
+          <div className="text-8xl md:text-9xl font-black text-brand-dark dark:text-brand-primary mb-4 tracking-wider leading-none select-none text-center whitespace-nowrap max-w-full transition-colors duration-300">
             {currentItem.pinyin}
           </div>
 
@@ -457,7 +457,7 @@ export const StudyPage = () => {
         </div>
 
         {/* 4. Quiz Game Entry */}
-        <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl p-6 shadow-lg text-white relative overflow-hidden group cursor-pointer transition-all hover:scale-[1.02]" onClick={() => navigate('/quiz-levels')}>
+        <div className="bg-gradient-to-br from-indigo-500 to-purple-600 dark:from-indigo-600 dark:to-purple-800 rounded-3xl p-6 shadow-lg text-white relative overflow-hidden group cursor-pointer transition-all hover:scale-[1.02] border border-transparent dark:border-indigo-500/30" onClick={() => navigate('/quiz-levels')}>
            <div className="relative z-10 flex justify-between items-center">
              <div>
                <div className="flex items-center gap-2 mb-2">
