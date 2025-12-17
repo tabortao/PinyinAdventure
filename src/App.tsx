@@ -4,7 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import { SettingsProvider } from './context/SettingsContext';
 import { RouteGuard } from './components/common/RouteGuard';
 import { Layout } from './components/common/Layout';
-import { LoginPage } from './pages/LoginPage';
+// import { LoginPage } from './pages/LoginPage';
 import { HomePage } from './pages/HomePage';
 import { GamePage } from './pages/GamePage';
 import { MistakesPage } from './pages/MistakesPage';
@@ -18,7 +18,7 @@ const App: React.FC = () => {
       <SettingsProvider>
         <BrowserRouter>
           <Routes>
-            <Route path="/login" element={<LoginPage />} />
+            {/* <Route path="/login" element={<LoginPage />} /> */}
             
             <Route element={<RouteGuard />}>
               <Route element={<Layout />}>

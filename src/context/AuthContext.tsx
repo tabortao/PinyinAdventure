@@ -1,7 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { supabase } from '../db/supabase';
-import { User } from '@supabase/supabase-js';
+import { initializeApp } from '../db/api';
 import { Profile } from '../types/types';
+
+// Mock User interface to minimize changes in other files
+interface User {
+  id: string;
+  email?: string;
+}
 
 interface AuthContextType {
   user: User | null;
@@ -17,46 +22,44 @@ const AuthContext = createContext<AuthContextType>({
   signOut: async () => {},
 });
 
+const LOCAL_USER: User = {
+  id: 'local-user',
+  email: 'local@app.com'
+};
+
+const LOCAL_PROFILE: Profile = {
+  id: 'local-user',
+  username: '本地用户',
+  role: 'user',
+  created_at: new Date().toISOString()
+};
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchProfile = async (userId: string) => {
-    const { data } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .maybeSingle();
-    setProfile(data as Profile | null);
-  };
-
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id);
+    const init = async () => {
+      // Initialize DB (Seeding)
+      try {
+        await initializeApp();
+      } catch (e) {
+        console.error("Failed to init DB", e);
       }
+      
+      // Auto login as local user
+      setUser(LOCAL_USER);
+      setProfile(LOCAL_PROFILE);
       setLoading(false);
-    });
+    };
 
-    // Listen for changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id);
-      } else {
-        setProfile(null);
-      }
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+    init();
   }, []);
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    // Reload page to reset state if needed
+    window.location.reload();
   };
 
   return (

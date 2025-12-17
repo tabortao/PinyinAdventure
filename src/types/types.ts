@@ -29,7 +29,7 @@ export interface Question {
 }
 
 export interface UserProgress {
-  id: string;
+  id: string | number;
   user_id: string;
   level_id: number;
   stars: number;
@@ -37,7 +37,7 @@ export interface UserProgress {
   completed_at: string;
 }
 export interface Mistake {
-  id: string;
+  id: string | number;
   user_id: string;
   question_id: number;
   wrong_pinyin: string;
@@ -61,7 +61,7 @@ export interface PinyinChart {
 }
 
 export interface UserPinyinProgress {
-  id: string;
+  id: string | number;
   user_id: string;
   pinyin_char: string;
   study_count: number;

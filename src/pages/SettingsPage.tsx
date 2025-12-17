@@ -1,15 +1,61 @@
 import { useSettings, Theme } from '../context/SettingsContext';
 import { useAuth } from '../context/AuthContext';
-import { ArrowLeft, Check, ChevronRight, HelpCircle, MessageCircle, Moon, Sun, Monitor, LogOut } from 'lucide-react';
+import { ArrowLeft, Check, ChevronRight, HelpCircle, MessageCircle, Moon, Sun, Monitor, LogOut, Database, Download, Upload } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { WechatModal } from '../components/common/WechatModal';
+import { exportData, importData } from '../db/localDB';
 
 export const SettingsPage = () => {
   const { mode, setMode, theme, setTheme } = useSettings();
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [showWechatModal, setShowWechatModal] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleExport = async () => {
+    if (!user) return;
+    try {
+      const json = await exportData(user.id);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `pinyin-game-backup-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error('Export failed', e);
+      alert('导出失败');
+    }
+  };
+
+  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      try {
+        const json = event.target?.result as string;
+        const success = await importData(json, user.id);
+        if (success) {
+          alert('导入成功，即将刷新页面');
+          window.location.reload();
+        } else {
+          alert('导入失败，请检查文件格式');
+        }
+      } catch (e) {
+        console.error('Import error', e);
+        alert('导入出错');
+      }
+    };
+    reader.readAsText(file);
+    // Reset input
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
 
   const modes = [
     { id: 'all', label: '混合模式 (默认)', desc: '包含所有类型的题目' },
@@ -86,6 +132,39 @@ export const SettingsPage = () => {
         </div>
       </div>
 
+      {/* Data Management */}
+      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden mb-6 transition-colors">
+        <div className="p-6 border-b border-slate-100 dark:border-slate-800">
+          <h2 className="text-xl font-bold text-slate-800 dark:text-white mb-2 transition-colors">数据管理</h2>
+          <p className="text-slate-500 dark:text-slate-400 text-sm transition-colors">备份或恢复您的学习进度。</p>
+        </div>
+        
+        <div className="grid grid-cols-2 divide-x divide-slate-100 dark:divide-slate-800">
+           <button
+             onClick={handleExport}
+             className="flex flex-col items-center justify-center py-6 gap-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300"
+           >
+             <Download size={24} className="text-blue-500" />
+             <span className="text-sm font-bold">导出备份</span>
+           </button>
+           
+           <button
+             onClick={() => fileInputRef.current?.click()}
+             className="flex flex-col items-center justify-center py-6 gap-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300"
+           >
+             <Upload size={24} className="text-green-500" />
+             <span className="text-sm font-bold">导入备份</span>
+             <input 
+               type="file" 
+               ref={fileInputRef} 
+               onChange={handleImport} 
+               accept=".json" 
+               className="hidden" 
+             />
+           </button>
+        </div>
+      </div>
+
       {/* Other Actions */}
       <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden divide-y divide-slate-100 dark:divide-slate-800 transition-colors mb-8">
          <button
@@ -125,16 +204,7 @@ export const SettingsPage = () => {
          </button>
       </div>
 
-      {/* Logout Button */}
-      {user && (
-        <button
-          onClick={signOut}
-          className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-red-500 p-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors shadow-sm"
-        >
-          <LogOut size={20} />
-          退出登录
-        </button>
-      )}
+
     </div>
   );
 };
