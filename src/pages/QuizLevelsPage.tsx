@@ -128,87 +128,98 @@ export const QuizLevelsPage = () => {
            </div>
         </div>
 
-        {/* AI Challenge Card */}
-        <div className="mb-6">
-          <button
-            onClick={() => navigate('/quiz-game/ai')}
-            className="w-full bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white rounded-3xl p-6 shadow-lg shadow-violet-200 dark:shadow-none hover:shadow-xl hover:scale-[1.01] transition-all flex items-center justify-between group relative overflow-hidden"
-          >
-             <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full translate-x-20 -translate-y-20 blur-3xl group-hover:opacity-20 transition-opacity"></div>
-             
-             <div className="flex items-center gap-4 relative z-10">
-                <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl shadow-inner">
-                   🤖
-                </div>
-                <div className="text-left">
-                   <h2 className="text-2xl font-black mb-1">AI 智能特训</h2>
-                   <p className="text-white/80 text-sm font-medium">根据你的错题本量身定制</p>
-                </div>
-             </div>
-             
-             <div className="w-12 h-12 bg-white text-violet-600 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform relative z-10">
-                <Play fill="currentColor" size={24} />
-             </div>
-          </button>
-        </div>
-
         {/* Level Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {currentGradeLevels.length > 0 ? (
-             currentGradeLevels.sort((a,b) => a.id - b.id).map((level) => {
-               const { status, score } = getLevelStatus(level.id);
-               const isLocked = status === 'locked';
-               
-               return (
-                 <button
-                   key={level.id}
-                   disabled={isLocked}
-                   onClick={() => navigate(`/quiz-game/${level.id}`)}
-                   className={cn(
-                     "relative group aspect-[4/5] rounded-3xl p-4 flex flex-col items-center justify-between transition-all duration-300 border-2",
-                     isLocked 
-                       ? "bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-800 opacity-80 cursor-not-allowed" 
-                       : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-brand-primary/50 hover:shadow-xl hover:-translate-y-1 cursor-pointer"
-                   )}
-                 >
-                    {/* Level Number/Emoji */}
-                    <div className={cn(
-                      "w-12 h-12 rounded-2xl flex items-center justify-center font-black text-2xl shadow-inner mb-2",
-                      isLocked 
-                        ? "bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 grayscale" 
-                        : "bg-brand-primary/10 text-brand-primary"
-                    )}>
-                      {EMOJIS[(level.chapter - 1) % EMOJIS.length]}
-                    </div>
-
-                    {/* Status Icon */}
-                    <div className="flex-1 flex items-center justify-center">
-                       {isLocked ? (
-                         <Lock size={40} className="text-slate-300 dark:text-slate-700" />
-                       ) : status === 'completed' ? (
-                         <div className="text-center">
-                            <div className="text-4xl mb-2">🏆</div>
-                            <div className="text-brand-primary font-bold text-lg">{score}分</div>
-                         </div>
-                       ) : (
-                         <div className="w-16 h-16 rounded-full bg-brand-primary text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                            <Play size={32} fill="currentColor" />
-                         </div>
-                       )}
-                    </div>
-
-                    {/* Footer */}
-                    <div className="w-full text-center">
+             <>
+               {currentGradeLevels.sort((a,b) => a.id - b.id).map((level) => {
+                 const { status, score } = getLevelStatus(level.id);
+                 const isLocked = status === 'locked';
+                 
+                 return (
+                   <button
+                     key={level.id}
+                     disabled={isLocked}
+                     onClick={() => navigate(`/quiz-game/${level.id}`)}
+                     className={cn(
+                       "relative group aspect-[4/5] rounded-3xl p-4 flex flex-col items-center justify-between transition-all duration-300 border-2",
+                       isLocked 
+                         ? "bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-800 opacity-80 cursor-not-allowed" 
+                         : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-brand-primary/50 hover:shadow-xl hover:-translate-y-1 cursor-pointer"
+                     )}
+                   >
+                      {/* Level Number/Emoji */}
                       <div className={cn(
-                        "text-xs font-bold uppercase tracking-wider",
-                        isLocked ? "text-slate-400 dark:text-slate-600" : "text-slate-500 dark:text-slate-400"
+                        "w-12 h-12 rounded-2xl flex items-center justify-center font-black text-2xl shadow-inner mb-2",
+                        isLocked 
+                          ? "bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 grayscale" 
+                          : "bg-brand-primary/10 text-brand-primary"
                       )}>
-                        PART {level.chapter}
+                        {EMOJIS[(level.chapter - 1) % EMOJIS.length]}
                       </div>
+
+                      {/* Status Icon */}
+                      <div className="flex-1 flex items-center justify-center">
+                         {isLocked ? (
+                           <Lock size={40} className="text-slate-300 dark:text-slate-700" />
+                         ) : status === 'completed' ? (
+                           <div className="text-center">
+                              <div className="text-4xl mb-2">🏆</div>
+                              <div className="text-brand-primary font-bold text-lg">{score}分</div>
+                           </div>
+                         ) : (
+                           <div className="w-16 h-16 rounded-full bg-brand-primary text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                              <Play size={32} fill="currentColor" />
+                           </div>
+                         )}
+                      </div>
+
+                      {/* Footer */}
+                      <div className="w-full text-center">
+                        <div className={cn(
+                          "text-xs font-bold uppercase tracking-wider",
+                          isLocked ? "text-slate-400 dark:text-slate-600" : "text-slate-500 dark:text-slate-400"
+                        )}>
+                          PART {level.chapter}
+                        </div>
+                      </div>
+                   </button>
+                 );
+               })}
+               
+               {/* AI Challenge Card (Last Item) */}
+               <button
+                 onClick={() => navigate('/quiz-game/ai')}
+                 className="relative group aspect-[4/5] rounded-3xl p-4 flex flex-col items-center justify-between transition-all duration-300 border-2 border-violet-200 dark:border-violet-900 bg-gradient-to-br from-violet-50 to-white dark:from-slate-900 dark:to-violet-950/20 hover:border-violet-400 hover:shadow-xl hover:-translate-y-1 cursor-pointer overflow-hidden"
+               >
+                  {/* Decorative Background */}
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-violet-500/10 rounded-full translate-x-10 -translate-y-10 blur-xl"></div>
+                  
+                  {/* Icon */}
+                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center font-black text-2xl shadow-inner mb-2 bg-violet-100 text-violet-600 dark:bg-violet-900/30 dark:text-violet-300 relative z-10">
+                    🤖
+                  </div>
+
+                  {/* Status Icon */}
+                  <div className="flex-1 flex items-center justify-center relative z-10">
+                    <div className="text-center">
+                       <div className="w-16 h-16 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform mb-2 mx-auto">
+                          <Play size={32} fill="currentColor" />
+                       </div>
+                       <div className="text-violet-500 dark:text-violet-300 font-bold text-sm">
+                         智能特训
+                       </div>
                     </div>
-                 </button>
-               );
-             })
+                  </div>
+
+                  {/* Footer */}
+                  <div className="w-full text-center relative z-10">
+                    <div className="text-xs font-bold uppercase tracking-wider text-violet-400 dark:text-violet-500">
+                      AI CHALLENGE
+                    </div>
+                  </div>
+               </button>
+             </>
           ) : (
             <div className="col-span-full py-20 text-center text-slate-400 dark:text-slate-500">
                <p>该年级暂无关卡数据</p>
