@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getLevels, getUserQuizProgress } from '../db/api';
 import { Level, UserQuizProgress } from '../types/types';
-import { ArrowLeft, Star, Lock, Play, Trophy } from 'lucide-react';
+import { ArrowLeft, Star, Lock, Play, Trophy, Filter, ChevronDown } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 export const QuizLevelsPage = () => {
@@ -11,8 +11,16 @@ export const QuizLevelsPage = () => {
   const navigate = useNavigate();
   const [levels, setLevels] = useState<Level[]>([]);
   const [progress, setProgress] = useState<UserQuizProgress[]>([]);
-  const [selectedGrade, setSelectedGrade] = useState(1);
+  const [selectedGrade, setSelectedGrade] = useState(() => {
+    const saved = localStorage.getItem('lastSelectedQuizGrade');
+    return saved ? parseInt(saved) : 1;
+  });
   const [loading, setLoading] = useState(true);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem('lastSelectedQuizGrade', selectedGrade.toString());
+  }, [selectedGrade]);
 
   useEffect(() => {
     fetchData();
@@ -86,28 +94,38 @@ export const QuizLevelsPage = () => {
 
       <div className="max-w-4xl mx-auto p-4">
         
-        {/* Grade Selector */}
-        <div className="mb-6 flex items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
-           <div className="flex items-center gap-3">
-             <div className="w-10 h-10 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-bold">
-               {selectedGrade}
-             </div>
-             <div>
-               <h2 className="font-bold text-slate-800 dark:text-white">选择年级</h2>
-               <p className="text-xs text-slate-400">当前显示 {selectedGrade} 年级关卡</p>
+        {/* Hero Banner with Filter */}
+        <div className="text-center mb-8 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-6 rounded-3xl relative transition-colors shadow-sm">
+           <h1 className="text-2xl md:text-3xl font-black text-slate-800 dark:text-white mb-2 transition-colors">看字识音闯关</h1>
+           <p className="text-slate-500 dark:text-slate-400 text-xs md:text-sm mb-4 md:mb-0 transition-colors">挑战你的汉字识音能力！</p>
+           
+           {/* Filter Toggle */}
+           <div className="md:absolute md:top-6 md:right-6 flex justify-center mt-3 md:mt-0">
+             <div className="relative inline-block text-left">
+                <button 
+                  onClick={() => setIsFilterOpen(!isFilterOpen)}
+                  className="flex items-center gap-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-full text-sm font-bold shadow-sm hover:bg-slate-100 dark:hover:bg-slate-700 transition-all"
+                >
+                  <Filter size={14} />
+                  <span>Level {selectedGrade}</span>
+                  <ChevronDown size={14} className={`transition-transform ${isFilterOpen ? 'rotate-180' : ''}`} />
+                </button>
+                
+                {isFilterOpen && (
+                  <div className="absolute left-1/2 -translate-x-1/2 md:left-auto md:right-0 md:translate-x-0 top-full mt-2 bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-100 dark:border-slate-800 p-2 min-w-[150px] z-10 animate-in fade-in zoom-in duration-200">
+                    {[1, 2, 3, 4, 5, 6].map(g => (
+                      <button 
+                        key={g}
+                        onClick={() => { setSelectedGrade(g); setIsFilterOpen(false); }}
+                        className={`w-full text-left px-3 py-2 rounded-lg text-sm font-bold hover:bg-slate-50 dark:hover:bg-slate-800 ${selectedGrade === g ? 'text-brand-primary bg-brand-primary/5 dark:bg-brand-primary/10' : 'text-slate-600 dark:text-slate-300'}`}
+                      >
+                        Level {g}
+                      </button>
+                    ))}
+                  </div>
+                )}
              </div>
            </div>
-           
-           <select 
-             value={selectedGrade}
-             onChange={(e) => setSelectedGrade(Number(e.target.value))}
-             className="bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-2 pl-4 pr-10 font-bold text-slate-700 dark:text-slate-200 cursor-pointer focus:ring-2 focus:ring-brand-primary/50 outline-none appearance-none"
-             style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em' }}
-           >
-             {[1, 2, 3, 4, 5, 6].map(grade => (
-               <option key={grade} value={grade}>{grade} 年级</option>
-             ))}
-           </select>
         </div>
 
         {/* AI Challenge Card */}
