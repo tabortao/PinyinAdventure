@@ -103,21 +103,17 @@ export const seedDatabase = async () => {
   const db = await initDB();
   
   const charCount = await db.countFromIndex('questions', 'by-type', 'character');
-  const pinyinCount = await db.count('pinyin_charts');
   
-  if (charCount > 0 && pinyinCount > 0) return; // Already seeded
-
-  console.log('Seeding database...');
-
-  // Seed Pinyin Charts
-  if (pinyinCount === 0) {
+  // Always update Pinyin Charts to ensure latest data (mnemonics, categories)
+  console.log('Seeding Pinyin Data...');
+  {
     const tx = db.transaction('pinyin_charts', 'readwrite');
     for (const p of PINYIN_DATA) {
         await tx.store.put({
             id: p.pinyin,
             pinyin: p.pinyin,
             type: p.type,
-            category: p.category || p.type, // Use new category if available
+            category: p.category || p.type, 
             emoji: p.emoji,
             group_name: '',
             mnemonic: p.mnemonic || '',
@@ -131,8 +127,10 @@ export const seedDatabase = async () => {
     await tx.done;
   }
   
-  // Seed Quiz Data
-  const { levels, questions } = generateQuizData();
+  // Seed Quiz Data if missing
+  if (charCount === 0) {
+      console.log('Seeding Quiz Data...');
+      const { levels, questions } = generateQuizData();
   
   // Add Levels if they don't exist
   {
@@ -156,6 +154,7 @@ export const seedDatabase = async () => {
        }
     }
     await tx.done;
+  }
   }
   
   console.log('Database seeded successfully.');
