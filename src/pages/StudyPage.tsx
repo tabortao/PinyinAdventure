@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { PinyinChart, UserPinyinProgress } from '../types/types';
 import { getPinyinCharts, getUserPinyinProgress, updatePinyinProgress, getPinyinReviewList, getUserQuizProgress } from '../db/api';
-import { BrainCircuit, Check, X, Volume2, BookOpen, Star, Sparkles, ChevronDown, Smile, Play } from 'lucide-react';
+import { BrainCircuit, Check, X, Volume2, BookOpen, Star, Sparkles, ChevronDown, Smile, Play, LayoutGrid, ArrowLeft } from 'lucide-react';
 import { playCorrectSound, playWrongSound } from '../lib/audio';
 import { getPinyinTTS } from '../lib/pinyinTTS';
 
@@ -15,6 +15,7 @@ export const StudyPage = () => {
   const [progress, setProgress] = useState<UserPinyinProgress[]>([]);
   const [quizLevel, setQuizLevel] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [showLibrary, setShowLibrary] = useState(false);
   
   // State for study modes
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
@@ -86,15 +87,21 @@ export const StudyPage = () => {
   };
 
   // Handlers
-  const startStudy = (items: PinyinChart[], mode: 'learn' | 'test', groupName: string) => {
+  const startStudy = (items: PinyinChart[], mode: 'learn' | 'test', groupName: string, startIndex: number = 0) => {
     if (!items || items.length === 0) {
       alert("该分类下暂时没有内容");
       return;
     }
-    setSelectedGroup(groupName); // Just for title/tracking
-    setReviewList(items); // Using reviewList for generic study
+    
+    let studyItems = [...items];
+    if (mode === 'test') {
+      studyItems = studyItems.sort(() => Math.random() - 0.5);
+    }
+
+    setSelectedGroup(groupName); 
+    setReviewList(studyItems); 
     setStudyMode(mode);
-    setCurrentCardIndex(0);
+    setCurrentCardIndex(mode === 'test' ? 0 : startIndex);
     setShowAnswer(false);
     setTestCompleted(false);
   };
@@ -283,6 +290,37 @@ export const StudyPage = () => {
   }
 
   // 3. Main Dashboard
+  if (showLibrary) {
+    return (
+      <div className="max-w-4xl mx-auto p-4 pb-24 relative min-h-screen">
+        <div className="flex items-center gap-4 mb-6 pt-4">
+          <button 
+            onClick={() => setShowLibrary(false)} 
+            className="p-2 bg-white dark:bg-slate-800 rounded-full shadow-sm hover:scale-110 transition-transform"
+          >
+            <ArrowLeft className="text-slate-600 dark:text-slate-300" />
+          </button>
+          <h1 className="text-2xl font-black text-brand-dark dark:text-brand-primary">拼音库 ({charts.length})</h1>
+        </div>
+
+        <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-4">
+          {charts.map((chart, index) => (
+            <button
+              key={chart.id}
+              onClick={() => {
+                startStudy(charts, 'learn', '拼音库', index);
+              }}
+              className="aspect-square bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center p-3 hover:shadow-md hover:border-brand-primary hover:-translate-y-1 transition-all group"
+            >
+              <span className="text-3xl font-black text-slate-700 dark:text-white mb-1 group-hover:text-brand-primary transition-colors">{chart.pinyin}</span>
+              <span className="text-2xl group-hover:scale-110 transition-transform">{chart.emoji}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-4xl mx-auto p-4 pb-24 relative">
       {/* Custom Modal for No Reviews */}
@@ -327,6 +365,14 @@ export const StudyPage = () => {
                   <span>随机测试</span>
                 </button>
              </div>
+             
+             <button
+               onClick={() => setShowLibrary(true)}
+               className="w-full bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-4 py-3 rounded-xl font-bold shadow-sm hover:shadow-md border border-slate-200 dark:border-slate-700 transition-all active:scale-95 flex items-center justify-center gap-2"
+             >
+                <LayoutGrid size={20} className="text-brand-secondary" />
+                <span>拼音库</span>
+             </button>
 
              <div className="w-full bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-800 flex items-center justify-between px-4 py-3 transition-colors">
                 <span className="text-sm text-slate-400 dark:text-slate-500 font-bold transition-colors">已掌握基础拼音</span>

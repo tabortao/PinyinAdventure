@@ -23,7 +23,7 @@ interface SettingsContextType {
 const SettingsContext = createContext<SettingsContextType>({
   mode: 'all',
   setMode: () => {},
-  theme: 'system',
+  theme: 'dark',
   setTheme: () => {},
   aiConfig: { provider: 'custom', host: '', apiKey: '', model: '' },
   setAiConfig: () => {},
@@ -32,7 +32,7 @@ const SettingsContext = createContext<SettingsContextType>({
 export const SettingsProvider = ({ children }: { children: React.ReactNode }) => {
   const [mode, setMode] = useState<GameMode>('character');
   const [theme, setTheme] = useState<Theme>(() => {
-    return (localStorage.getItem('theme') as Theme) || 'system';
+    return (localStorage.getItem('theme') as Theme) || 'dark';
   });
   const [aiConfig, setAiConfig] = useState<AIConfig>(() => {
     const saved = localStorage.getItem('aiConfig');
