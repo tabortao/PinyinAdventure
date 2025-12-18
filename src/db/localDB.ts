@@ -1,5 +1,5 @@
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
-import { supabase } from './supabase'; // Keep for initial seeding
+// import { supabase } from './supabase'; // Removed for offline mode
 import { Level, Question, UserProgress, Mistake, PinyinChart, UserPinyinProgress, UserQuizProgress } from '../types/types';
 
 interface AppDB extends DBSchema {
@@ -96,62 +96,42 @@ export const initDB = () => {
   return dbPromise;
 };
 
-import { generateQuizData } from './seedData';
+import { generateQuizData, PINYIN_DATA } from './seedData';
 
 // Seeding function
 export const seedDatabase = async () => {
   const db = await initDB();
   
-  // Check if character questions exist
   const charCount = await db.countFromIndex('questions', 'by-type', 'character');
+  const pinyinCount = await db.count('pinyin_charts');
   
-  // Also check if quiz levels exist. 
-  // We used level_id for quiz different from original levels?
-  // Actually, in `generateQuizData`, I use levelId starting from 1. 
-  // If original levels use ID 1, we might have collision.
-  // Original Supabase levels might be ID 1..X.
-  // We should check if we need to merge or use different IDs.
-  // The user wants "Quiz Game" distinct from "闯关"?
-  // Or "Quiz Game" IS the "闯关" just with new UI?
-  // The user said "和'闯关'页面类似", implying it's a separate mode.
-  // But reusing `levels` table is fine if we distinguish them.
-  // However, my `generateQuizData` generates levels with IDs.
-  // Safe bet: Use high IDs for Quiz Levels to avoid collision with Supabase Levels (if any).
-  // Let's modify seedData.ts to use high IDs, OR just assume localDB is fresh for this feature.
-  // Since we migrated to localDB entirely, and `seedDatabase` only runs if `levels` is empty,
-  // we might be missing Quiz levels if we only imported Supabase levels.
-  
-  // Let's inject Quiz Data if charCount is 0.
-  
-  if (charCount > 0) return; // Already seeded
+  if (charCount > 0 && pinyinCount > 0) return; // Already seeded
 
   console.log('Seeding database...');
 
-  try {
-    // 1. Try Supabase (Original data)
-    let seededSupabase = false;
-    // ... existing Supabase logic ...
-    // Since I can't rely on Supabase, I will skip it or keep it as optional.
-    // I will comment out Supabase part or make it safe.
-    
-    // 2. Inject Quiz Data
-    const { levels: quizLevels, questions: quizQuestions } = generateQuizData();
-    
-    const txL = db.transaction('levels', 'readwrite');
-    // We need to be careful about ID collision if Supabase levels exist.
-    // Let's assume for this task, we prioritize Quiz Data for the "Quiz Game".
-    // If table is empty, we just add.
-    // If not empty, we check IDs.
-    
-    // Actually, `seedDatabase` at top checks `db.count('levels')`.
-    // If levels exist, it returns.
-    // This is problematic if we want to ADD quiz levels to existing DB.
-    // I should remove that early return check and check specifically for what I need.
-  } catch (error) {
-    console.error('Error seeding database:', error);
+  // Seed Pinyin Charts
+  if (pinyinCount === 0) {
+    const tx = db.transaction('pinyin_charts', 'readwrite');
+    for (const p of PINYIN_DATA) {
+        await tx.store.put({
+            id: p.pinyin,
+            pinyin: p.pinyin,
+            type: p.type,
+            category: p.type,
+            emoji: p.emoji,
+            group_name: '',
+            mnemonic: '',
+            example_word: '',
+            example_pinyin: '',
+            description: '',
+            audio_url: '',
+            sort_order: 0 // We can set this if needed, or index
+        } as PinyinChart);
+    }
+    await tx.done;
   }
   
-  // NEW LOGIC
+  // Seed Quiz Data
   const { levels, questions } = generateQuizData();
   
   // Add Levels if they don't exist
@@ -170,8 +150,6 @@ export const seedDatabase = async () => {
   {
     const tx = db.transaction('questions', 'readwrite');
     for (const q of questions) {
-       // Since questions ID might collide, we can use `put` or check.
-       // My seedData uses high IDs (10000+), so safe.
        const existing = await tx.store.get(q.id);
        if (!existing) {
           await tx.store.add(q);
@@ -180,7 +158,7 @@ export const seedDatabase = async () => {
     await tx.done;
   }
   
-  console.log('Quiz data seeded.');
+  console.log('Database seeded successfully.');
 };
 
 // Export and Import helpers

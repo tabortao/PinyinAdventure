@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { SettingsProvider } from './context/SettingsContext';
@@ -14,8 +14,13 @@ import { StudyPage } from './pages/StudyPage';
 import { HelpPage } from './pages/HelpPage';
 import { QuizGamePage } from './pages/QuizGamePage';
 import { QuizLevelsPage } from './pages/QuizLevelsPage'; // Added
+import { initializeApp } from './db/api';
 
 const App: React.FC = () => {
+  useEffect(() => {
+    initializeApp();
+  }, []);
+
   return (
     <AuthProvider>
       <SettingsProvider>

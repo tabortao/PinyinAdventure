@@ -168,16 +168,61 @@ export const getQuizQuestions = async (levelId: number, count: number = 10) => {
   candidates = candidates.sort(() => 0.5 - Math.random()).slice(0, count);
 
   // For each question, generate 3 distractors
-  // Source of distractors: pinyin_charts
-  const charts = await db.getAll('pinyin_charts');
+  // Strategy: Pick from other existing questions' pinyins to ensure validity.
+  // Prioritize "similar" pinyins (confusing ones).
   
+  // 1. Get pool of all valid pinyins from questions
+  // We can fetch all questions to build a pool. 
+  // Optimization: caching this pool if possible, but for now just fetch.
+  // We already fetched 'questions' for this level. We should fetch MORE for a good pool.
+  const allLevelsQuestions = await db.getAll('questions'); // This might be expensive if thousands, but for <1000 it's fine.
+  const pinyinPool = Array.from(new Set(allLevelsQuestions.map(q => q.pinyin).filter(p => p)));
+
   const results = candidates.map(q => {
     const correct = q.pinyin;
-    // Filter charts to remove correct one
-    const others = charts.filter(c => c.pinyin !== correct);
-    // Shuffle and pick 3
-    const distractors = others.sort(() => 0.5 - Math.random()).slice(0, 3).map(c => c.pinyin);
     
+    // Helper to normalize pinyin (remove tones roughly for comparison)
+    // Simple way: just compare string similarity
+    const similarity = (target: string, candidate: string) => {
+        if (!target || !candidate) return 0;
+        let score = 0;
+        // Same length reward
+        if (target.length === candidate.length) score += 2;
+        // Same start reward
+        if (target[0] === candidate[0]) score += 1;
+        // Same end reward
+        if (target[target.length-1] === candidate[candidate.length-1]) score += 1;
+        // Contains substring?
+        if (target.includes(candidate) || candidate.includes(target)) score += 1;
+        
+        return score;
+    };
+
+    // Filter out correct answer
+    let others = pinyinPool.filter(p => p !== correct);
+    
+    // Calculate scores
+    const scored = others.map(p => ({ p, score: similarity(correct, p) }));
+    
+    // Sort by score desc, then random
+    scored.sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        return 0.5 - Math.random();
+    });
+    
+    // Pick top 3 (high similarity)
+    // If we want *some* randomness, we can pick from top 10.
+    const topCandidates = scored.slice(0, 10);
+    const distractors = topCandidates.sort(() => 0.5 - Math.random()).slice(0, 3).map(i => i.p);
+    
+    // If not enough distractors (e.g. pool too small), fill with randoms
+    while (distractors.length < 3) {
+        // Fallback to random strings or just repeat? 
+        // Better to use pinyin charts fallback if we really have to, but pool should be enough.
+        // Let's just duplicate to avoid crash
+        distractors.push('ā'); 
+    }
+
     // Combine and shuffle options
     const options = [correct, ...distractors].sort(() => 0.5 - Math.random());
     

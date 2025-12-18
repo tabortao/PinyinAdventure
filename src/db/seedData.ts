@@ -42,6 +42,46 @@ const COMMON_CHARS = [
   { h: '鹊', p: 'què' }, { h: '蝉', p: 'chán' }, { h: '稻', p: 'dào' }, { h: '惊', p: 'jīng' }, { h: '聚', p: 'jù' }
 ];
 
+export const PINYIN_DATA = [
+  // Initials (声母) 23
+  { pinyin: 'b', type: 'initial', emoji: '👄' }, { pinyin: 'p', type: 'initial', emoji: '💦' },
+  { pinyin: 'm', type: 'initial', emoji: '🚪' }, { pinyin: 'f', type: 'initial', emoji: '🗽' },
+  { pinyin: 'd', type: 'initial', emoji: '🥁' }, { pinyin: 't', type: 'initial', emoji: '⛱️' },
+  { pinyin: 'n', type: 'initial', emoji: '🚪' }, { pinyin: 'l', type: 'initial', emoji: '🪵' },
+  { pinyin: 'g', type: 'initial', emoji: '🕊️' }, { pinyin: 'k', type: 'initial', emoji: '蝌' },
+  { pinyin: 'h', type: 'initial', emoji: '🪑' }, { pinyin: 'j', type: 'initial', emoji: '🐔' },
+  { pinyin: 'q', type: 'initial', emoji: '🎈' }, { pinyin: 'x', type: 'initial', emoji: '🍉' },
+  { pinyin: 'zh', type: 'initial', emoji: '🕷️' }, { pinyin: 'ch', type: 'initial', emoji: '🥄' },
+  { pinyin: 'sh', type: 'initial', emoji: '🦁' }, { pinyin: 'r', type: 'initial', emoji: '☀️' },
+  { pinyin: 'z', type: 'initial', emoji: '💜' }, { pinyin: 'c', type: 'initial', emoji: '🦔' },
+  { pinyin: 's', type: 'initial', emoji: '🐍' }, { pinyin: 'y', type: 'initial', emoji: '👔' },
+  { pinyin: 'w', type: 'initial', emoji: '🏠' },
+
+  // Finals (韵母) 24
+  { pinyin: 'a', type: 'final', emoji: '😮' }, { pinyin: 'o', type: 'final', emoji: '🐔' },
+  { pinyin: 'e', type: 'final', emoji: '🦆' }, { pinyin: 'i', type: 'final', emoji: '👕' },
+  { pinyin: 'u', type: 'final', emoji: '🐢' }, { pinyin: 'ü', type: 'final', emoji: '🐟' },
+  { pinyin: 'ai', type: 'final', emoji: '👵' }, { pinyin: 'ei', type: 'final', emoji: '🔨' },
+  { pinyin: 'ui', type: 'final', emoji: '🐢' }, { pinyin: 'ao', type: 'final', emoji: '🧥' },
+  { pinyin: 'ou', type: 'final', emoji: '🐦' }, { pinyin: 'iu', type: 'final', emoji: '🏊' },
+  { pinyin: 'ie', type: 'final', emoji: '🥥' }, { pinyin: 'üe', type: 'final', emoji: '🌙' },
+  { pinyin: 'er', type: 'final', emoji: '👂' }, { pinyin: 'an', type: 'final', emoji: '⛩️' },
+  { pinyin: 'en', type: 'final', emoji: '👋' }, { pinyin: 'in', type: 'final', emoji: '🥤' },
+  { pinyin: 'un', type: 'final', emoji: '☁️' }, { pinyin: 'ün', type: 'final', emoji: '☁️' },
+  { pinyin: 'ang', type: 'final', emoji: '🐑' }, { pinyin: 'eng', type: 'final', emoji: '💡' },
+  { pinyin: 'ing', type: 'final', emoji: '🦅' }, { pinyin: 'ong', type: 'final', emoji: '⏰' },
+
+  // Overall Recognition (整体认读) 16
+  { pinyin: 'zhi', type: 'overall', emoji: '🕷️' }, { pinyin: 'chi', type: 'overall', emoji: '🥄' },
+  { pinyin: 'shi', type: 'overall', emoji: '🦁' }, { pinyin: 'ri', type: 'overall', emoji: '☀️' },
+  { pinyin: 'zi', type: 'overall', emoji: '💜' }, { pinyin: 'ci', type: 'overall', emoji: '🦔' },
+  { pinyin: 'si', type: 'overall', emoji: '🐍' }, { pinyin: 'yi', type: 'overall', emoji: '👔' },
+  { pinyin: 'wu', type: 'overall', emoji: '🏠' }, { pinyin: 'yu', type: 'overall', emoji: '🐟' },
+  { pinyin: 'ye', type: 'overall', emoji: '🥥' }, { pinyin: 'yue', type: 'overall', emoji: '🌙' },
+  { pinyin: 'yuan', type: 'overall', emoji: '⭕' }, { pinyin: 'yin', type: 'overall', emoji: '🎵' },
+  { pinyin: 'yun', type: 'overall', emoji: '☁️' }, { pinyin: 'ying', type: 'overall', emoji: '🦅' }
+];
+
 export const generateQuizData = () => {
   const levels: Level[] = [];
   const questions: Question[] = [];
