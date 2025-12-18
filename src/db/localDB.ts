@@ -117,15 +117,15 @@ export const seedDatabase = async () => {
             id: p.pinyin,
             pinyin: p.pinyin,
             type: p.type,
-            category: p.type,
+            category: p.category || p.type, // Use new category if available
             emoji: p.emoji,
             group_name: '',
-            mnemonic: '',
-            example_word: '',
-            example_pinyin: '',
+            mnemonic: p.mnemonic || '',
+            example_word: p.example_word || '',
+            example_pinyin: p.example_pinyin || '',
             description: '',
             audio_url: '',
-            sort_order: 0 // We can set this if needed, or index
+            sort_order: 0 
         } as PinyinChart);
     }
     await tx.done;

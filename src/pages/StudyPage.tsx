@@ -26,10 +26,6 @@ export const StudyPage = () => {
   
   // Custom Modal State
   const [showNoReviewModal, setShowNoReviewModal] = useState(false);
-  
-  // UI State for sections
-  const [expandedSection, setExpandedSection] = useState<string>('yunmu'); // default expand yunmu as it has subcategories
-  
   // Review specific state
   const [reviewList, setReviewList] = useState<(PinyinChart & { progress_id?: string })[]>([]);
 
@@ -55,27 +51,23 @@ export const StudyPage = () => {
 
     setLoading(false);
   };
-
+  
+  const [libraryTab, setLibraryTab] = useState<'initial' | 'final' | 'overall'>('initial');
+  
+  const [expandedSection, setExpandedSection] = useState<string>('yunmu');
   // Grouping logic for Study View
   const pinyinData = useMemo(() => {
-    const data = {
+    return {
       initials: charts.filter(c => c.category === 'initial'),
       finals: {
-        all: charts.filter(c => c.category === 'final'),
-        groups: {} as Record<string, PinyinChart[]>
+        simple: charts.filter(c => c.category === 'final_simple'),
+        compound: charts.filter(c => c.category === 'final_compound'),
+        front: charts.filter(c => c.category === 'final_front'),
+        back: charts.filter(c => c.category === 'final_back'),
+        all: charts.filter(c => c.category.startsWith('final')),
       },
       overall: charts.filter(c => c.category === 'overall')
     };
-
-    // Group finals by group_name
-    data.finals.all.forEach(c => {
-      if (!data.finals.groups[c.group_name]) {
-        data.finals.groups[c.group_name] = [];
-      }
-      data.finals.groups[c.group_name].push(c);
-    });
-
-    return data;
   }, [charts]);
 
   const getProgressPercentage = (items: PinyinChart[]) => {
@@ -179,84 +171,84 @@ export const StudyPage = () => {
     const showDetails = studyMode === 'learn' || showAnswer;
 
     return (
-      <div className="max-w-md mx-auto p-4 flex flex-col h-[calc(100vh-80px)] md:h-[calc(100vh-140px)]">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-4">
-          <button onClick={() => setStudyMode('list')} className="text-slate-400 hover:text-brand-primary font-bold text-sm flex items-center gap-1 transition-colors">
-             <X size={24} /> 退出
+      <div className="max-w-md mx-auto p-4 flex flex-col h-[calc(100vh-80px)]">
+        {/* Compact Header */}
+        <div className="flex justify-between items-center mb-2 shrink-0">
+          <button onClick={() => setStudyMode('list')} className="text-slate-400 hover:text-brand-primary font-bold text-sm flex items-center gap-1">
+             <X size={20} /> 退出
           </button>
-          <div className="text-brand-secondary font-bold text-lg">
+          <div className="text-brand-secondary font-bold text-base">
             {currentCardIndex + 1} / {reviewList.length}
           </div>
         </div>
 
-        {/* Card */}
-        <div className="flex-1 bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800 p-6 flex flex-col items-center justify-center relative overflow-hidden mb-6 transition-colors duration-300">
+        {/* Flexible Card Area */}
+        <div className="flex-1 bg-white dark:bg-slate-900 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-800 p-4 flex flex-col items-center justify-center relative overflow-hidden mb-4 min-h-0">
           
           {/* Top Hint */}
-          <div className={`transition-all duration-300 flex flex-col items-center ${!showDetails ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
-             <div className="text-6xl mb-4 animate-in zoom-in">{currentItem.emoji}</div>
-             <div className="text-brand-primary/80 font-bold text-xl mb-6 text-center">{currentItem.mnemonic}</div>
+          <div className={`transition-all duration-300 flex flex-col items-center ${!showDetails ? 'opacity-0 scale-95 h-0 overflow-hidden' : 'opacity-100 scale-100 mb-4'}`}>
+             <div className="text-5xl mb-2">{currentItem.emoji}</div>
+             <div className="text-brand-primary/80 font-bold text-base text-center px-4">{currentItem.mnemonic}</div>
           </div>
 
-          {/* Main Pinyin - BIGGER FONT */}
-          <div className="text-8xl md:text-9xl font-black text-brand-dark dark:text-brand-primary mb-4 tracking-wider leading-none select-none text-center whitespace-nowrap max-w-full transition-colors duration-300">
+          {/* Main Pinyin */}
+          <div className="text-8xl md:text-9xl font-black text-brand-dark dark:text-brand-primary mb-6 tracking-wider leading-none select-none text-center whitespace-nowrap">
             {currentItem.pinyin}
           </div>
 
           {/* Action: Play Audio */}
           <button 
             onClick={(e) => { e.stopPropagation(); playAudio(currentItem.pinyin); }}
-            className="mb-8 w-20 h-20 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center hover:bg-brand-primary hover:text-white transition-all shadow-sm active:scale-95"
+            className="mb-6 w-16 h-16 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center hover:bg-brand-primary hover:text-white transition-colors shadow-sm active:scale-95"
           >
-            <Volume2 size={40} />
+            <Volume2 size={32} />
           </button>
 
-          {/* Example Word */}
+          {/* Details Section (Word) */}
           <div className={`transition-all duration-300 text-center ${!showDetails ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
-            <div className="text-xl text-slate-400 dark:text-slate-500 mb-2 font-bold">{currentItem.example_pinyin}</div>
-            <div className="text-4xl font-bold text-slate-700 dark:text-slate-200">{currentItem.example_word}</div>
+            <div className="text-lg text-slate-400 dark:text-slate-500 mb-1 font-bold">{currentItem.example_pinyin}</div>
+            <div className="text-3xl font-bold text-slate-700 dark:text-slate-200">{currentItem.example_word}</div>
           </div>
         </div>
 
-        {/* Footer Actions */}
-        <div className="h-24">
+        {/* Compact Footer Actions */}
+        <div className="h-16 shrink-0">
            {isTest && !showAnswer ? (
              <button 
                onClick={() => setShowAnswer(true)}
-               className="w-full h-full bg-brand-primary text-white rounded-2xl text-2xl font-bold shadow-lg hover:bg-brand-dark transition-colors active:scale-95 transform duration-100"
+               className="w-full h-full bg-brand-primary text-white rounded-xl text-lg font-bold shadow-md hover:bg-brand-dark transition-colors active:scale-95"
              >
                显示答案
              </button>
            ) : isTest && showAnswer ? (
-             <div className="flex gap-4 h-full">
+             <div className="flex gap-3 h-full">
                <button 
                  onClick={() => handleTestResult(false)}
-                 className="flex-1 bg-red-100 dark:bg-red-900/30 text-red-500 dark:text-red-400 rounded-2xl font-bold text-xl flex flex-col items-center justify-center hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors active:scale-95"
+                 className="flex-1 bg-red-100 dark:bg-red-900/30 text-red-500 dark:text-red-400 rounded-xl font-bold text-lg flex flex-col items-center justify-center hover:bg-red-200 active:scale-95"
                >
-                 <X size={32} className="mb-1" />
+                 <X size={24} className="mb-0.5" />
                  需复习
                </button>
                <button 
                  onClick={() => handleTestResult(true)}
-                 className="flex-1 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-2xl font-bold text-xl flex flex-col items-center justify-center hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors active:scale-95"
+                 className="flex-1 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-xl font-bold text-lg flex flex-col items-center justify-center hover:bg-green-200 active:scale-95"
                >
-                 <Check size={32} className="mb-1" />
+                 <Check size={24} className="mb-0.5" />
                  记住了
                </button>
              </div>
            ) : (
-             <div className="flex gap-4 h-full">
+             <div className="flex gap-3 h-full">
                <button 
                  onClick={() => currentCardIndex > 0 && setCurrentCardIndex(p => p - 1)}
                  disabled={currentCardIndex === 0}
-                 className="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 rounded-2xl font-bold text-lg disabled:opacity-50 transition-colors"
+                 className="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 rounded-xl font-bold text-base disabled:opacity-50 transition-colors active:scale-95"
                >
                  上一个
                </button>
                <button 
                  onClick={handleNextCard}
-                 className="flex-1 bg-brand-primary text-white rounded-2xl font-bold text-xl shadow-md active:scale-95"
+                 className="flex-1 bg-brand-primary text-white rounded-xl font-bold text-lg shadow-md active:scale-95"
                >
                  下一个
                </button>
@@ -289,33 +281,91 @@ export const StudyPage = () => {
     );
   }
 
-  // 3. Main Dashboard
+  // 3. Main Dashboard (Library View)
   if (showLibrary) {
+    const renderGrid = (items: PinyinChart[], groupName: string) => (
+      <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
+        {items.map((chart, index) => (
+          <button
+            key={chart.id}
+            onClick={() => {
+              // Pass the CURRENT LIST (items) so prev/next works within this category
+              startStudy(items, 'learn', groupName, index);
+            }}
+            className="aspect-square bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center p-2 hover:shadow-md hover:border-brand-primary active:scale-95 transition-all group"
+          >
+            <span className="text-xl font-black text-slate-700 dark:text-white mb-0.5 group-hover:text-brand-primary transition-colors">{chart.pinyin}</span>
+            <span className="text-lg group-hover:scale-110 transition-transform">{chart.emoji}</span>
+          </button>
+        ))}
+      </div>
+    );
+
     return (
-      <div className="max-w-4xl mx-auto p-4 pb-24 relative min-h-screen">
-        <div className="flex items-center gap-4 mb-6 pt-4">
+      <div className="max-w-4xl mx-auto p-4 flex flex-col h-[calc(100vh-80px)]">
+        <div className="flex items-center gap-3 mb-4 pt-2">
           <button 
             onClick={() => setShowLibrary(false)} 
-            className="p-2 bg-white dark:bg-slate-800 rounded-full shadow-sm hover:scale-110 transition-transform"
+            className="p-2 bg-white dark:bg-slate-800 rounded-full shadow-sm active:scale-95 transition-transform"
           >
-            <ArrowLeft className="text-slate-600 dark:text-slate-300" />
+            <ArrowLeft className="text-slate-600 dark:text-slate-300 w-5 h-5" />
           </button>
-          <h1 className="text-2xl font-black text-brand-dark dark:text-brand-primary">拼音库 ({charts.length})</h1>
+          <h1 className="text-xl font-black text-brand-dark dark:text-brand-primary">拼音库</h1>
         </div>
 
-        <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-4">
-          {charts.map((chart, index) => (
-            <button
-              key={chart.id}
-              onClick={() => {
-                startStudy(charts, 'learn', '拼音库', index);
-              }}
-              className="aspect-square bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center p-3 hover:shadow-md hover:border-brand-primary hover:-translate-y-1 transition-all group"
-            >
-              <span className="text-3xl font-black text-slate-700 dark:text-white mb-1 group-hover:text-brand-primary transition-colors">{chart.pinyin}</span>
-              <span className="text-2xl group-hover:scale-110 transition-transform">{chart.emoji}</span>
-            </button>
-          ))}
+        {/* Tabs */}
+        <div className="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl mb-4 shrink-0">
+            {(['initial', 'final', 'overall'] as const).map(tab => (
+                <button
+                    key={tab}
+                    onClick={() => setLibraryTab(tab)}
+                    className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${
+                        libraryTab === tab 
+                        ? 'bg-white dark:bg-slate-700 text-brand-primary shadow-sm' 
+                        : 'text-slate-400 hover:text-slate-600'
+                    }`}
+                >
+                    {tab === 'initial' ? '声母' : tab === 'final' ? '韵母' : '整体认读'}
+                </button>
+            ))}
+        </div>
+
+        {/* Content Area - Scrollable */}
+        <div className="flex-1 overflow-y-auto min-h-0 pb-4">
+            {libraryTab === 'initial' && (
+                <div>
+                    <div className="text-sm font-bold text-slate-400 mb-2">声母 (23个)</div>
+                    {renderGrid(pinyinData.initials, '声母')}
+                </div>
+            )}
+            
+            {libraryTab === 'overall' && (
+                <div>
+                    <div className="text-sm font-bold text-slate-400 mb-2">整体认读音节 (16个)</div>
+                    {renderGrid(pinyinData.overall, '整体认读')}
+                </div>
+            )}
+
+            {libraryTab === 'final' && (
+                <div className="space-y-6">
+                    <section>
+                        <div className="text-sm font-bold text-slate-400 mb-2">单韵母 (6个)</div>
+                        {renderGrid(pinyinData.finals.simple, '单韵母')}
+                    </section>
+                    <section>
+                        <div className="text-sm font-bold text-slate-400 mb-2">复韵母 (9个)</div>
+                        {renderGrid(pinyinData.finals.compound, '复韵母')}
+                    </section>
+                    <section>
+                        <div className="text-sm font-bold text-slate-400 mb-2">前鼻韵母 (5个)</div>
+                        {renderGrid(pinyinData.finals.front, '前鼻韵母')}
+                    </section>
+                    <section>
+                        <div className="text-sm font-bold text-slate-400 mb-2">后鼻韵母 (4个)</div>
+                        {renderGrid(pinyinData.finals.back, '后鼻韵母')}
+                    </section>
+                </div>
+            )}
         </div>
       </div>
     );
@@ -451,22 +501,26 @@ export const StudyPage = () => {
            
            {expandedSection === 'yunmu' && (
              <div className="px-5 pb-5 space-y-4 animate-in slide-in-from-top-2">
-                {/* Subgroups Loop */}
-                {Object.entries(pinyinData.finals.groups).map(([groupName, items]) => (
-                  <div key={groupName} className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-100 dark:border-slate-700 transition-colors">
+                {[
+                  { name: '单韵母', items: pinyinData.finals.simple },
+                  { name: '复韵母', items: pinyinData.finals.compound },
+                  { name: '前鼻韵母', items: pinyinData.finals.front },
+                  { name: '后鼻韵母', items: pinyinData.finals.back }
+                ].map((group) => (
+                  <div key={group.name} className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-100 dark:border-slate-700 transition-colors">
                     <div className="flex justify-between items-center mb-3">
-                      <span className="font-bold text-slate-700 dark:text-slate-200 transition-colors">{groupName} <span className="text-slate-400 dark:text-slate-500 text-xs ml-1">({items.length})</span></span>
-                      <span className="text-xs font-bold text-brand-primary">{getProgressPercentage(items)}%</span>
+                      <span className="font-bold text-slate-700 dark:text-slate-200 transition-colors">{group.name} <span className="text-slate-400 dark:text-slate-500 text-xs ml-1">({group.items.length})</span></span>
+                      <span className="text-xs font-bold text-brand-primary">{getProgressPercentage(group.items)}%</span>
                     </div>
                     <div className="flex gap-2">
                        <button 
-                         onClick={() => startStudy(items, 'learn', groupName)}
+                         onClick={() => startStudy(group.items, 'learn', group.name)}
                          className="flex-1 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-300 shadow-sm transition-colors"
                        >
                          学习卡片
                        </button>
                        <button 
-                         onClick={() => startStudy(items, 'test', groupName)}
+                         onClick={() => startStudy(group.items, 'test', group.name)}
                          className="flex-1 py-2 bg-white dark:bg-slate-700 border border-brand-primary/20 dark:border-brand-primary/40 text-brand-primary rounded-lg text-xs font-bold shadow-sm transition-colors"
                        >
                          记忆测试

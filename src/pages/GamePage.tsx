@@ -248,7 +248,7 @@ export const GamePage = () => {
 
   const currentQ = questions[currentIndex];
   
-  if (!currentQ && gameState !== 'loading') {
+  if (!currentQ) {
     return (
       <div className="min-h-screen bg-brand-background dark:bg-slate-950 flex flex-col items-center justify-center p-4 transition-colors">
         <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-xl text-center max-w-sm w-full border border-slate-100 dark:border-slate-800">

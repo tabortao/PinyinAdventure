@@ -235,6 +235,82 @@ export const getQuizQuestions = async (levelId: number, count: number = 10) => {
   return results;
 };
 
+export const getAIQuestions = async (userId: string, count: number = 10) => {
+  const db = await initDB();
+  
+  // 1. Fetch user's mistakes (Weaknesses)
+  const mistakes = await db.getAllFromIndex('mistakes', 'by-user', userId);
+  
+  // Sort by error_count desc
+  mistakes.sort((a, b) => b.error_count - a.error_count);
+  
+  // Pick top 5 questions from mistakes
+  const topMistakes = mistakes.slice(0, 5);
+  
+  const questionIds = topMistakes.map(m => m.question_id);
+  
+  // Fetch these questions
+  let candidates: Question[] = [];
+  for (const qId of questionIds) {
+      const q = await db.get('questions', qId);
+      if (q) candidates.push(q);
+  }
+  
+  // 2. Fill the rest with random questions (Strengthen/Explore)
+  const needed = count - candidates.length;
+  if (needed > 0) {
+      const allQuestions = await db.getAll('questions');
+      const filtered = allQuestions.filter(q => q.type === 'character' && !questionIds.includes(q.id));
+      const randomPicks = filtered.sort(() => 0.5 - Math.random()).slice(0, needed);
+      candidates = [...candidates, ...randomPicks];
+  }
+  
+  // Deduplicate and Shuffle
+  candidates = Array.from(new Map(candidates.map(item => [item.id, item])).values());
+  candidates = candidates.sort(() => 0.5 - Math.random());
+  
+  // 3. Generate Options (Reuse logic from getQuizQuestions)
+  const allLevelsQuestions = await db.getAll('questions');
+  const pinyinPool = Array.from(new Set(allLevelsQuestions.map(q => q.pinyin).filter(p => p)));
+  
+  const results = candidates.map(q => {
+    const correct = q.pinyin;
+    const similarity = (target: string, candidate: string) => {
+        if (!target || !candidate) return 0;
+        let score = 0;
+        if (target.length === candidate.length) score += 2;
+        if (target[0] === candidate[0]) score += 1;
+        if (target[target.length-1] === candidate[candidate.length-1]) score += 1;
+        if (target.includes(candidate) || candidate.includes(target)) score += 1;
+        return score;
+    };
+
+    let others = pinyinPool.filter(p => p !== correct);
+    const scored = others.map(p => ({ p, score: similarity(correct, p) }));
+    scored.sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        return 0.5 - Math.random();
+    });
+    
+    const topCandidates = scored.slice(0, 10);
+    const distractors = topCandidates.sort(() => 0.5 - Math.random()).slice(0, 3).map(i => i.p);
+    
+    while (distractors.length < 3) {
+        distractors.push('ā'); 
+    }
+
+    const options = [correct, ...distractors].sort(() => 0.5 - Math.random());
+    
+    return {
+      ...q,
+      options
+    };
+  });
+  
+  return results;
+};
+
+
 export const getMistakes = async (userId: string) => {
   const db = await initDB();
   const now = new Date().toISOString();

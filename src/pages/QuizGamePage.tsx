@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Volume2, Clock } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { getQuizQuestions, saveUserQuizProgress, recordMistake, getLevelById } from '../db/api';
+import { getQuizQuestions, saveUserQuizProgress, recordMistake, getLevelById, getAIQuestions } from '../db/api';
 import { Question, Level } from '../types/types';
 import * as Tone from 'tone';
 
@@ -51,12 +51,25 @@ export const QuizGamePage = () => {
   const loadQuestions = async () => {
     try {
       setLoading(true);
-      const [data, level] = await Promise.all([
-        getQuizQuestions(Number(levelId), 10),
-        getLevelById(Number(levelId))
-      ]);
-      setQuestions(data);
-      setLevelInfo(level);
+      if (levelId === 'ai') {
+        if (!user) return;
+        const data = await getAIQuestions(user.id, 10);
+        setQuestions(data as QuizQuestion[]);
+        setLevelInfo({
+            id: 9999,
+            grade: 0,
+            chapter: 0,
+            name: 'AI 智能特训',
+            description: '根据你的学习情况量身定制'
+        });
+      } else {
+        const [data, level] = await Promise.all([
+          getQuizQuestions(Number(levelId), 10),
+          getLevelById(Number(levelId))
+        ]);
+        setQuestions(data);
+        setLevelInfo(level);
+      }
     } catch (error) {
       console.error('Failed to load quiz questions', error);
     } finally {
@@ -172,6 +185,8 @@ export const QuizGamePage = () => {
   // Effect to save score when finished
   useEffect(() => {
     if (isFinished && user && levelId) {
+      if (levelId === 'ai') return;
+      
       saveUserQuizProgress(user.id, Number(levelId), score).then(() => {
         console.log('Quiz progress saved');
       });
@@ -179,11 +194,6 @@ export const QuizGamePage = () => {
   }, [isFinished, user, levelId, score]);
 
   const nextLevel = () => {
-    // Logic to find next level
-    // For now, just levelId + 1
-    const nextId = Number(levelId) + 1;
-    // Check max level? We'll let the user try, if empty questions, handle it.
-    navigate(`/quiz-game/${nextId}`);
     // Reset state
     setScore(0);
     setCurrentIndex(0);
@@ -191,7 +201,13 @@ export const QuizGamePage = () => {
     setSelectedOption(null);
     setIsCorrect(null);
     setLoading(true);
-    // levelId changes -> useEffect triggers loadQuestions
+
+    if (levelId === 'ai') {
+        loadQuestions();
+    } else {
+        const nextId = Number(levelId) + 1;
+        navigate(`/quiz-game/${nextId}`);
+    }
   };
 
   if (loading) {
@@ -234,7 +250,7 @@ export const QuizGamePage = () => {
               onClick={nextLevel}
               className="w-full py-4 text-lg font-bold rounded-2xl shadow-lg bg-brand-primary hover:bg-brand-secondary text-white transition-all active:scale-95"
             >
-              下一关
+              {levelId === 'ai' ? '再来一组' : '下一关'}
             </button>
             <button 
               onClick={() => navigate('/quiz-levels')}
@@ -257,7 +273,7 @@ export const QuizGamePage = () => {
         <button onClick={() => navigate('/quiz-levels')} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors">
           <ArrowLeft className="text-slate-600 dark:text-slate-300" />
         </button>
-        <div className="font-bold text-slate-700 dark:text-white">第 {levelInfo?.chapter || levelId} 关</div>
+        <div className="font-bold text-slate-700 dark:text-white">{levelInfo?.name || `第 ${levelId} 关`}</div>
         <div className="flex items-center gap-2">
            <div className={`px-3 py-1 rounded-full font-mono font-bold ${timeLeft <= 3 ? 'bg-red-100 dark:bg-red-900/30 text-red-500 dark:text-red-400' : 'bg-blue-100 dark:bg-blue-900/30 text-blue-500 dark:text-blue-400'}`}>
              {timeLeft}s

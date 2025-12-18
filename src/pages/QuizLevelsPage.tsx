@@ -104,6 +104,30 @@ export const QuizLevelsPage = () => {
           ))}
         </div>
 
+        {/* AI Challenge Card */}
+        <div className="mb-6">
+          <button
+            onClick={() => navigate('/quiz-game/ai')}
+            className="w-full bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white rounded-3xl p-6 shadow-lg shadow-violet-200 dark:shadow-none hover:shadow-xl hover:scale-[1.01] transition-all flex items-center justify-between group relative overflow-hidden"
+          >
+             <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full translate-x-20 -translate-y-20 blur-3xl group-hover:opacity-20 transition-opacity"></div>
+             
+             <div className="flex items-center gap-4 relative z-10">
+                <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl shadow-inner">
+                   🤖
+                </div>
+                <div className="text-left">
+                   <h2 className="text-2xl font-black mb-1">AI 智能特训</h2>
+                   <p className="text-white/80 text-sm font-medium">根据你的错题本量身定制</p>
+                </div>
+             </div>
+             
+             <div className="w-12 h-12 bg-white text-violet-600 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform relative z-10">
+                <Play fill="currentColor" size={24} />
+             </div>
+          </button>
+        </div>
+
         {/* Level Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {currentGradeLevels.length > 0 ? (

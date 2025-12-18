@@ -43,43 +43,81 @@ const COMMON_CHARS = [
 ];
 
 export const PINYIN_DATA = [
-  // Initials (声母) 23
-  { pinyin: 'b', type: 'initial', emoji: '👄' }, { pinyin: 'p', type: 'initial', emoji: '💦' },
-  { pinyin: 'm', type: 'initial', emoji: '🚪' }, { pinyin: 'f', type: 'initial', emoji: '🗽' },
-  { pinyin: 'd', type: 'initial', emoji: '🥁' }, { pinyin: 't', type: 'initial', emoji: '⛱️' },
-  { pinyin: 'n', type: 'initial', emoji: '🚪' }, { pinyin: 'l', type: 'initial', emoji: '🪵' },
-  { pinyin: 'g', type: 'initial', emoji: '🕊️' }, { pinyin: 'k', type: 'initial', emoji: '蝌' },
-  { pinyin: 'h', type: 'initial', emoji: '🪑' }, { pinyin: 'j', type: 'initial', emoji: '🐔' },
-  { pinyin: 'q', type: 'initial', emoji: '🎈' }, { pinyin: 'x', type: 'initial', emoji: '🍉' },
-  { pinyin: 'zh', type: 'initial', emoji: '🕷️' }, { pinyin: 'ch', type: 'initial', emoji: '🥄' },
-  { pinyin: 'sh', type: 'initial', emoji: '🦁' }, { pinyin: 'r', type: 'initial', emoji: '☀️' },
-  { pinyin: 'z', type: 'initial', emoji: '💜' }, { pinyin: 'c', type: 'initial', emoji: '🦔' },
-  { pinyin: 's', type: 'initial', emoji: '🐍' }, { pinyin: 'y', type: 'initial', emoji: '👔' },
-  { pinyin: 'w', type: 'initial', emoji: '🏠' },
+  // 声母 (Initials) - 23个
+  { pinyin: 'b', type: 'initial', category: 'initial', emoji: '📻', mnemonic: '听广播 b b b', example_word: '菠菜', example_pinyin: 'bō cài' },
+  { pinyin: 'p', type: 'initial', category: 'initial', emoji: '⛰️', mnemonic: '爬山坡 p p p', example_word: '爬山', example_pinyin: 'pá shān' },
+  { pinyin: 'm', type: 'initial', category: 'initial', emoji: '🚪', mnemonic: '两个门洞 m m m', example_word: '摸人', example_pinyin: 'mō rén' },
+  { pinyin: 'f', type: 'initial', category: 'initial', emoji: '🗿', mnemonic: '一尊佛像 f f f', example_word: '大佛', example_pinyin: 'dà fó' },
+  { pinyin: 'd', type: 'initial', category: 'initial', emoji: '🥁', mnemonic: '左下半圆 d d d', example_word: '打鼓', example_pinyin: 'dǎ gǔ' },
+  { pinyin: 't', type: 'initial', category: 'initial', emoji: '🌂', mnemonic: '伞柄朝下 t t t', example_word: '特别', example_pinyin: 'tè bié' },
+  { pinyin: 'n', type: 'initial', category: 'initial', emoji: '🚪', mnemonic: '一个门洞 n n n', example_word: '哪吒', example_pinyin: 'né zhā' },
+  { pinyin: 'l', type: 'initial', category: 'initial', emoji: '🥢', mnemonic: '一根小棍 l l l', example_word: '快乐', example_pinyin: 'kuài lè' },
+  { pinyin: 'g', type: 'initial', category: 'initial', emoji: '🕊️', mnemonic: '鸽子鸽子 g g g', example_word: '哥哥', example_pinyin: 'gē ge' },
+  { pinyin: 'k', type: 'initial', category: 'initial', emoji: '👶', mnemonic: '蝌蚪蝌蚪 k k k', example_word: '蝌蚪', example_pinyin: 'kē dǒu' },
+  { pinyin: 'h', type: 'initial', category: 'initial', emoji: '🪑', mnemonic: '一把椅子 h h h', example_word: '喝水', example_pinyin: 'hē shuǐ' },
+  { pinyin: 'j', type: 'initial', category: 'initial', emoji: '🐔', mnemonic: '母鸡母鸡 j j j', example_word: '母鸡', example_pinyin: 'mǔ jī' },
+  { pinyin: 'q', type: 'initial', category: 'initial', emoji: '🎈', mnemonic: '气球气球 q q q', example_word: '气球', example_pinyin: 'qì qiú' },
+  { pinyin: 'x', type: 'initial', category: 'initial', emoji: '🍉', mnemonic: '西瓜西瓜 x x x', example_word: '西瓜', example_pinyin: 'xī guā' },
+  { pinyin: 'zh', type: 'initial', category: 'initial', emoji: '🧶', mnemonic: '织毛衣 zh zh zh', example_word: '蜘蛛', example_pinyin: 'zhī zhū' },
+  { pinyin: 'ch', type: 'initial', category: 'initial', emoji: '🥄', mnemonic: '吃苹果 ch ch ch', example_word: '吃饭', example_pinyin: 'chī fàn' },
+  { pinyin: 'sh', type: 'initial', category: 'initial', emoji: '🦁', mnemonic: '石狮子 sh sh sh', example_word: '狮子', example_pinyin: 'shī zi' },
+  { pinyin: 'r', type: 'initial', category: 'initial', emoji: '☀️', mnemonic: '红日红日 r r r', example_word: '日出', example_pinyin: 'rì chū' },
+  { pinyin: 'z', type: 'initial', category: 'initial', emoji: '✍️', mnemonic: '像个2字 z z z', example_word: '写字', example_pinyin: 'xiě zì' },
+  { pinyin: 'c', type: 'initial', category: 'initial', emoji: '🦔', mnemonic: '半个圆圈 c c c', example_word: '刺猬', example_pinyin: 'cì wei' },
+  { pinyin: 's', type: 'initial', category: 'initial', emoji: '🐍', mnemonic: '半个8字 s s s', example_word: '吐丝', example_pinyin: 'tǔ sī' },
+  { pinyin: 'y', type: 'initial', category: 'initial', emoji: '🌲', mnemonic: '像个树杈 y y y', example_word: '鸭梨', example_pinyin: 'yā lí' },
+  { pinyin: 'w', type: 'initial', category: 'initial', emoji: '🏠', mnemonic: '像间屋子 w w w', example_word: '乌鸦', example_pinyin: 'wū yā' },
 
-  // Finals (韵母) 24
-  { pinyin: 'a', type: 'final', emoji: '😮' }, { pinyin: 'o', type: 'final', emoji: '🐔' },
-  { pinyin: 'e', type: 'final', emoji: '🦆' }, { pinyin: 'i', type: 'final', emoji: '👕' },
-  { pinyin: 'u', type: 'final', emoji: '🐢' }, { pinyin: 'ü', type: 'final', emoji: '🐟' },
-  { pinyin: 'ai', type: 'final', emoji: '👵' }, { pinyin: 'ei', type: 'final', emoji: '🔨' },
-  { pinyin: 'ui', type: 'final', emoji: '🐢' }, { pinyin: 'ao', type: 'final', emoji: '🧥' },
-  { pinyin: 'ou', type: 'final', emoji: '🐦' }, { pinyin: 'iu', type: 'final', emoji: '🏊' },
-  { pinyin: 'ie', type: 'final', emoji: '🥥' }, { pinyin: 'üe', type: 'final', emoji: '🌙' },
-  { pinyin: 'er', type: 'final', emoji: '👂' }, { pinyin: 'an', type: 'final', emoji: '⛩️' },
-  { pinyin: 'en', type: 'final', emoji: '👋' }, { pinyin: 'in', type: 'final', emoji: '🥤' },
-  { pinyin: 'un', type: 'final', emoji: '☁️' }, { pinyin: 'ün', type: 'final', emoji: '☁️' },
-  { pinyin: 'ang', type: 'final', emoji: '🐑' }, { pinyin: 'eng', type: 'final', emoji: '💡' },
-  { pinyin: 'ing', type: 'final', emoji: '🦅' }, { pinyin: 'ong', type: 'final', emoji: '⏰' },
+  // 韵母 (Finals) - 24个
+  // 单韵母
+  { pinyin: 'a', type: 'final', category: 'final_simple', emoji: '😮', mnemonic: '张大嘴巴 a a a', example_word: '阿姨', example_pinyin: 'ā yí' },
+  { pinyin: 'o', type: 'final', category: 'final_simple', emoji: '🐓', mnemonic: '圆圆嘴巴 o o o', example_word: '喔喔', example_pinyin: 'wō wō' },
+  { pinyin: 'e', type: 'final', category: 'final_simple', emoji: '🦢', mnemonic: '扁扁嘴巴 e e e', example_word: '白鹅', example_pinyin: 'bái é' },
+  { pinyin: 'i', type: 'final', category: 'final_simple', emoji: '👕', mnemonic: '一件衣服 i i i', example_word: '衣服', example_pinyin: 'yī fu' },
+  { pinyin: 'u', type: 'final', category: 'final_simple', emoji: '🐢', mnemonic: '一只乌龟 u u u', example_word: '乌龟', example_pinyin: 'wū guī' },
+  { pinyin: 'ü', type: 'final', category: 'final_simple', emoji: '🐟', mnemonic: '一条小鱼 ü ü ü', example_word: '金鱼', example_pinyin: 'jīn yú' },
+  
+  // 复韵母
+  { pinyin: 'ai', type: 'final', category: 'final_compound', emoji: '👵', mnemonic: '挨在一起 ai ai ai', example_word: '喜爱', example_pinyin: 'xǐ ài' },
+  { pinyin: 'ei', type: 'final', category: 'final_compound', emoji: '🔨', mnemonic: '用力砍树 ei ei ei', example_word: '杯子', example_pinyin: 'bēi zi' },
+  { pinyin: 'ui', type: 'final', category: 'final_compound', emoji: '🧣', mnemonic: '围巾围巾 ui ui ui', example_word: '水杯', example_pinyin: 'shuǐ bēi' },
+  { pinyin: 'ao', type: 'final', category: 'final_compound', emoji: '🧥', mnemonic: '一件棉袄 ao ao ao', example_word: '书包', example_pinyin: 'shū bāo' },
+  { pinyin: 'ou', type: 'final', category: 'final_compound', emoji: '🕊️', mnemonic: '一只海鸥 ou ou ou', example_word: '海鸥', example_pinyin: 'hǎi ōu' },
+  { pinyin: 'iu', type: 'final', category: 'final_compound', emoji: '🏊', mnemonic: '游泳游泳 iu iu iu', example_word: '柳树', example_pinyin: 'liǔ shù' },
+  { pinyin: 'ie', type: 'final', category: 'final_compound', emoji: '🥥', mnemonic: '椰子椰子 ie ie ie', example_word: '椰子', example_pinyin: 'yē zi' },
+  { pinyin: 'üe', type: 'final', category: 'final_compound', emoji: '🌙', mnemonic: '月亮月亮 üe üe üe', example_word: '月亮', example_pinyin: 'yuè liang' },
+  { pinyin: 'er', type: 'final', category: 'final_compound', emoji: '👂', mnemonic: '一只耳朵 er er er', example_word: '耳朵', example_pinyin: 'ěr duo' },
+  
+  // 前鼻韵母
+  { pinyin: 'an', type: 'final', category: 'final_front', emoji: '🚪', mnemonic: '天安门 an an an', example_word: '天安门', example_pinyin: 'tiān ān mén' },
+  { pinyin: 'en', type: 'final', category: 'final_front', emoji: '🔘', mnemonic: '摁门铃 en en en', example_word: '摁住', example_pinyin: 'èn zhù' },
+  { pinyin: 'in', type: 'final', category: 'final_front', emoji: '🌲', mnemonic: '树荫树荫 in in in', example_word: '音乐', example_pinyin: 'yīn yuè' },
+  { pinyin: 'un', type: 'final', category: 'final_front', emoji: '🦟', mnemonic: '蚊子蚊子 un un un', example_word: '温水', example_pinyin: 'wēn shuǐ' },
+  { pinyin: 'ün', type: 'final', category: 'final_front', emoji: '☁️', mnemonic: '白云白云 ün ün ün', example_word: '白云', example_pinyin: 'bái yún' },
+  
+  // 后鼻韵母
+  { pinyin: 'ang', type: 'final', category: 'final_back', emoji: '🐑', mnemonic: '一只山羊 ang ang ang', example_word: '山羊', example_pinyin: 'shān yáng' },
+  { pinyin: 'eng', type: 'final', category: 'final_back', emoji: '💡', mnemonic: '开灯关灯 eng eng eng', example_word: '台灯', example_pinyin: 'tái dēng' },
+  { pinyin: 'ing', type: 'final', category: 'final_back', emoji: '🦅', mnemonic: '老鹰老鹰 ing ing ing', example_word: '老鹰', example_pinyin: 'lǎo yīng' },
+  { pinyin: 'ong', type: 'final', category: 'final_back', emoji: '🕰️', mnemonic: '大钟大钟 ong ong ong', example_word: '闹钟', example_pinyin: 'nào zhōng' },
 
-  // Overall Recognition (整体认读) 16
-  { pinyin: 'zhi', type: 'overall', emoji: '🕷️' }, { pinyin: 'chi', type: 'overall', emoji: '🥄' },
-  { pinyin: 'shi', type: 'overall', emoji: '🦁' }, { pinyin: 'ri', type: 'overall', emoji: '☀️' },
-  { pinyin: 'zi', type: 'overall', emoji: '💜' }, { pinyin: 'ci', type: 'overall', emoji: '🦔' },
-  { pinyin: 'si', type: 'overall', emoji: '🐍' }, { pinyin: 'yi', type: 'overall', emoji: '👔' },
-  { pinyin: 'wu', type: 'overall', emoji: '🏠' }, { pinyin: 'yu', type: 'overall', emoji: '🐟' },
-  { pinyin: 'ye', type: 'overall', emoji: '🥥' }, { pinyin: 'yue', type: 'overall', emoji: '🌙' },
-  { pinyin: 'yuan', type: 'overall', emoji: '⭕' }, { pinyin: 'yin', type: 'overall', emoji: '🎵' },
-  { pinyin: 'yun', type: 'overall', emoji: '☁️' }, { pinyin: 'ying', type: 'overall', emoji: '🦅' }
+  // 整体认读音节 (Overall Recognition) - 16个
+  { pinyin: 'zhi', type: 'overall', category: 'overall', emoji: '🕸️', mnemonic: '织网织网 zhi zhi zhi', example_word: '织布', example_pinyin: 'zhī bù' },
+  { pinyin: 'chi', type: 'overall', category: 'overall', emoji: '🥄', mnemonic: '吃饭吃饭 chi chi chi', example_word: '吃亏', example_pinyin: 'chī kuī' },
+  { pinyin: 'shi', type: 'overall', category: 'overall', emoji: '🦁', mnemonic: '狮子狮子 shi shi shi', example_word: '老师', example_pinyin: 'lǎo shī' },
+  { pinyin: 'ri', type: 'overall', category: 'overall', emoji: '🗓️', mnemonic: '日历日历 ri ri ri', example_word: '日记', example_pinyin: 'rì jì' },
+  { pinyin: 'zi', type: 'overall', category: 'overall', emoji: '💜', mnemonic: '紫色紫色 zi zi zi', example_word: '写字', example_pinyin: 'xiě zì' },
+  { pinyin: 'ci', type: 'overall', category: 'overall', emoji: '🦔', mnemonic: '刺猬刺猬 ci ci ci', example_word: '歌词', example_pinyin: 'gē cí' },
+  { pinyin: 'si', type: 'overall', category: 'overall', emoji: '🧶', mnemonic: '蚕丝蚕丝 si si si', example_word: '司机', example_pinyin: 'sī jī' },
+  { pinyin: 'yi', type: 'overall', category: 'overall', emoji: '👕', mnemonic: '衣服衣服 yi yi yi', example_word: '阿姨', example_pinyin: 'ā yí' },
+  { pinyin: 'wu', type: 'overall', category: 'overall', emoji: '🐦', mnemonic: '乌鸦乌鸦 wu wu wu', example_word: '房屋', example_pinyin: 'fáng wū' },
+  { pinyin: 'yu', type: 'overall', category: 'overall', emoji: '🌽', mnemonic: '玉米玉米 yu yu yu', example_word: '玉米', example_pinyin: 'yù mǐ' },
+  { pinyin: 'ye', type: 'overall', category: 'overall', emoji: '🌴', mnemonic: '椰树椰树 ye ye ye', example_word: '树叶', example_pinyin: 'shù yè' },
+  { pinyin: 'yue', type: 'overall', category: 'overall', emoji: '🌙', mnemonic: '月亮月亮 yue yue yue', example_word: '音乐', example_pinyin: 'yīn yuè' },
+  { pinyin: 'yuan', type: 'overall', category: 'overall', emoji: '🏐', mnemonic: '圆圆足球 yuan yuan yuan', example_word: '公园', example_pinyin: 'gōng yuán' },
+  { pinyin: 'yin', type: 'overall', category: 'overall', emoji: '🎵', mnemonic: '音乐音乐 yin yin yin', example_word: '因为', example_pinyin: 'yīn wèi' },
+  { pinyin: 'yun', type: 'overall', category: 'overall', emoji: '☁️', mnemonic: '白云白云 yun yun yun', example_word: '运气', example_pinyin: 'yùn qì' },
+  { pinyin: 'ying', type: 'overall', category: 'overall', emoji: '🦅', mnemonic: '老鹰老鹰 ying ying ying', example_word: '电影', example_pinyin: 'diàn yǐng' }
 ];
 
 export const generateQuizData = () => {
