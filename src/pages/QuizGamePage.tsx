@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Volume2, Clock } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useSettings } from '../context/SettingsContext';
 import { getQuizQuestions, saveUserQuizProgress, recordMistake, getLevelById, getAIQuestions } from '../db/api';
 import { Question, Level } from '../types/types';
 import * as Tone from 'tone';
@@ -14,6 +15,7 @@ export const QuizGamePage = () => {
   const { levelId } = useParams<{ levelId: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { aiConfig } = useSettings();
   
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [levelInfo, setLevelInfo] = useState<Level | null>(null);
@@ -53,7 +55,7 @@ export const QuizGamePage = () => {
       setLoading(true);
       if (levelId === 'ai') {
         if (!user) return;
-        const data = await getAIQuestions(user.id, 10);
+        const data = await getAIQuestions(user.id, 10, aiConfig);
         setQuestions(data as QuizQuestion[]);
         setLevelInfo({
             id: 9999,

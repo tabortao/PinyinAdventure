@@ -86,22 +86,28 @@ export const QuizLevelsPage = () => {
 
       <div className="max-w-4xl mx-auto p-4">
         
-        {/* Grade Tabs */}
-        <div className="flex overflow-x-auto gap-2 py-4 mb-4 no-scrollbar">
-          {[1, 2, 3, 4, 5, 6].map(grade => (
-            <button
-              key={grade}
-              onClick={() => setSelectedGrade(grade)}
-              className={cn(
-                "flex-none px-6 py-3 rounded-2xl font-bold text-sm transition-all shadow-sm whitespace-nowrap",
-                selectedGrade === grade 
-                  ? "bg-brand-primary text-white scale-105 shadow-md ring-2 ring-brand-primary/20" 
-                  : "bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
-              )}
-            >
-              Level {grade}
-            </button>
-          ))}
+        {/* Grade Selector */}
+        <div className="mb-6 flex items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
+           <div className="flex items-center gap-3">
+             <div className="w-10 h-10 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-bold">
+               {selectedGrade}
+             </div>
+             <div>
+               <h2 className="font-bold text-slate-800 dark:text-white">选择年级</h2>
+               <p className="text-xs text-slate-400">当前显示 {selectedGrade} 年级关卡</p>
+             </div>
+           </div>
+           
+           <select 
+             value={selectedGrade}
+             onChange={(e) => setSelectedGrade(Number(e.target.value))}
+             className="bg-slate-50 dark:bg-slate-800 border-none rounded-xl py-2 pl-4 pr-10 font-bold text-slate-700 dark:text-slate-200 cursor-pointer focus:ring-2 focus:ring-brand-primary/50 outline-none appearance-none"
+             style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em' }}
+           >
+             {[1, 2, 3, 4, 5, 6].map(grade => (
+               <option key={grade} value={grade}>{grade} 年级</option>
+             ))}
+           </select>
         </div>
 
         {/* AI Challenge Card */}

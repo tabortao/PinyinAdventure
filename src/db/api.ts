@@ -2,6 +2,7 @@ import { initDB, seedDatabase } from './localDB';
 import { Level, Question, UserProgress, Mistake, PinyinChart, UserPinyinProgress, UserQuizProgress } from '../types/types';
 
 // Initialize DB on module load or first call
+import { AIConfig, generateReviewQuestions } from '../lib/ai';
 // We can expose an init function
 export const initializeApp = async () => {
   await seedDatabase();
@@ -235,7 +236,7 @@ export const getQuizQuestions = async (levelId: number, count: number = 10) => {
   return results;
 };
 
-export const getAIQuestions = async (userId: string, count: number = 10) => {
+export const getAIQuestions = async (userId: string, count: number = 10, aiConfig?: AIConfig) => {
   const db = await initDB();
   
   // 1. Fetch user's mistakes (Weaknesses)
@@ -244,20 +245,39 @@ export const getAIQuestions = async (userId: string, count: number = 10) => {
   // Sort by error_count desc
   mistakes.sort((a, b) => b.error_count - a.error_count);
   
-  // Pick top 5 questions from mistakes
+  // Pick top mistakes
   const topMistakes = mistakes.slice(0, 5);
-  
   const questionIds = topMistakes.map(m => m.question_id);
   
   // Fetch these questions
   let candidates: Question[] = [];
-  for (const qId of questionIds) {
-      const q = await db.get('questions', qId);
-      if (q) candidates.push(q);
+  const mistakeQuestions: { question: Question, wrong_pinyin: string }[] = [];
+
+  for (const m of topMistakes) {
+      const q = await db.get('questions', m.question_id);
+      if (q) {
+        candidates.push(q);
+        mistakeQuestions.push({ question: q, wrong_pinyin: m.wrong_pinyin });
+      }
   }
   
-  // 2. Fill the rest with random questions (Strengthen/Explore)
-  const needed = count - candidates.length;
+  // 2. AI Generation (if configured)
+  if (aiConfig && aiConfig.apiKey && mistakeQuestions.length > 0) {
+      try {
+          // Generate 3-5 new questions based on mistakes
+          const aiCount = Math.min(5, Math.max(2, mistakeQuestions.length));
+          const aiQuestions = await generateReviewQuestions(mistakeQuestions, aiConfig, aiCount);
+          if (aiQuestions && aiQuestions.length > 0) {
+              candidates = [...candidates, ...aiQuestions];
+          }
+      } catch (e) {
+          console.error("AI Generation failed, falling back to local questions", e);
+      }
+  }
+
+  // 3. Fill the rest with random questions (Strengthen/Explore)
+  // Ensure we have at least 'count' questions if possible, but don't force duplicates if DB is small
+  let needed = count - candidates.length;
   if (needed > 0) {
       const allQuestions = await db.getAll('questions');
       const filtered = allQuestions.filter(q => q.type === 'character' && !questionIds.includes(q.id));
@@ -266,10 +286,14 @@ export const getAIQuestions = async (userId: string, count: number = 10) => {
   }
   
   // Deduplicate and Shuffle
-  candidates = Array.from(new Map(candidates.map(item => [item.id, item])).values());
-  candidates = candidates.sort(() => 0.5 - Math.random());
+  // Use a map to deduplicate by content (since AI might generate similar content to existing ones)
+  const uniqueMap = new Map();
+  candidates.forEach(c => uniqueMap.set(c.content, c));
+  candidates = Array.from(uniqueMap.values());
   
-  // 3. Generate Options (Reuse logic from getQuizQuestions)
+  candidates = candidates.sort(() => 0.5 - Math.random()).slice(0, count);
+  
+  // 4. Generate Options
   const allLevelsQuestions = await db.getAll('questions');
   const pinyinPool = Array.from(new Set(allLevelsQuestions.map(q => q.pinyin).filter(p => p)));
   
