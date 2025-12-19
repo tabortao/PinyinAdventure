@@ -331,9 +331,9 @@ export const FishingGamePage = () => {
          </button>
        </div>
        
-       <div className="absolute top-4 right-4 z-20 flex flex-col items-end">
+       <div className="absolute top-20 right-4 z-20 flex flex-col items-end">
           {/* Score & Basket Area */}
-          <div className="flex flex-col items-end gap-2">
+          <div className="flex flex-col items-end gap-6">
               <div className="bg-white/20 backdrop-blur px-4 py-2 rounded-xl text-white font-bold flex items-center gap-2 mb-2 shadow-sm border border-white/20">
                 <span>⭐</span>
                 <span>{score} / {questions.length}</span>
@@ -358,7 +358,7 @@ export const FishingGamePage = () => {
        </div>
 
        {/* Target Board */}
-       <div className="absolute top-20 left-1/2 -translate-x-1/2 z-20">
+       <div className="absolute top-20 left-[75%] -translate-x-1/2 z-20">
          <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl border-4 border-amber-300 px-8 py-4 text-center transform hover:scale-105 transition-transform min-w-[200px]">
            <div className="text-sm text-slate-400 font-bold mb-1 uppercase tracking-widest">目标拼音</div>
            <div className="text-6xl font-black text-blue-600 font-mono tracking-wider drop-shadow-sm">
@@ -456,10 +456,10 @@ export const FishingGamePage = () => {
                         <circle cx="26" cy="25" r="1.5" fill="black" />
                      </svg>
                      
-                     {/* Text - Centered and upright - Smaller for kids */}
-                     <div className="absolute inset-0 flex items-center justify-center pb-1 pr-4">
+                     {/* Text - Centered and upright - Smaller for kids - Closer to tail (Right) */}
+                     <div className="absolute inset-0 flex items-center justify-center pb-1 pl-4">
                         <span 
-                            className="text-xl md:text-2xl font-black text-white drop-shadow-md z-10" 
+                            className="text-lg md:text-xl font-black text-white drop-shadow-md z-10" 
                             style={{ 
                                 transform: `scaleX(${fish.direction})`, // Flip text back
                                 display: 'inline-block' 

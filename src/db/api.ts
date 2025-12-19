@@ -35,9 +35,46 @@ export const getLevelById = async (id: number) => {
 };
 
 // Questions
-export const getQuestionsByLevel = async (levelId: number) => {
+export const addPracticeScore = async (userId: string, points: number) => {
   const db = await initDB();
-  return await db.getAllFromIndex('questions', 'by-level', levelId);
+  const PRACTICE_LEVEL_ID = 99999;
+  
+  const index = db.transaction('user_progress').store.index('by-user-level');
+  const existing = await index.get([userId, PRACTICE_LEVEL_ID]);
+
+  let newScore = points;
+  let id: string | number | undefined = undefined;
+
+  if (existing) {
+    newScore = (existing.score || 0) + points;
+    id = existing.id;
+  }
+
+  const item: UserProgress = {
+    id: id as (string | number),
+    user_id: userId,
+    level_id: PRACTICE_LEVEL_ID,
+    stars: 3,
+    score: newScore,
+    completed_at: new Date().toISOString()
+  };
+  
+  if (!id) delete (item as any).id;
+
+  const tx = db.transaction('user_progress', 'readwrite');
+  await tx.store.put(item);
+  await tx.done;
+  
+  return item;
+};
+
+export const getQuestionsByLevel = async (levelId: number, type?: string) => {
+  const db = await initDB();
+  let questions = await db.getAllFromIndex('questions', 'by-level', levelId);
+  if (type) {
+    questions = questions.filter(q => q.type === type);
+  }
+  return questions;
 };
 
 export const getRandomQuestionsByGrade = async (grade: number, type: string, count: number = 10) => {
@@ -139,11 +176,20 @@ export const saveUserQuizProgress = async (userId: string, levelId: number, scor
   return item;
 };
 
-export const getQuizQuestions = async (levelId: number, count: number = 10) => {
+export const getQuizQuestions = async (levelId: number, count: number = 10, mode: string = 'character') => {
   const db = await initDB();
   // Get questions for this level
   const questions = await db.getAllFromIndex('questions', 'by-level', levelId);
-  let candidates = questions.filter(q => q.type === 'character');
+  
+  // Filter by mode
+  // If mode is 'all', we allow character and word (exclude sentence for quiz?)
+  // User said "Look and Spell doesn't need sentence mode".
+  let candidates = [];
+  if (mode === 'all') {
+      candidates = questions.filter(q => q.type !== 'sentence');
+  } else {
+      candidates = questions.filter(q => q.type === mode);
+  }
 
   // If not enough, fetch from same grade levels
   if (candidates.length < count) {
@@ -152,12 +198,14 @@ export const getQuizQuestions = async (levelId: number, count: number = 10) => {
        const levels = await db.getAllFromIndex('levels', 'by-grade', level.grade);
        const otherLevelIds = levels.map(l => l.id).filter(id => id !== levelId);
        
-       // Optimization: Randomly pick a few levels to fetch from instead of all
-       // Or just fetch all questions from random other level
        for (const lId of otherLevelIds) {
          if (candidates.length >= count) break;
          const qs = await db.getAllFromIndex('questions', 'by-level', lId);
-         candidates = candidates.concat(qs.filter(q => q.type === 'character'));
+         if (mode === 'all') {
+             candidates = candidates.concat(qs.filter(q => q.type !== 'sentence'));
+         } else {
+             candidates = candidates.concat(qs.filter(q => q.type === mode));
+         }
        }
      }
   }
@@ -169,62 +217,52 @@ export const getQuizQuestions = async (levelId: number, count: number = 10) => {
   candidates = candidates.sort(() => 0.5 - Math.random()).slice(0, count);
 
   // For each question, generate 3 distractors
-  // Strategy: Pick from other existing questions' pinyins to ensure validity.
-  // Prioritize "similar" pinyins (confusing ones).
+  const allLevelsQuestions = await db.getAll('questions'); 
   
-  // 1. Get pool of all valid pinyins from questions
-  // We can fetch all questions to build a pool. 
-  // Optimization: caching this pool if possible, but for now just fetch.
-  // We already fetched 'questions' for this level. We should fetch MORE for a good pool.
-  const allLevelsQuestions = await db.getAll('questions'); // This might be expensive if thousands, but for <1000 it's fine.
-  const pinyinPool = Array.from(new Set(allLevelsQuestions.map(q => q.pinyin).filter(p => p)));
+  // Filter pool based on mode to ensure distractors make sense (e.g. don't mix word pinyin with char pinyin if strict, 
+  // but if mode is 'all', maybe mixed is okay? 
+  // Actually, for a specific question of type 'character', distractors should probably be 'character' pinyins.
+  // But to keep it simple, if mode is 'all', we use 'all' pool (minus sentences).
+  let poolSource = allLevelsQuestions;
+  if (mode === 'all') {
+      poolSource = allLevelsQuestions.filter(q => q.type !== 'sentence');
+  } else {
+      poolSource = allLevelsQuestions.filter(q => q.type === mode);
+  }
+  
+  const pinyinPool = Array.from(new Set(poolSource.map(q => q.pinyin).filter(p => p)));
 
   const results = candidates.map(q => {
     const correct = q.pinyin;
-    
-    // Helper to normalize pinyin (remove tones roughly for comparison)
-    // Simple way: just compare string similarity
+    // ... same similarity logic ...
     const similarity = (target: string, candidate: string) => {
         if (!target || !candidate) return 0;
         let score = 0;
-        // Same length reward
         if (target.length === candidate.length) score += 2;
-        // Same start reward
         if (target[0] === candidate[0]) score += 1;
-        // Same end reward
         if (target[target.length-1] === candidate[candidate.length-1]) score += 1;
-        // Contains substring?
         if (target.includes(candidate) || candidate.includes(target)) score += 1;
-        
         return score;
     };
 
-    // Filter out correct answer
     let others = pinyinPool.filter(p => p !== correct);
+    // Optimization: if we have mixed types, maybe we should prefer distractors of same length/type?
+    // The similarity function rewards same length, so it naturally picks better distractors.
     
-    // Calculate scores
     const scored = others.map(p => ({ p, score: similarity(correct, p) }));
     
-    // Sort by score desc, then random
     scored.sort((a, b) => {
         if (b.score !== a.score) return b.score - a.score;
         return 0.5 - Math.random();
     });
     
-    // Pick top 3 (high similarity)
-    // If we want *some* randomness, we can pick from top 10.
     const topCandidates = scored.slice(0, 10);
     const distractors = topCandidates.sort(() => 0.5 - Math.random()).slice(0, 3).map(i => i.p);
     
-    // If not enough distractors (e.g. pool too small), fill with randoms
     while (distractors.length < 3) {
-        // Fallback to random strings or just repeat? 
-        // Better to use pinyin charts fallback if we really have to, but pool should be enough.
-        // Let's just duplicate to avoid crash
         distractors.push('ā'); 
     }
 
-    // Combine and shuffle options
     const options = [correct, ...distractors].sort(() => 0.5 - Math.random());
     
     return {

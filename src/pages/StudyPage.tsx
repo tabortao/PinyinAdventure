@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { PinyinChart, UserPinyinProgress } from '../types/types';
-import { getPinyinCharts, getUserPinyinProgress, updatePinyinProgress, getPinyinReviewList, getUserQuizProgress } from '../db/api';
+import { getPinyinCharts, getUserPinyinProgress, updatePinyinProgress, getPinyinReviewList, getUserQuizProgress, addPracticeScore } from '../db/api';
 import { BrainCircuit, Check, X, Volume2, BookOpen, Star, Sparkles, ChevronDown, Smile, Play, LayoutGrid, ArrowLeft } from 'lucide-react';
 import { playCorrectSound, playWrongSound } from '../lib/audio';
 import { getPinyinTTS } from '../lib/pinyinTTS';
@@ -140,6 +140,7 @@ export const StudyPage = () => {
     
     if (isRemembered) {
       playCorrectSound();
+      await addPracticeScore(user.id, 1);
     } else {
       playWrongSound();
     }

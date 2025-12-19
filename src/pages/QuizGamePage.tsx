@@ -15,7 +15,7 @@ export const QuizGamePage = () => {
   const { levelId } = useParams<{ levelId: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { aiConfig } = useSettings();
+  const { aiConfig, mode } = useSettings();
   
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [levelInfo, setLevelInfo] = useState<Level | null>(null);
@@ -65,8 +65,9 @@ export const QuizGamePage = () => {
             description: '根据你的学习情况量身定制'
         });
       } else {
+        const safeMode = mode === 'sentence' ? 'character' : mode;
         const [data, level] = await Promise.all([
-          getQuizQuestions(Number(levelId), 10),
+          getQuizQuestions(Number(levelId), 10, safeMode),
           getLevelById(Number(levelId))
         ]);
         setQuestions(data);
