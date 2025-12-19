@@ -25,7 +25,6 @@ export const Layout = () => {
 
   const navItems = [
     { name: '首页', path: '/', icon: <Home size={24} /> },
-    { name: '大冒险', path: '/adventure', icon: <Map size={24} /> },
     { name: '错音本', path: '/mistakes', icon: <BookX size={24} /> },
     { name: '设置', path: '/settings', icon: <Settings size={24} /> },
   ];

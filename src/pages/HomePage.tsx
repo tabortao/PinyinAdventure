@@ -19,24 +19,6 @@ export const HomePage = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-             {/* Fishing Game (Featured) */}
-             <button 
-               onClick={() => navigate('/fishing')}
-               className="w-full bg-gradient-to-br from-cyan-500 to-blue-600 text-white p-6 rounded-3xl flex items-center gap-5 shadow-lg shadow-cyan-200 dark:shadow-none hover:shadow-xl hover:scale-[1.02] transition-all group text-left relative overflow-hidden md:col-span-2 border-4 border-white/20"
-             >
-                <div className="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-bl-[100px] transition-transform group-hover:scale-150" />
-                <div className="absolute left-10 bottom-0 w-24 h-24 bg-white/10 rounded-full blur-xl" />
-                
-                <div className="w-20 h-20 bg-white/20 backdrop-blur-md text-white rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-inner relative z-10 shrink-0 border border-white/30">
-                   <Fish size={40} />
-                </div>
-                <div className="relative z-10">
-                   <div className="bg-white/20 text-xs px-2 py-0.5 rounded-full inline-block mb-1 font-bold">NEW</div>
-                   <h3 className="text-2xl font-black mb-1">钓鱼学拼音</h3>
-                   <p className="text-white/80 font-medium">寓教于乐，60关卡等你挑战！</p>
-                </div>
-             </button>
-
              {/* Study - Pinyin Basics */}
              <button 
                onClick={() => navigate('/study')}
@@ -82,6 +64,22 @@ export const HomePage = () => {
                 <div className="relative z-10">
                    <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-1 group-hover:text-brand-primary transition-colors">拼音大冒险</h3>
                    <p className="text-sm text-slate-400 dark:text-slate-500 font-medium">循序渐进的关卡挑战</p>
+                </div>
+             </button>
+
+             {/* Fishing Game (Moved) */}
+             <button 
+               onClick={() => navigate('/fishing')}
+               className="w-full bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 p-6 rounded-3xl flex items-center gap-5 hover:border-brand-primary hover:shadow-lg transition-all group text-left relative overflow-hidden"
+             >
+                <div className="absolute right-0 top-0 w-24 h-24 bg-cyan-500/5 rounded-bl-[100px] transition-transform group-hover:scale-150" />
+                
+                <div className="w-16 h-16 bg-cyan-100 dark:bg-cyan-900/30 text-cyan-500 dark:text-cyan-400 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm relative z-10 shrink-0">
+                   <Fish size={32} />
+                </div>
+                <div className="relative z-10">
+                   <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-1 group-hover:text-brand-primary transition-colors">钓鱼学拼音</h3>
+                   <p className="text-sm text-slate-400 dark:text-slate-500 font-medium">60关卡，满载而归！</p>
                 </div>
              </button>
 
