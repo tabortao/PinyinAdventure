@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { getFishingQuestions } from '../db/fishingApi';
-import { recordMistake, saveUserProgress, getLevelById } from '../db/api';
+import { recordMistake, saveUserProgress, getLevelById, updateDailyStats } from '../db/api';
 import { Question, Level } from '../types/types';
 import * as Tone from 'tone';
 
@@ -259,6 +259,7 @@ export const FishingGamePage = () => {
       else if (ratio >= 0.6) stars = 2;
       
       await saveUserProgress(user.id, levelInfo.id, stars, finalScore);
+      await updateDailyStats(user.id, finalScore, questions.length);
     }
   };
 
@@ -358,7 +359,7 @@ export const FishingGamePage = () => {
        </div>
 
        {/* Target Board */}
-       <div className="absolute top-20 left-[75%] -translate-x-1/2 z-20">
+       <div className="absolute top-20 right-[10%] z-20">
          <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl border-4 border-amber-300 px-8 py-4 text-center transform hover:scale-105 transition-transform min-w-[200px]">
            <div className="text-sm text-slate-400 font-bold mb-1 uppercase tracking-widest">目标拼音</div>
            <div className="text-6xl font-black text-blue-600 font-mono tracking-wider drop-shadow-sm">
@@ -375,7 +376,7 @@ export const FishingGamePage = () => {
              x1="50%" 
              y1="0" 
              x2={`${hookPos.x}%`} 
-             y2={`${hookPos.y}%`} 
+             y2={`${hookPos.y + 2}%`} 
              stroke="#e2e8f0" 
              strokeWidth="2"
              strokeDasharray="4 2"

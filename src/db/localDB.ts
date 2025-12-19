@@ -38,10 +38,22 @@ interface AppDB extends DBSchema {
     value: UserQuizProgress;
     indexes: { 'by-user-level': [string, number]; 'by-user': string };
   };
+  daily_stats: {
+    key: number;
+    value: {
+        id?: number;
+        user_id: string;
+        date: string;
+        correct_count: number;
+        total_count: number;
+        study_duration: number;
+    };
+    indexes: { 'by-user-date': [string, string]; 'by-user': string };
+  };
 }
 
 const DB_NAME = 'pinyin-game-db';
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 
 let dbPromise: Promise<IDBPDatabase<AppDB>>;
 
@@ -88,6 +100,12 @@ export const initDB = () => {
         if (!db.objectStoreNames.contains('user_quiz_progress')) {
           const store = db.createObjectStore('user_quiz_progress', { keyPath: 'id', autoIncrement: true });
           store.createIndex('by-user-level', ['user_id', 'level_id'], { unique: true });
+          store.createIndex('by-user', 'user_id');
+        }
+        // Daily Stats (Added in v3)
+        if (!db.objectStoreNames.contains('daily_stats')) {
+          const store = db.createObjectStore('daily_stats', { keyPath: 'id', autoIncrement: true });
+          store.createIndex('by-user-date', ['user_id', 'date'], { unique: true });
           store.createIndex('by-user', 'user_id');
         }
       },
@@ -187,12 +205,14 @@ export const exportData = async (userId: string) => {
   const mistakes = await db.getAllFromIndex('mistakes', 'by-user', userId);
   const pinyinProgress = await db.getAllFromIndex('user_pinyin_progress', 'by-user', userId);
   const quizProgress = await db.getAllFromIndex('user_quiz_progress', 'by-user', userId);
+  const dailyStats = await db.getAllFromIndex('daily_stats', 'by-user', userId);
 
   return JSON.stringify({
     user_progress: progress,
     mistakes: mistakes,
     user_pinyin_progress: pinyinProgress,
     user_quiz_progress: quizProgress,
+    daily_stats: dailyStats,
     version: 1,
     exported_at: new Date().toISOString()
   });
@@ -275,6 +295,22 @@ export const importData = async (json: string, userId: string) => {
         item.user_id = userId;
         const index = tx.store.index('by-user-level');
         const existing = await index.get([userId, item.level_id]);
+        if (existing) {
+          item.id = existing.id;
+        } else {
+          delete item.id;
+        }
+        await tx.store.put(item);
+      }
+      await tx.done;
+    }
+    
+    if (data.daily_stats && Array.isArray(data.daily_stats)) {
+      const tx = db.transaction('daily_stats', 'readwrite');
+      for (const item of data.daily_stats) {
+        item.user_id = userId;
+        const index = tx.store.index('by-user-date');
+        const existing = await index.get([userId, item.date]);
         if (existing) {
           item.id = existing.id;
         } else {

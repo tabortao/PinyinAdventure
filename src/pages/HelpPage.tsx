@@ -54,7 +54,7 @@ export const HelpPage = () => {
                { icon: <Gamepad2 size={16} />, text: '寓教于乐：游戏化闯关体验' },
                { icon: <Zap size={16} />, text: '科学记忆：艾宾浩斯智能复习' },
                { icon: <Sparkles size={16} />, text: '即时反馈：动画激励系统' },
-               { icon: <Smartphone size={16} />, text: '多端同步：手机电脑无缝切换' },
+               { icon: <BrainCircuit size={16} />, text: 'AI驱动：个性化学习路径' },
              ].map((item, i) => (
                <li key={i} className="flex items-center gap-3 text-slate-600 dark:text-slate-400 text-sm font-bold">
                  <span className="text-slate-400 dark:text-slate-600">{item.icon}</span>
@@ -89,6 +89,10 @@ export const HelpPage = () => {
                 <div className="w-1.5 h-1.5 rounded-full bg-brand-secondary mt-1.5 flex-shrink-0"></div>
                 <span className="text-slate-600 dark:text-slate-400 text-sm"><strong className="text-slate-800 dark:text-slate-200">AI 助教</strong>：智能生成复习关卡，查漏补缺。</span>
              </li>
+             <li className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-brand-secondary mt-1.5 flex-shrink-0"></div>
+                <span className="text-slate-600 dark:text-slate-400 text-sm"><strong className="text-slate-800 dark:text-slate-200">钓鱼游戏</strong>：趣味益智，手眼协调训练。</span>
+             </li>
            </ul>
         </div>
       </div>
@@ -97,7 +101,7 @@ export const HelpPage = () => {
         <div className="flex flex-col items-center gap-2">
             <span className="text-slate-400 dark:text-slate-500 text-xs font-bold">作者：Tabor</span>
             <div className="inline-block px-4 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 text-xs font-bold font-mono transition-colors">
-              v1.6.1
+              v1.6.2
             </div>
         </div>
         
@@ -109,7 +113,6 @@ export const HelpPage = () => {
            微信反馈
         </button>
 
-        <p className="text-slate-300 dark:text-slate-700 text-xs transition-colors">© 2025 智能拼音大闯关 Team</p>
       </div>
     </div>
   );

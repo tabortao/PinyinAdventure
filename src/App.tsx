@@ -17,6 +17,7 @@ import { QuizLevelsPage } from './pages/QuizLevelsPage';
 import { FishingStagesPage } from './pages/FishingStagesPage';
 import { FishingLevelSelectPage } from './pages/FishingLevelSelectPage';
 import { FishingGamePage } from './pages/FishingGamePage';
+import { StatisticsPage } from './pages/StatisticsPage';
 import { initializeApp } from './db/api';
 
 const App: React.FC = () => {
@@ -37,6 +38,7 @@ const App: React.FC = () => {
                 <Route path="/adventure" element={<AdventurePage />} />
                 <Route path="/study" element={<StudyPage />} />
                 <Route path="/mistakes" element={<MistakesPage />} />
+                <Route path="/stats" element={<StatisticsPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/help" element={<HelpPage />} />
               </Route>

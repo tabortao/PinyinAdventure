@@ -559,3 +559,33 @@ export const getFishingQuestions = async (difficulty: number, count: number = 10
   
   return filtered.sort(() => 0.5 - Math.random()).slice(0, count);
 };
+
+// Stats
+export const updateDailyStats = async (userId: string, correctDelta: number, totalDelta: number, durationDelta: number = 0) => {
+    const db = await initDB();
+    const today = new Date().toISOString().split('T')[0];
+    const tx = db.transaction('daily_stats', 'readwrite');
+    const index = tx.store.index('by-user-date');
+    const existing = await index.get([userId, today]);
+    
+    if (existing) {
+        existing.correct_count += correctDelta;
+        existing.total_count += totalDelta;
+        existing.study_duration += durationDelta;
+        await tx.store.put(existing);
+    } else {
+        await tx.store.add({
+            user_id: userId,
+            date: today,
+            correct_count: correctDelta,
+            total_count: totalDelta,
+            study_duration: durationDelta
+        });
+    }
+    await tx.done;
+};
+
+export const getUserStats = async (userId: string) => {
+    const db = await initDB();
+    return await db.getAllFromIndex('daily_stats', 'by-user', userId);
+};

@@ -1,6 +1,6 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { LogOut, User, Trophy, Menu, X, Settings, Gamepad2, BookX, HelpCircle, BookOpen, Home, Map } from 'lucide-react';
+import { LogOut, User, Trophy, Menu, X, Settings, Gamepad2, BookX, HelpCircle, BookOpen, Home, Map, BarChart2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { getTotalScore } from '../../db/api';
 
@@ -26,6 +26,7 @@ export const Layout = () => {
   const navItems = [
     { name: '首页', path: '/', icon: <Home size={24} /> },
     { name: '错音本', path: '/mistakes', icon: <BookX size={24} /> },
+    { name: '统计', path: '/stats', icon: <BarChart2 size={24} /> },
     { name: '设置', path: '/settings', icon: <Settings size={24} /> },
   ];
 
