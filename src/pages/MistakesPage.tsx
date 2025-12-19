@@ -216,7 +216,7 @@ export const MistakesPage = () => {
     <div className="max-w-4xl mx-auto px-4 pb-20">
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4 mt-6">
         <div>
-          <h1 className="text-3xl font-black text-brand-dark dark:text-brand-primary mb-2 transition-colors">错音本 (智能复习)</h1>
+          <h1 className="text-3xl font-black text-brand-dark dark:text-brand-primary mb-2 transition-colors">错音本</h1>
           <p className="text-slate-500 dark:text-slate-400 transition-colors">
             {activeTab === 'questions' 
               ? `基于艾宾浩斯记忆曲线，今日需复习 ${mistakes.length} 个难点。`
@@ -248,7 +248,7 @@ export const MistakesPage = () => {
              <div className="mb-8 flex justify-end">
                <button 
                 onClick={startReview}
-                className="bg-brand-secondary hover:bg-orange-500 text-white px-8 py-3 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all active:scale-95 flex items-center gap-2"
+                className="bg-brand-secondary hover:bg-orange-500 text-white px-6 py-2 rounded-lg font-bold shadow-md hover:shadow-lg transition-all active:scale-95 flex items-center gap-2 text-sm"
               >
                 <RefreshCw /> 开始复习
               </button>

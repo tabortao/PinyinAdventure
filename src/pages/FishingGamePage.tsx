@@ -102,7 +102,7 @@ export const FishingGamePage = () => {
       pinyin: q.pinyin,
       x: Math.random() * 80 + 10, // 10-90%
       y: Math.random() * 50 + 30, // 30-80% depth (deeper)
-      speed: (Math.random() * 0.2 + 0.1) * (Math.random() > 0.5 ? 1 : -1),
+      speed: (Math.random() * 0.05 + 0.02) * (Math.random() > 0.5 ? 1 : -1), // Very slow speed for kids
       direction: Math.random() > 0.5 ? 1 : -1,
       color: FISH_COLORS[Math.floor(Math.random() * FISH_COLORS.length)],
       isCaught: false,
@@ -392,8 +392,24 @@ export const FishingGamePage = () => {
          }}
        >
            {/* The Hook Graphic */}
-           <div className="text-4xl filter drop-shadow-lg -translate-y-2">
-             🪝
+           <div className="w-10 h-16 -translate-y-1 filter drop-shadow-lg">
+             <svg viewBox="0 0 40 60" className="w-full h-full">
+               <defs>
+                 <linearGradient id="hookGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                   <stop offset="0%" stopColor="#94a3b8" />
+                   <stop offset="50%" stopColor="#cbd5e1" />
+                   <stop offset="100%" stopColor="#94a3b8" />
+                 </linearGradient>
+               </defs>
+               {/* Eyelet */}
+               <circle cx="20" cy="4" r="3" stroke="url(#hookGrad)" strokeWidth="2" fill="none" />
+               {/* Shank */}
+               <path d="M20 7 L20 40" stroke="url(#hookGrad)" strokeWidth="3" />
+               {/* Bend & Point */}
+               <path d="M20 40 Q20 55 32 45 L35 40" stroke="url(#hookGrad)" strokeWidth="3" fill="none" strokeLinecap="round" />
+               {/* Barb */}
+               <path d="M35 40 L30 43" stroke="url(#hookGrad)" strokeWidth="2" strokeLinecap="round" />
+             </svg>
            </div>
        </div>
 
@@ -440,10 +456,10 @@ export const FishingGamePage = () => {
                         <circle cx="26" cy="25" r="1.5" fill="black" />
                      </svg>
                      
-                     {/* Text - Centered and upright */}
+                     {/* Text - Centered and upright - Smaller for kids */}
                      <div className="absolute inset-0 flex items-center justify-center pb-1 pr-4">
                         <span 
-                            className="text-3xl md:text-4xl font-black text-white drop-shadow-md z-10" 
+                            className="text-xl md:text-2xl font-black text-white drop-shadow-md z-10" 
                             style={{ 
                                 transform: `scaleX(${fish.direction})`, // Flip text back
                                 display: 'inline-block' 
