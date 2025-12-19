@@ -391,7 +391,7 @@ export const getMistakes = async (userId: string) => {
   }));
   
   // Sort
-  return results.sort((a, b) => a.next_review_at.localeCompare(b.next_review_at));
+  return results.filter(r => r.question).sort((a, b) => a.next_review_at.localeCompare(b.next_review_at));
 };
 
 export const recordMistake = async (userId: string, questionId: number, wrongPinyin: string) => {

@@ -89,11 +89,30 @@ export const HelpPage = () => {
                 <div className="w-1.5 h-1.5 rounded-full bg-brand-secondary mt-1.5 flex-shrink-0"></div>
                 <span className="text-slate-600 dark:text-slate-400 text-sm"><strong className="text-slate-800 dark:text-slate-200">AI 助教</strong>：智能生成复习关卡，查漏补缺。</span>
              </li>
-             <li className="flex items-start gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-brand-secondary mt-1.5 flex-shrink-0"></div>
-                <span className="text-slate-600 dark:text-slate-400 text-sm"><strong className="text-slate-800 dark:text-slate-200">钓鱼游戏</strong>：趣味益智，手眼协调训练。</span>
-             </li>
            </ul>
+        </div>
+
+        {/* Game Intro */}
+        <div className="col-span-1 md:col-span-2 bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800 transition-colors">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center text-blue-600 dark:text-blue-400 transition-colors">
+                <Gamepad2 size={20} />
+              </div>
+              <h2 className="text-lg font-bold text-slate-800 dark:text-white">游戏介绍</h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {[
+                    { title: '拼音基础', desc: '系统学习声母、韵母发音规则，打好基础。' },
+                    { title: '看字识音', desc: '根据汉字选择正确拼音，强化认读能力。' },
+                    { title: '拼音大冒险', desc: '沉浸式闯关游戏，在冒险中掌握拼音运用。' },
+                    { title: '钓鱼学拼音', desc: '趣味益智小游戏，锻炼手眼协调与反应力。' }
+                ].map((game, i) => (
+                    <div key={i} className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                        <h3 className="font-bold text-slate-700 dark:text-slate-200 mb-1">{game.title}</h3>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">{game.desc}</p>
+                    </div>
+                ))}
+            </div>
         </div>
       </div>
 
@@ -101,7 +120,7 @@ export const HelpPage = () => {
         <div className="flex flex-col items-center gap-2">
             <span className="text-slate-400 dark:text-slate-500 text-xs font-bold">作者：Tabor</span>
             <div className="inline-block px-4 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 text-xs font-bold font-mono transition-colors">
-              v1.6.2
+              v1.6.5
             </div>
         </div>
         

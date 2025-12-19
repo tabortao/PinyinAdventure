@@ -171,7 +171,7 @@ export const MistakesPage = () => {
           </div>
           
           <div className={`
-             bg-white w-48 h-48 md:w-64 md:h-64 rounded-3xl shadow-lg border-b-8 flex items-center justify-center mb-8 text-6xl md:text-8xl font-bold text-slate-800 relative overflow-hidden transition-colors
+             bg-white dark:bg-slate-800 w-48 h-48 md:w-64 md:h-64 rounded-3xl shadow-lg border-b-8 flex items-center justify-center mb-8 text-6xl md:text-8xl font-bold text-slate-800 dark:text-white relative overflow-hidden transition-colors
              ${currentItem.type === 'ai' ? 'border-violet-500' : 'border-brand-accent'}
           `}>
             {content}
@@ -189,16 +189,16 @@ export const MistakesPage = () => {
           </div>
 
           <div className={`
-            w-full max-w-sm bg-white rounded-xl p-4 text-center mb-6 shadow-sm border-2 transition-all
-            ${input ? 'border-brand-primary' : 'border-slate-200'}
+            w-full max-w-sm bg-white dark:bg-slate-800 rounded-xl p-4 text-center mb-6 shadow-sm border-2 transition-all
+            ${input ? 'border-brand-primary' : 'border-slate-200 dark:border-slate-700'}
           `}>
-            <span className="text-3xl font-mono text-slate-700 min-h-[2.5rem] block">
-              {input || <span className="text-slate-300">请输入拼音</span>}
+            <span className="text-3xl font-mono text-slate-700 dark:text-slate-200 min-h-[2.5rem] block">
+              {input || <span className="text-slate-300 dark:text-slate-600">请输入拼音</span>}
             </span>
           </div>
         </div>
 
-        <div className="bg-white shadow-md">
+        <div className="bg-white dark:bg-slate-900 shadow-md transition-colors">
           <PinyinKeyboard 
             onInput={handleInput}
             onDelete={handleDelete}
