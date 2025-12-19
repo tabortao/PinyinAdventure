@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { getMistakes, reviewMistakeSuccess, recordMistake, getPinyinReviewList } from '../db/api';
-import { Mistake, PinyinChart } from '../types/types';
+import { Mistake, PinyinChart, Question } from '../types/types';
 import { useAuth } from '../context/AuthContext';
+import { useSettings } from '../context/SettingsContext';
+import { generateReviewQuestions } from '../lib/ai';
 import { PinyinKeyboard } from '../components/game/PinyinKeyboard';
 import { applyTone, checkAnswer } from '../lib/pinyinUtils';
 import { Check, X, RefreshCw, Calendar, Trophy, BookOpen } from 'lucide-react';
@@ -9,15 +11,22 @@ import { Link, useNavigate } from 'react-router-dom';
 
 export const MistakesPage = () => {
   const { user } = useAuth();
+  const { aiConfig } = useSettings();
   const navigate = useNavigate();
   const [mistakes, setMistakes] = useState<Mistake[]>([]);
   const [pinyinMistakes, setPinyinMistakes] = useState<PinyinChart[]>([]);
+  
+  // Review Queue State
+  type ReviewItem = { type: 'mistake', data: Mistake } | { type: 'ai', data: Question };
+  const [reviewQueue, setReviewQueue] = useState<ReviewItem[]>([]);
+  
   const [activeTab, setActiveTab] = useState<'questions' | 'pinyin'>('questions');
   const [loading, setLoading] = useState(true);
   const [reviewMode, setReviewMode] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [input, setInput] = useState('');
   const [feedback, setFeedback] = useState<'none' | 'correct' | 'wrong'>('none');
+  const [isGeneratingAI, setIsGeneratingAI] = useState(false);
 
   useEffect(() => {
     fetchMistakes();
@@ -39,9 +48,37 @@ export const MistakesPage = () => {
     }
   };
 
-  const startReview = () => {
+  const startReview = async () => {
     if (mistakes.length === 0) return;
+    
     setReviewMode(true);
+    setIsGeneratingAI(true);
+    
+    // Base queue: all mistakes
+    let queue: ReviewItem[] = mistakes.map(m => ({ type: 'mistake', data: m }));
+    
+    // Try AI generation
+    if (aiConfig.apiKey) {
+       try {
+          // Pass top 5 mistakes to AI for generation
+          const contextMistakes = mistakes.slice(0, 5).map(m => ({
+              question: m.question!,
+              wrong_pinyin: m.wrong_pinyin
+          }));
+          
+          const aiQuestions = await generateReviewQuestions(contextMistakes, aiConfig, 3);
+          
+          if (aiQuestions && aiQuestions.length > 0) {
+             // Add AI questions to the end
+             queue = [...queue, ...aiQuestions.map(q => ({ type: 'ai' as const, data: q }))];
+          }
+       } catch (e) {
+          console.error("AI Review Generation Failed:", e);
+       }
+    }
+    
+    setReviewQueue(queue);
+    setIsGeneratingAI(false);
     setCurrentIndex(0);
     setInput('');
     setFeedback('none');
@@ -54,21 +91,37 @@ export const MistakesPage = () => {
   const handleConfirm = async () => {
     if (!input || !user) return;
     
-    const currentMistake = mistakes[currentIndex];
-    const correctPinyin = currentMistake.question?.pinyin || '';
+    const currentItem = reviewQueue[currentIndex];
+    let correctPinyin = '';
+    
+    if (currentItem.type === 'mistake') {
+        correctPinyin = currentItem.data.question?.pinyin || '';
+    } else {
+        correctPinyin = currentItem.data.pinyin;
+    }
     
     const isCorrect = checkAnswer(input, correctPinyin);
     
     setFeedback(isCorrect ? 'correct' : 'wrong');
 
-    if (isCorrect) {
-      await reviewMistakeSuccess(currentMistake.id, currentMistake.review_stage);
+    if (currentItem.type === 'mistake') {
+        if (isCorrect) {
+          await reviewMistakeSuccess(currentItem.data.id, currentItem.data.review_stage);
+        } else {
+          await recordMistake(user.id, currentItem.data.question_id, input);
+        }
     } else {
-      await recordMistake(user.id, currentMistake.question_id, input);
+        // AI Question Logic
+        if (!isCorrect) {
+            // If user gets AI question wrong, record it as a new mistake!
+            // But we need a valid question_id. 
+            // Since AI question is virtual, we can't record it to `mistakes` table unless we save the question first.
+            // For now, let's just show feedback.
+        }
     }
 
     setTimeout(() => {
-      if (currentIndex < mistakes.length - 1) {
+      if (currentIndex < reviewQueue.length - 1) {
         setCurrentIndex(prev => prev + 1);
         setInput('');
         setFeedback('none');
@@ -77,24 +130,51 @@ export const MistakesPage = () => {
         setReviewMode(false);
         fetchMistakes(); // Refresh list
       }
-    }, isCorrect ? 1000 : 2000);
+    }, isCorrect ? 1000 : 2500);
   };
 
   if (loading) return <div className="p-8 text-center">加载中...</div>;
 
+  if (isGeneratingAI) {
+      return (
+          <div className="flex h-screen items-center justify-center flex-col">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary mb-4"></div>
+              <p className="text-slate-500">AI 正在为你准备强化训练...</p>
+          </div>
+      );
+  }
+
   // Review Interface (Similar to GamePage but simpler)
-  if (reviewMode) {
-    const currentMistake = mistakes[currentIndex];
+  if (reviewMode && reviewQueue.length > 0) {
+    const currentItem = reviewQueue[currentIndex];
+    
+    // Extract content/pinyin safely
+    let content = '';
+    let pinyin = '';
+    
+    if (currentItem.type === 'mistake') {
+        content = currentItem.data.question?.content || '';
+        pinyin = currentItem.data.question?.pinyin || '';
+    } else {
+        content = currentItem.data.content;
+        pinyin = currentItem.data.pinyin;
+    }
     
     return (
       <div className="flex flex-col h-[calc(100vh-64px)]">
         <div className="flex-1 flex flex-col items-center justify-center p-4 relative">
-          <div className="mb-4 text-slate-400 font-medium">
-            复习进度: {currentIndex + 1} / {mistakes.length}
+          <div className="mb-4 text-slate-400 font-medium flex items-center gap-2">
+            <span>复习进度: {currentIndex + 1} / {reviewQueue.length}</span>
+            {currentItem.type === 'ai' && (
+                <span className="bg-violet-100 text-violet-600 px-2 py-0.5 rounded text-xs font-bold">AI 强化</span>
+            )}
           </div>
           
-          <div className="bg-white w-48 h-48 md:w-64 md:h-64 rounded-3xl shadow-lg border-b-8 border-brand-accent flex items-center justify-center mb-8 text-6xl md:text-8xl font-bold text-slate-800 relative overflow-hidden">
-            {currentMistake.question?.content}
+          <div className={`
+             bg-white w-48 h-48 md:w-64 md:h-64 rounded-3xl shadow-lg border-b-8 flex items-center justify-center mb-8 text-6xl md:text-8xl font-bold text-slate-800 relative overflow-hidden transition-colors
+             ${currentItem.type === 'ai' ? 'border-violet-500' : 'border-brand-accent'}
+          `}>
+            {content}
             
             {feedback !== 'none' && (
                <div className={`absolute inset-0 flex flex-col items-center justify-center bg-opacity-90 backdrop-blur-sm transition-all
@@ -102,7 +182,7 @@ export const MistakesPage = () => {
                `}>
                  {feedback === 'correct' ? <Check size={48} className="text-white" /> : <X size={48} className="text-white" />}
                  {feedback === 'wrong' && (
-                   <div className="text-white mt-2 font-mono text-xl">{currentMistake.question?.pinyin}</div>
+                   <div className="text-white mt-2 font-mono text-xl">{pinyin}</div>
                  )}
                </div>
             )}

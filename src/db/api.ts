@@ -482,3 +482,42 @@ export const getPinyinReviewList = async (userId: string) => {
   
   return results.filter(r => r !== null) as (PinyinChart & { progress_id: string, study_count: number, is_mastered: boolean })[];
 };
+
+export const getFishingQuestions = async (difficulty: number, count: number = 10) => {
+  const db = await initDB();
+  const allQuestions = await db.getAll('questions');
+  const candidates = allQuestions.filter(q => q.type === 'character'); 
+
+  const isLevel1 = (pinyin: string) => {
+    if (!pinyin) return false;
+    const base = pinyin.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    return /^[bpmfdtnlgkhjqxzhchshrzcsyw]?[aoeiuüv]$/i.test(base);
+  };
+
+  const isLevel2 = (pinyin: string) => {
+    if (!pinyin) return false;
+    const base = pinyin.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    return /([ae]i|ui|ao|ou|iu|ie|ve|er|[aeiuv]n)$/i.test(base) && !/(ang|eng|ing|ong)$/i.test(base);
+  };
+
+  const isLevel3 = (pinyin: string) => {
+    if (!pinyin) return false;
+    const base = pinyin.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const overall = ['zhi', 'chi', 'shi', 'ri', 'zi', 'ci', 'si', 'yi', 'wu', 'yu', 'ye', 'yue', 'yuan', 'yin', 'yun', 'ying'];
+    return /(ang|eng|ing|ong)$/i.test(base) || overall.includes(base);
+  };
+
+  let filtered: Question[] = [];
+  if (difficulty === 1) {
+      filtered = candidates.filter(q => isLevel1(q.pinyin));
+      if (filtered.length < count) filtered = candidates; 
+  } else if (difficulty === 2) {
+      filtered = candidates.filter(q => isLevel2(q.pinyin));
+      if (filtered.length < count) filtered = candidates;
+  } else {
+      filtered = candidates.filter(q => isLevel3(q.pinyin));
+      if (filtered.length < count) filtered = candidates;
+  }
+  
+  return filtered.sort(() => 0.5 - Math.random()).slice(0, count);
+};

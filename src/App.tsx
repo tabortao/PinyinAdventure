@@ -13,7 +13,8 @@ import { SettingsPage } from './pages/SettingsPage';
 import { StudyPage } from './pages/StudyPage';
 import { HelpPage } from './pages/HelpPage';
 import { QuizGamePage } from './pages/QuizGamePage';
-import { QuizLevelsPage } from './pages/QuizLevelsPage'; // Added
+import { QuizLevelsPage } from './pages/QuizLevelsPage';
+import { FishingGamePage } from './pages/FishingGamePage'; // Added
 import { initializeApp } from './db/api';
 
 const App: React.FC = () => {
@@ -40,7 +41,8 @@ const App: React.FC = () => {
               {/* Game pages without layout (full screen immersion) */}
               <Route path="/game/:levelId" element={<GamePage />} />
               <Route path="/quiz-game/:levelId" element={<QuizGamePage />} />
-              <Route path="/quiz-levels" element={<QuizLevelsPage />} /> {/* Added */}
+              <Route path="/quiz-levels" element={<QuizLevelsPage />} />
+              <Route path="/fishing" element={<FishingGamePage />} /> {/* Added */}
             </Route>
 
             <Route path="*" element={<Navigate to="/" replace />} />
