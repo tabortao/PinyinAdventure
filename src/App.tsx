@@ -14,7 +14,9 @@ import { StudyPage } from './pages/StudyPage';
 import { HelpPage } from './pages/HelpPage';
 import { QuizGamePage } from './pages/QuizGamePage';
 import { QuizLevelsPage } from './pages/QuizLevelsPage';
-import { FishingGamePage } from './pages/FishingGamePage'; // Added
+import { FishingStagesPage } from './pages/FishingStagesPage';
+import { FishingLevelSelectPage } from './pages/FishingLevelSelectPage';
+import { FishingGamePage } from './pages/FishingGamePage';
 import { initializeApp } from './db/api';
 
 const App: React.FC = () => {
@@ -42,7 +44,11 @@ const App: React.FC = () => {
               <Route path="/game/:levelId" element={<GamePage />} />
               <Route path="/quiz-game/:levelId" element={<QuizGamePage />} />
               <Route path="/quiz-levels" element={<QuizLevelsPage />} />
-              <Route path="/fishing" element={<FishingGamePage />} /> {/* Added */}
+              
+              {/* Fishing Game Routes */}
+              <Route path="/fishing" element={<FishingStagesPage />} />
+              <Route path="/fishing/levels/:stageId" element={<FishingLevelSelectPage />} />
+              <Route path="/fishing/game/:levelId" element={<FishingGamePage />} />
             </Route>
 
             <Route path="*" element={<Navigate to="/" replace />} />

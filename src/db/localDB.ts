@@ -97,6 +97,7 @@ export const initDB = () => {
 };
 
 import { generateQuizData, PINYIN_DATA } from './seedData';
+import { generateFishingGameData } from './fishingData';
 
 // Seeding function
 export const seedDatabase = async () => {
@@ -128,33 +129,52 @@ export const seedDatabase = async () => {
   }
   
   // Seed Quiz Data if missing
-  if (charCount === 0) {
+  if (charCount < 100) { // Increased threshold to ensure we check for fishing data
       console.log('Seeding Quiz Data...');
       const { levels, questions } = generateQuizData();
   
-  // Add Levels if they don't exist
-  {
-    const tx = db.transaction('levels', 'readwrite');
-    for (const l of levels) {
-      const existing = await tx.store.get(l.id);
-      if (!existing) {
-         await tx.store.add(l);
+      // Add Levels if they don't exist
+      {
+        const tx = db.transaction('levels', 'readwrite');
+        for (const l of levels) {
+          const existing = await tx.store.get(l.id);
+          if (!existing) {
+             await tx.store.add(l);
+          }
+        }
+        await tx.done;
       }
-    }
-    await tx.done;
+      
+      // Add Questions
+      {
+        const tx = db.transaction('questions', 'readwrite');
+        for (const q of questions) {
+           const existing = await tx.store.get(q.id);
+           if (!existing) {
+              await tx.store.add(q);
+           }
+        }
+        await tx.done;
+      }
   }
-  
-  // Add Questions
-  {
-    const tx = db.transaction('questions', 'readwrite');
-    for (const q of questions) {
-       const existing = await tx.store.get(q.id);
-       if (!existing) {
-          await tx.store.add(q);
-       }
-    }
-    await tx.done;
-  }
+
+  // Seed Fishing Data
+  const fishingLevel = await db.get('levels', 20001);
+  if (!fishingLevel) {
+      console.log('Seeding Fishing Game Data...');
+      const { levels, questions } = generateFishingGameData();
+      
+      const tx = db.transaction(['levels', 'questions'], 'readwrite');
+      const lStore = tx.objectStore('levels');
+      const qStore = tx.objectStore('questions');
+      
+      for (const l of levels) {
+          await lStore.put(l);
+      }
+      for (const q of questions) {
+          await qStore.put(q);
+      }
+      await tx.done;
   }
   
   console.log('Database seeded successfully.');
