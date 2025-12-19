@@ -57,7 +57,12 @@ export const FishingGamePage = () => {
 
   // Refs for animation loop
   const requestRef = useRef<number | null>(null);
+  const hookAnimRef = useRef<number | null>(null);
+  const hookPosRef = useRef(hookPos);
   const fishContainerRef = useRef<HTMLDivElement>(null);
+
+  // Sync ref
+  useEffect(() => { hookPosRef.current = hookPos; }, [hookPos]);
 
   // Initial Load
   useEffect(() => {
@@ -153,13 +158,43 @@ export const FishingGamePage = () => {
     requestRef.current = requestAnimationFrame(animate);
     return () => {
         if (requestRef.current) cancelAnimationFrame(requestRef.current);
+        if (hookAnimRef.current) cancelAnimationFrame(hookAnimRef.current);
     }
   }, [animate]);
 
 
-  // Logic for moving hook smoothly would be nice, but CSS transition is easier for "point A to point B" logic.
-  // We used CSS transition for hook movement in previous version. We can keep that or mix.
-  // Let's use CSS transitions for hookPos updates.
+  // JS Animation for Hook
+  const moveHook = (target: {x: number, y: number}, duration: number) => {
+    return new Promise<void>(resolve => {
+        if (hookAnimRef.current) cancelAnimationFrame(hookAnimRef.current);
+        
+        const start = hookPosRef.current;
+        const startTime = performance.now();
+        
+        const loop = (time: number) => {
+            const elapsed = time - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            // Ease in out quad
+            const ease = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress;
+            
+            const current = {
+                x: start.x + (target.x - start.x) * ease,
+                y: start.y + (target.y - start.y) * ease
+            };
+            
+            setHookPos(current);
+            
+            if (progress < 1) {
+                hookAnimRef.current = requestAnimationFrame(loop);
+            } else {
+                resolve();
+            }
+        };
+        hookAnimRef.current = requestAnimationFrame(loop);
+    });
+  };
+
+  const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
   const handleCastHook = async (fish: Fish) => {
     if (hookState !== 'idle' || feedback !== null) return;
@@ -169,85 +204,80 @@ export const FishingGamePage = () => {
 
     // 1. Aim & Drop
     setTargetFishId(fish.id);
-    setHookPos({ x: fish.x, y: fish.y }); // This will trigger drop transition
     setHookState('dropping');
+    
+    // Move to fish
+    await moveHook({ x: fish.x, y: fish.y }, 600);
 
     // Check answer immediately to decide flow
     const isCorrect = fish.pinyin === currentQ.pinyin;
 
-    // Wait for drop (approx 500ms transition)
-    setTimeout(() => {
-        if (isCorrect) {
-            playTone('catch');
-            setHookState('catching');
-            
-            // Mark fish as caught so it stops swimming and follows hook
-            setFishes(prev => prev.map(f => f.id === fish.id ? { ...f, isCaught: true } : f));
-            setFeedback('correct');
+    if (isCorrect) {
+        playTone('catch');
+        setHookState('catching');
+        
+        // Mark fish as caught so it stops swimming and follows hook
+        setFishes(prev => prev.map(f => f.id === fish.id ? { ...f, isCaught: true } : f));
+        setFeedback('correct');
 
-            // 2. Retract (Pull up)
-            setTimeout(() => {
-                setHookState('retracting');
-                setHookPos({ x: fish.x, y: 15 }); // Pull up to surface level
+        await wait(300);
 
-                // 3. Deliver to Basket
-                setTimeout(() => {
-                    setHookState('delivering');
-                    setHookPos(BASKET_POS);
+        // 2. Retract (Pull up)
+        setHookState('retracting');
+        await moveHook({ x: fish.x, y: 15 }, 600);
 
-                    // 4. Deposit
-                    setTimeout(() => {
-                        setHookState('depositing');
-                        playTone('splash'); // Splash sound for drop
-                        
-                        // Fish disappears into basket
-                        setFishes(prev => prev.map(f => f.id === fish.id ? { ...f, opacity: 0, scale: 0 } : f));
-                        setScore(s => s + 1);
+        // 3. Deliver to Basket
+        setHookState('delivering');
+        await moveHook(BASKET_POS, 800);
 
-                        // 5. Return to Idle
-                        setTimeout(() => {
-                            setHookState('idle');
-                            setHookPos(IDLE_POS);
-                            setFeedback(null);
-                            setTargetFishId(null);
-                            
-                            // Next question
-                            if (currentQIndex < questions.length - 1) {
-                                setCurrentQIndex(prev => prev + 1);
-                            } else {
-                                finishLevel(score + 1);
-                            }
+        // 4. Deposit
+        setHookState('depositing');
+        playTone('splash'); // Splash sound for drop
+        
+        // Fish disappears into basket
+        setFishes(prev => prev.map(f => f.id === fish.id ? { ...f, opacity: 0, scale: 0 } : f));
+        setScore(s => s + 1);
 
-                        }, 500);
-                    }, 800); // Time to move to basket
-                }, 600); // Time to retract
-            }, 300); // Pause at catch
+        await wait(500);
 
+        // 5. Return to Idle
+        setHookState('idle');
+        setFeedback(null);
+        setTargetFishId(null);
+        
+        await moveHook(IDLE_POS, 500);
+        
+        // Next question
+        if (currentQIndex < questions.length - 1) {
+            setCurrentQIndex(prev => prev + 1);
         } else {
-            // WRONG ANSWER
-            playTone('wrong');
-            setHookState('catching');
-            setFeedback('wrong');
-
-            if (user) {
-                recordMistake(user.id, currentQ.id, fish.pinyin);
-            }
-            if (navigator.vibrate) navigator.vibrate(200);
-
-            // Just retract and reset
-            setTimeout(() => {
-                setHookState('retracting');
-                setHookPos({ x: fish.x, y: 15 });
-
-                setTimeout(() => {
-                    setHookState('idle');
-                    setHookPos(IDLE_POS);
-                    setFeedback(null);
-                    setTargetFishId(null);
-                }, 500);
-            }, 500);
+            finishLevel(score + 1);
         }
-    }, 600); // Drop duration
+
+    } else {
+        // WRONG ANSWER
+        playTone('wrong');
+        setHookState('catching');
+        setFeedback('wrong');
+
+        if (user) {
+            recordMistake(user.id, currentQ.id, fish.pinyin);
+        }
+        if (navigator.vibrate) navigator.vibrate(200);
+
+        // Pause
+        await wait(500);
+
+        // Retract
+        setHookState('retracting');
+        await moveHook({ x: fish.x, y: 15 }, 500);
+        
+        // Return
+        setHookState('idle');
+        setFeedback(null);
+        setTargetFishId(null);
+        await moveHook(IDLE_POS, 500);
+    }
   };
 
   const finishLevel = async (finalScore: number) => {
@@ -359,7 +389,7 @@ export const FishingGamePage = () => {
        </div>
 
        {/* Target Board */}
-       <div className="absolute top-20 right-[10%] z-20">
+       <div className="absolute top-20 left-4 z-20">
          <div className="bg-white/95 backdrop-blur rounded-2xl shadow-xl border-4 border-amber-300 px-8 py-4 text-center transform hover:scale-105 transition-transform min-w-[200px]">
            <div className="text-sm text-slate-400 font-bold mb-1 uppercase tracking-widest">目标拼音</div>
            <div className="text-6xl font-black text-blue-600 font-mono tracking-wider drop-shadow-sm">
@@ -376,7 +406,7 @@ export const FishingGamePage = () => {
              x1="50%" 
              y1="0" 
              x2={`${hookPos.x}%`} 
-             y2={`${hookPos.y + 2}%`} 
+             y2={`${hookPos.y + 4}%`} 
              stroke="#e2e8f0" 
              strokeWidth="2"
              strokeDasharray="4 2"
@@ -385,7 +415,7 @@ export const FishingGamePage = () => {
 
        {/* Hook Component */}
        <div 
-         className="absolute z-30 transition-all duration-500 ease-in-out"
+         className="absolute z-30"
          style={{ 
            left: `${hookPos.x}%`, 
            top: `${hookPos.y}%`,
