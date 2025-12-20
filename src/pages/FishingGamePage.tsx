@@ -49,6 +49,7 @@ export const FishingGamePage = () => {
   // Hook Position (Percent)
   const [hookPos, setHookPos] = useState({ x: 50, y: 15 });
   const [targetFishId, setTargetFishId] = useState<number | null>(null);
+  const [caughtFish, setCaughtFish] = useState<Fish | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
 
   // Constants
@@ -122,20 +123,10 @@ export const FishingGamePage = () => {
     if (gameState !== 'playing') return;
 
     setFishes(prev => prev.map(fish => {
-      // 1. Caught Logic: Fish follows hook
-      if (fish.isCaught) {
-          // If depositing, let other effects handle visual (or stay at last known pos)
-          if (hookState === 'depositing') return fish;
-          
-          // Otherwise, strict follow hook
-          return {
-              ...fish,
-              x: hookPosRef.current.x,
-              y: hookPosRef.current.y + 5 
-          };
-      }
+      // If caught, stop swimming logic
+      if (fish.isCaught) return fish;
 
-      // 2. Swim Logic
+      // Swim Logic
       let newX = fish.x + fish.speed;
       if (newX <= 5 || newX >= 95) {
         fish.speed *= -1;
@@ -146,7 +137,7 @@ export const FishingGamePage = () => {
     }));
     
     requestRef.current = requestAnimationFrame(animate);
-  }, [gameState, hookState]); // Removed targetFishId dependency as we use fish.isCaught
+  }, [gameState]);
 
   useEffect(() => {
     requestRef.current = requestAnimationFrame(animate);
@@ -212,17 +203,17 @@ export const FishingGamePage = () => {
         playTone('catch');
         setHookState('catching');
         
-        // CRITICAL: Snap fish to hook and mark caught
-        // This ensures visual alignment before lifting
-        const caughtPos = hookPosRef.current;
-        setFishes(prev => prev.map(f => f.id === fish.id ? { ...f, x: caughtPos.x, y: caughtPos.y + 5, isCaught: true } : f));
+        // VISUAL TRICK: Hide swimming fish, Show attached fish
+        setFishes(prev => prev.map(f => f.id === fish.id ? { ...f, isCaught: true, opacity: 0 } : f));
+        setCaughtFish({ ...fish, isCaught: true });
         setFeedback('correct');
 
         await wait(300);
 
         // 2. Retract (Pull up)
         setHookState('retracting');
-        await moveHook({ x: caughtPos.x, y: 15 }, 600);
+        // We move hook to surface. Caught fish will follow automatically via UI rendering
+        await moveHook({ x: fish.x, y: 15 }, 600);
 
         // 3. Deliver to Basket
         setHookState('delivering');
@@ -232,8 +223,8 @@ export const FishingGamePage = () => {
         setHookState('depositing');
         playTone('splash');
         
-        // Fish disappears
-        setFishes(prev => prev.map(f => f.id === fish.id ? { ...f, opacity: 0, scale: 0 } : f));
+        // Fish disappears into basket
+        setCaughtFish(null); // Remove from hook
         setScore(s => s + 1);
 
         await wait(500);
@@ -263,7 +254,7 @@ export const FishingGamePage = () => {
         }
         if (navigator.vibrate) navigator.vibrate(200);
 
-        await wait(500);
+        await wait(1000); // Longer wait to see the error
 
         // Retract
         setHookState('retracting');
@@ -439,6 +430,32 @@ export const FishingGamePage = () => {
                <path d="M35 40 L30 43" stroke="url(#hookGrad)" strokeWidth="2" strokeLinecap="round" />
              </svg>
            </div>
+            {caughtFish && (
+              <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-4 w-24 h-16 pointer-events-none origin-top transition-transform animate-in zoom-in duration-300">
+                  <svg viewBox="0 0 100 60" className="w-full h-full drop-shadow-lg" style={{ transform: 'rotate(90deg)' }}> 
+                      <defs>
+                          <linearGradient id="caughtFishGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                              <stop offset="0%" stopColor={caughtFish.color} />
+                              <stop offset="100%" stopColor="white" stopOpacity="0.5" />
+                          </linearGradient>
+                      </defs>
+                      <path 
+                          d="M80,30 Q60,5 30,30 Q60,55 80,30 M80,30 L95,15 L95,45 Z" 
+                          fill={caughtFish.color}
+                          stroke="white" 
+                          strokeWidth="2"
+                      />
+                      <path d="M50,15 Q60,5 70,15" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="2" />
+                      <circle cx="25" cy="25" r="3" fill="white" />
+                      <circle cx="26" cy="25" r="1.5" fill="black" />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center pb-1 pl-4" style={{ transform: 'rotate(90deg)' }}>
+                      <span className="text-xl font-black text-white drop-shadow-md">
+                           {caughtFish.char}
+                      </span>
+                  </div>
+              </div>
+            )}
        </div>
 
        {/* Fishes */}
@@ -504,10 +521,22 @@ export const FishingGamePage = () => {
        
        {/* Feedback Overlay */}
        {feedback && (
-           <div className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none">
-               <div className={`text-9xl font-black animate-bounce filter drop-shadow-2xl ${feedback === 'correct' ? 'text-green-400' : 'text-red-400'}`}>
+           <div className="absolute inset-0 z-50 flex flex-col items-center justify-center pointer-events-none bg-black/10 backdrop-blur-[2px]">
+               <div className={`text-8xl md:text-9xl font-black animate-bounce filter drop-shadow-2xl ${feedback === 'correct' ? 'text-green-500' : 'text-red-500'}`}>
                    {feedback === 'correct' ? '✓' : '✗'}
                </div>
+               
+               {feedback === 'wrong' && (
+                   <div className="mt-8 bg-red-500 text-white px-8 py-4 rounded-full text-2xl md:text-3xl font-black animate-pulse shadow-2xl border-4 border-white transform rotate-2">
+                       鱼竿钓鱼失败！
+                   </div>
+               )}
+               
+               {feedback === 'correct' && (
+                   <div className="mt-8 bg-green-500 text-white px-8 py-4 rounded-full text-2xl md:text-3xl font-black animate-bounce shadow-2xl border-4 border-white transform -rotate-2">
+                       太棒了！
+                   </div>
+               )}
            </div>
        )}
 
