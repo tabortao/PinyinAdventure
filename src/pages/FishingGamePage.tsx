@@ -122,38 +122,31 @@ export const FishingGamePage = () => {
     if (gameState !== 'playing') return;
 
     setFishes(prev => prev.map(fish => {
-      // If caught, fish follows hook
-      // Use ref for latest hook position to avoid re-creating animate function on every hook move
-      if (fish.id === targetFishId && (hookState === 'retracting' || hookState === 'delivering')) {
+      // 1. Caught Logic: Fish follows hook
+      if (fish.isCaught) {
+          // If depositing, let other effects handle visual (or stay at last known pos)
+          if (hookState === 'depositing') return fish;
+          
+          // Otherwise, strict follow hook
           return {
               ...fish,
               x: hookPosRef.current.x,
-              y: hookPosRef.current.y + 5 // Hang slightly below hook
+              y: hookPosRef.current.y + 5 
           };
       }
-      
-      // If depositing, fish drops into basket
-      if (fish.id === targetFishId && hookState === 'depositing') {
-           // handled by effects mostly, but keep position stable
-           return fish;
-      }
 
-      // Normal swimming
-      if (!fish.isCaught) {
-          let newX = fish.x + fish.speed;
-          if (newX <= 5 || newX >= 95) {
-            fish.speed *= -1;
-            fish.direction *= -1;
-            newX = Math.max(5, Math.min(95, newX));
-          }
-          return { ...fish, x: newX, speed: fish.speed, direction: fish.direction };
+      // 2. Swim Logic
+      let newX = fish.x + fish.speed;
+      if (newX <= 5 || newX >= 95) {
+        fish.speed *= -1;
+        fish.direction *= -1;
+        newX = Math.max(5, Math.min(95, newX));
       }
-
-      return fish;
+      return { ...fish, x: newX, speed: fish.speed, direction: fish.direction };
     }));
     
     requestRef.current = requestAnimationFrame(animate);
-  }, [gameState, hookState, targetFishId]); // Removed hookPos dependency
+  }, [gameState, hookState]); // Removed targetFishId dependency as we use fish.isCaught
 
   useEffect(() => {
     requestRef.current = requestAnimationFrame(animate);
@@ -183,6 +176,8 @@ export const FishingGamePage = () => {
                 y: start.y + (target.y - start.y) * ease
             };
             
+            // Sync immediately for loop
+            hookPosRef.current = current;
             setHookPos(current);
             
             if (progress < 1) {
@@ -207,25 +202,27 @@ export const FishingGamePage = () => {
     setTargetFishId(fish.id);
     setHookState('dropping');
     
-    // Move to fish
+    // Move to fish initial pos
     await moveHook({ x: fish.x, y: fish.y }, 600);
 
-    // Check answer immediately to decide flow
+    // Check answer
     const isCorrect = fish.pinyin === currentQ.pinyin;
 
     if (isCorrect) {
         playTone('catch');
         setHookState('catching');
         
-        // Mark fish as caught so it stops swimming and follows hook
-        setFishes(prev => prev.map(f => f.id === fish.id ? { ...f, isCaught: true } : f));
+        // CRITICAL: Snap fish to hook and mark caught
+        // This ensures visual alignment before lifting
+        const caughtPos = hookPosRef.current;
+        setFishes(prev => prev.map(f => f.id === fish.id ? { ...f, x: caughtPos.x, y: caughtPos.y + 5, isCaught: true } : f));
         setFeedback('correct');
 
         await wait(300);
 
         // 2. Retract (Pull up)
         setHookState('retracting');
-        await moveHook({ x: fish.x, y: 15 }, 600);
+        await moveHook({ x: caughtPos.x, y: 15 }, 600);
 
         // 3. Deliver to Basket
         setHookState('delivering');
@@ -233,9 +230,9 @@ export const FishingGamePage = () => {
 
         // 4. Deposit
         setHookState('depositing');
-        playTone('splash'); // Splash sound for drop
+        playTone('splash');
         
-        // Fish disappears into basket
+        // Fish disappears
         setFishes(prev => prev.map(f => f.id === fish.id ? { ...f, opacity: 0, scale: 0 } : f));
         setScore(s => s + 1);
 
@@ -266,7 +263,6 @@ export const FishingGamePage = () => {
         }
         if (navigator.vibrate) navigator.vibrate(200);
 
-        // Pause
         await wait(500);
 
         // Retract
