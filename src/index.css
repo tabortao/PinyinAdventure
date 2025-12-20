@@ -8,6 +8,8 @@
   html, body {
     @apply overflow-x-hidden w-full;
     -webkit-overflow-scrolling: touch;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
   
   #root {

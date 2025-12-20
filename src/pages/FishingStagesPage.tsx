@@ -47,7 +47,7 @@ export const FishingStagesPage = () => {
              <p className="text-cyan-600 dark:text-cyan-400">不同的海域有不同的挑战在等着你！</p>
          </div>
 
-         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
             {stages.map((stage) => (
                 <button
                     key={stage.id}

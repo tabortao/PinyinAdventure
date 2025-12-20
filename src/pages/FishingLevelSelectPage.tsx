@@ -96,7 +96,7 @@ export const FishingLevelSelectPage = () => {
                   <p className="text-xs mt-2">ID: {stageId}</p>
               </div>
           ) : (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                   {levels.map((level, index) => {
                       const unlocked = isUnlocked(level.id, index);
                       const prog = getLevelProgress(level.id);
