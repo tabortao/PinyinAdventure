@@ -1,15 +1,12 @@
 import { ArrowLeft, BookOpen, BrainCircuit, Gamepad2, Layers, Smartphone, Sparkles, Zap, MessageCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { WechatModal } from '../components/common/WechatModal';
 
 export const HelpPage = () => {
   const navigate = useNavigate();
-  const [showWechatModal, setShowWechatModal] = useState(false);
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-6 pb-24 md:pb-6 relative text-slate-900 dark:text-slate-100 transition-colors">
-      <WechatModal isOpen={showWechatModal} onClose={() => setShowWechatModal(false)} />
 
       <button 
         onClick={() => navigate('/settings')} 
@@ -124,13 +121,7 @@ export const HelpPage = () => {
             </div>
         </div>
         
-        <button 
-          onClick={() => setShowWechatModal(true)}
-          className="inline-flex items-center gap-2 text-brand-primary text-sm font-bold hover:underline"
-        >
-           <MessageCircle size={16} />
-           微信反馈
-        </button>
+
 
       </div>
     </div>

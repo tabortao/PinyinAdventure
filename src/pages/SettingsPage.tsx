@@ -3,7 +3,6 @@ import { useAuth } from '../context/AuthContext';
 import { ArrowLeft, Check, ChevronRight, HelpCircle, MessageCircle, Moon, Sun, Monitor, LogOut, Database, Download, Upload, Brain, Wifi, Loader2, Server } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState, useRef } from 'react';
-import { WechatModal } from '../components/common/WechatModal';
 import { exportData, importData } from '../db/localDB';
 import { AI_PROVIDERS, testConnection } from '../lib/ai';
 
@@ -11,7 +10,6 @@ export const SettingsPage = () => {
   const { mode, setMode, theme, setTheme, aiConfig, setAiConfig } = useSettings();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [showWechatModal, setShowWechatModal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState<{success: boolean, message: string} | null>(null);
@@ -103,7 +101,6 @@ export const SettingsPage = () => {
 
   return (
     <div className="max-w-5xl mx-auto py-8 px-4">
-      <WechatModal isOpen={showWechatModal} onClose={() => setShowWechatModal(false)} />
       
       <h1 className="text-3xl font-bold text-brand-dark dark:text-brand-primary mb-8 transition-colors">设置</h1>
       
@@ -304,7 +301,7 @@ export const SettingsPage = () => {
          </button>
 
          <button
-           onClick={() => setShowWechatModal(true)}
+           onClick={() => window.open('https://img.sdgarden.top/blog/wechat/zuoyejianeice.jpg', '_blank')}
            className="w-full text-left p-6 flex items-center justify-between transition-colors hover:bg-slate-50 dark:hover:bg-slate-800 group"
          >
            <div className="flex items-center gap-4">

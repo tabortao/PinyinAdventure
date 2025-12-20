@@ -17,6 +17,7 @@ import { QuizLevelsPage } from './pages/QuizLevelsPage';
 import { FishingStagesPage } from './pages/FishingStagesPage';
 import { FishingLevelSelectPage } from './pages/FishingLevelSelectPage';
 import { FishingGamePage } from './pages/FishingGamePage';
+import { OrientationGuard } from './components/common/OrientationGuard';
 import { initializeApp } from './db/api';
 
 const App: React.FC = () => {
@@ -28,6 +29,7 @@ const App: React.FC = () => {
     <AuthProvider>
       <SettingsProvider>
         <BrowserRouter>
+          <OrientationGuard />
           <Routes>
             {/* <Route path="/login" element={<LoginPage />} /> */}
             
