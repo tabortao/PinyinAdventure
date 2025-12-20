@@ -5,6 +5,15 @@
 
 
 @layer base {
+  html, body {
+    @apply overflow-x-hidden w-full;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  #root {
+    @apply min-h-screen w-full overflow-x-hidden;
+  }
+
   :root {
     --radius: 0.5rem;
     --background: 0 0% 100%;

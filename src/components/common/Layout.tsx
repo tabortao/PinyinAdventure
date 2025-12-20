@@ -30,7 +30,7 @@ export const Layout = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col font-sans transition-colors duration-300">
+    <div className="min-h-screen w-full overflow-x-hidden bg-slate-50 dark:bg-slate-950 flex flex-col font-sans transition-colors duration-300">
       {/* Top Navbar */}
       <nav className="bg-brand-primary dark:bg-slate-900 text-white shadow-lg sticky top-0 z-50 transition-colors duration-300">
         <div className="max-w-6xl mx-auto px-4 h-14 md:h-16 flex items-center justify-between">

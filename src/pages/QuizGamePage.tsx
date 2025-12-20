@@ -294,7 +294,7 @@ export const QuizGamePage = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col md:flex-row items-center justify-center p-6 gap-6 md:gap-10 max-w-5xl mx-auto w-full">
+      <div className="flex-1 flex flex-col lg:flex-row items-center justify-center p-6 gap-6 lg:gap-10 max-w-5xl mx-auto w-full">
         
         {/* Character Card */}
         <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-lg p-12 w-full max-w-md aspect-square flex items-center justify-center border-4 border-slate-100 dark:border-slate-700">
