@@ -267,8 +267,8 @@ export const GamePage = () => {
   
   const getContentSize = (text: string) => {
     if (text.length > 8) return 'text-3xl md:text-5xl';
-    if (text.length > 4) return 'text-4xl md:text-7xl';
-    return 'text-6xl md:text-9xl';
+    if (text.length > 4) return 'text-4xl md:text-6xl';
+    return 'text-6xl md:text-8xl';
   };
 
   return (
