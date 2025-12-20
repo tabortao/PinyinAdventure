@@ -102,7 +102,7 @@ export const SettingsPage = () => {
   ];
 
   return (
-    <div className="max-w-4xl mx-auto py-8 px-4">
+    <div className="max-w-5xl mx-auto py-8 px-4">
       <WechatModal isOpen={showWechatModal} onClose={() => setShowWechatModal(false)} />
       
       <h1 className="text-3xl font-bold text-brand-dark dark:text-brand-primary mb-8 transition-colors">设置</h1>

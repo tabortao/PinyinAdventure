@@ -123,11 +123,12 @@ export const FishingGamePage = () => {
 
     setFishes(prev => prev.map(fish => {
       // If caught, fish follows hook
+      // Use ref for latest hook position to avoid re-creating animate function on every hook move
       if (fish.id === targetFishId && (hookState === 'retracting' || hookState === 'delivering')) {
           return {
               ...fish,
-              x: hookPos.x,
-              y: hookPos.y + 5 // Hang slightly below hook
+              x: hookPosRef.current.x,
+              y: hookPosRef.current.y + 5 // Hang slightly below hook
           };
       }
       
@@ -152,7 +153,7 @@ export const FishingGamePage = () => {
     }));
     
     requestRef.current = requestAnimationFrame(animate);
-  }, [gameState, hookPos, hookState, targetFishId]);
+  }, [gameState, hookState, targetFishId]); // Removed hookPos dependency
 
   useEffect(() => {
     requestRef.current = requestAnimationFrame(animate);

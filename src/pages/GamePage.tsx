@@ -316,7 +316,7 @@ export const GamePage = () => {
       </div>
 
       {/* Game Area */}
-      <div className="flex-1 flex flex-col items-center justify-center p-2 md:p-4 relative w-full max-w-4xl mx-auto">
+      <div className="flex-1 flex flex-col items-center justify-center p-2 md:p-4 relative w-full max-w-5xl mx-auto">
         {/* Question Card */}
           {(isAiGenerated || isReviewMode) && gameState !== 'feedback' && (
             <div className="absolute top-0 left-0 right-0 flex justify-center z-10 -mt-2">

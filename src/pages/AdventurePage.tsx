@@ -77,7 +77,7 @@ export const AdventurePage = () => {
   if (loading) return <div className="text-center py-20 text-brand-primary">正在加载关卡...</div>;
 
   return (
-    <div className="max-w-4xl mx-auto pb-20 px-4 md:px-0">
+    <div className="max-w-6xl mx-auto pb-20 px-4 md:px-0">
       {/* Hero Banner with Filter */}
       <div className="text-center mb-8 bg-brand-primary/5 dark:bg-brand-primary/10 p-6 rounded-3xl relative transition-colors">
         <h1 className="text-2xl md:text-4xl font-bold text-brand-dark dark:text-brand-primary mb-4 md:mb-2 transition-colors">拼音闯关大冒险</h1>

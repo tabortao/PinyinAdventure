@@ -213,7 +213,7 @@ export const MistakesPage = () => {
 
   // List Interface
   return (
-    <div className="max-w-4xl mx-auto px-4 pb-20">
+    <div className="max-w-6xl mx-auto px-4 pb-20">
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4 mt-6">
         <div>
           <h1 className="text-3xl font-black text-brand-dark dark:text-brand-primary mb-2 transition-colors">错音本</h1>

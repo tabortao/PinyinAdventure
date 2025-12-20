@@ -303,7 +303,7 @@ export const StudyPage = () => {
     );
 
     return (
-      <div className="max-w-4xl mx-auto p-4 flex flex-col h-[calc(100vh-80px)]">
+      <div className="max-w-6xl mx-auto p-4 flex flex-col h-[calc(100vh-80px)]">
         <div className="flex items-center gap-3 mb-4 pt-2">
           <button 
             onClick={() => setShowLibrary(false)} 

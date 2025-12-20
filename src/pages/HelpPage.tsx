@@ -8,7 +8,7 @@ export const HelpPage = () => {
   const [showWechatModal, setShowWechatModal] = useState(false);
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-6 pb-24 md:pb-6 relative text-slate-900 dark:text-slate-100 transition-colors">
+    <div className="max-w-4xl mx-auto px-4 py-6 pb-24 md:pb-6 relative text-slate-900 dark:text-slate-100 transition-colors">
       <WechatModal isOpen={showWechatModal} onClose={() => setShowWechatModal(false)} />
 
       <button 

@@ -294,17 +294,17 @@ export const QuizGamePage = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col items-center justify-center p-6 max-w-md mx-auto w-full">
+      <div className="flex-1 flex flex-col md:flex-row items-center justify-center p-6 gap-6 md:gap-10 max-w-5xl mx-auto w-full">
         
         {/* Character Card */}
-        <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-lg p-12 mb-12 w-full aspect-square flex items-center justify-center border-4 border-slate-100 dark:border-slate-700">
+        <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-lg p-12 w-full max-w-md aspect-square flex items-center justify-center border-4 border-slate-100 dark:border-slate-700">
           <span className="text-9xl font-black text-slate-800 dark:text-white select-none">
             {currentQuestion.content}
           </span>
         </div>
 
         {/* Options */}
-        <div className="grid grid-cols-2 gap-4 w-full">
+        <div className="grid grid-cols-2 gap-4 w-full max-w-md h-full content-center">
           {currentQuestion.options.map((opt, idx) => {
             let stateClass = "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 border-slate-200 dark:border-slate-700";
             

@@ -8,7 +8,7 @@ export const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-4 pb-24 transition-colors">
-       <div className="max-w-4xl mx-auto pt-6 md:pt-10">
+       <div className="max-w-6xl mx-auto pt-6 md:pt-10">
           <div className="text-center mb-10">
             <h1 className="text-3xl font-black text-brand-dark dark:text-white mb-2 tracking-tight">
               拼音学习助手
@@ -18,7 +18,7 @@ export const HomePage = () => {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
              {/* Study - Pinyin Basics */}
              <button 
                onClick={() => navigate('/study')}

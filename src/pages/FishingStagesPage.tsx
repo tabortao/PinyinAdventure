@@ -27,7 +27,7 @@ export const FishingStagesPage = () => {
 
       {/* Header */}
       <div className="sticky top-0 z-10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-cyan-100 dark:border-slate-800 p-4 shadow-sm transition-colors">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
           <button 
             onClick={() => navigate('/')}
             className="p-2 hover:bg-cyan-50 dark:hover:bg-slate-800 rounded-full transition-colors"
@@ -41,7 +41,7 @@ export const FishingStagesPage = () => {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto p-6 flex flex-col items-center gap-8 mt-4 relative z-10">
+      <div className="max-w-6xl mx-auto p-6 flex flex-col items-center gap-8 mt-4 relative z-10">
          <div className="text-center mb-4">
              <h2 className="text-3xl font-black text-cyan-900 dark:text-white mb-2">选择挑战海域</h2>
              <p className="text-cyan-600 dark:text-cyan-400">不同的海域有不同的挑战在等着你！</p>
