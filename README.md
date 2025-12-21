@@ -1,3 +1,7 @@
+# 欢迎使用你的秒哒应用代码包
+秒哒应用链接
+    URL:https://www.miaoda.cn/projects/app-89i5xxtol9mp
+
 # 智能拼音大闯关 (Pinyin Adventure)
 
 ## 1. 项目简介
@@ -61,8 +65,6 @@ npm run preview
 
 ## 5. 作者信息
 - **作者**: Tabor
-- **微信**: tabor2024 (欢迎交流反馈)
-- **版本**: v1.6.0
 
 ## 6. 目录结构
 

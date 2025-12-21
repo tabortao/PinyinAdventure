@@ -13,6 +13,11 @@ export default {
     ],
     prefix: '',
     theme: {
+      screens: {
+        // Custom breakpoint for better iPad support
+        // Ensure iPad landscape (768px+ width) uses desktop layout
+        'md': '700px', // Lower than default 768px to catch iPad landscape earlier
+      },
       extend: {
         colors: {
           brand: {
