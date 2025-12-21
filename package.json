@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "tsgo -p tsconfig.check.json; npx biome lint; .rules/testBuild.sh"
+    "lint": "tsgo -p tsconfig.check.json; npx biome lint; .rules/testBuild.sh",
+    "install:clean": "rm -rf node_modules pnpm-lock.yaml && pnpm install"
   },
   "dependencies": {
     "@mediapipe/tasks-vision": "0.10.22-rc.20250304",
