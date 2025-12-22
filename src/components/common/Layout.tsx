@@ -32,7 +32,7 @@ export const Layout = () => {
   return (
     <div className="min-h-screen w-full overflow-x-hidden bg-slate-50 dark:bg-slate-950 flex flex-col font-sans transition-colors duration-300">
       {/* Top Navbar */}
-      <nav className="bg-brand-primary dark:bg-slate-900 text-white shadow-lg sticky top-0 z-50 transition-colors duration-300">
+      <nav className="bg-brand-primary dark:bg-slate-900 text-white shadow-lg sticky top-0 z-50 transition-colors duration-300 pt-safe sticky-nav">
         <div className="max-w-6xl mx-auto px-4 h-14 md:h-16 flex items-center justify-between">
           
           {/* Left: Brand + Desktop Nav */}
@@ -72,7 +72,7 @@ export const Layout = () => {
       </nav>
 
       {/* Main Content */}
-      <main className="flex-1 relative pb-20 md:pb-0 dark:bg-slate-950 transition-colors duration-300">
+      <main className="flex-1 relative pb-20 md:pb-0 dark:bg-slate-950 transition-colors duration-300 main-content-offset">
         <Outlet />
       </main>
 
