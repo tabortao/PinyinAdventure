@@ -30,7 +30,7 @@ export const Layout = () => {
   ];
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-slate-50 dark:bg-slate-950 flex flex-col font-sans transition-colors duration-300 mobile-layout">
+    <div className="min-h-screen w-full overflow-x-hidden bg-slate-50 dark:bg-slate-950 flex flex-col font-sans transition-colors duration-300 mobile-layout relative">
       {/* Top Navbar */}
       <nav className="bg-brand-primary dark:bg-slate-900 text-white shadow-lg fixed top-0 left-0 right-0 z-50 transition-colors duration-300 pt-safe sticky-nav">
         <div className="max-w-6xl mx-auto px-4 h-14 md:h-16 flex items-center justify-between">
@@ -72,7 +72,7 @@ export const Layout = () => {
       </nav>
 
       {/* Main Content */}
-      <main className="flex-1 relative pb-20 md:pb-0 dark:bg-slate-950 transition-colors duration-300 main-content-offset scrollable-content">
+      <main className="absolute inset-x-0 top-[3.5rem] bottom-[4rem] md:top-[4rem] md:bottom-0 dark:bg-slate-950 transition-colors duration-300 main-content-offset scrollable-content overflow-y-auto">
         <Outlet />
       </main>
 
