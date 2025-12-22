@@ -1,6 +1,6 @@
 import { useSettings, Theme } from '../context/SettingsContext';
 import { useAuth } from '../context/AuthContext';
-import { ArrowLeft, Check, ChevronRight, HelpCircle, MessageCircle, Moon, Sun, Monitor, LogOut, Database, Download, Upload, Brain, Wifi, Loader2, Server } from 'lucide-react';
+import { ArrowLeft, Check, ChevronRight, HelpCircle, MessageCircle, Moon, Sun, Monitor, LogOut, Database, Download, Upload, Brain, Wifi, Loader2, Server, Heart, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState, useRef } from 'react';
 import { exportData, importData } from '../db/localDB';
@@ -317,8 +317,25 @@ export const SettingsPage = () => {
               <ChevronRight size={24} />
            </div>
          </button>
-      </div>
 
+         <button
+           onClick={() => navigate('/donation')}
+           className="w-full text-left p-6 flex items-center justify-between transition-colors hover:bg-slate-50 dark:hover:bg-slate-800 group"
+         >
+           <div className="flex items-center gap-4">
+             <div className="bg-red-100 dark:bg-red-900/30 text-red-500 dark:text-red-400 p-2 rounded-lg transition-colors">
+                <Heart size={24} />
+             </div>
+             <div>
+               <div className="font-bold text-lg text-slate-700 dark:text-slate-200 mb-1 group-hover:text-brand-primary transition-colors">打赏支持</div>
+               <div className="text-slate-500 dark:text-slate-400 text-sm transition-colors">支持开发者，让项目持续发展</div>
+             </div>
+           </div>
+           <div className="text-slate-300 dark:text-slate-600 group-hover:text-brand-primary transition-colors">
+              <ChevronRight size={24} />
+           </div>
+         </button>
+      </div>
 
     </div>
   );

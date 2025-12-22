@@ -12,6 +12,7 @@ import { MistakesPage } from './pages/MistakesPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { StudyPage } from './pages/StudyPage';
 import { HelpPage } from './pages/HelpPage';
+import { DonationPage } from './pages/DonationPage';
 import { QuizGamePage } from './pages/QuizGamePage';
 import { QuizLevelsPage } from './pages/QuizLevelsPage';
 import { FishingStagesPage } from './pages/FishingStagesPage';
@@ -40,6 +41,7 @@ const App: React.FC = () => {
                 <Route path="/study" element={<StudyPage />} />
                 <Route path="/mistakes" element={<MistakesPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/donation" element={<DonationPage />} />
                 <Route path="/help" element={<HelpPage />} />
               </Route>
               {/* Game pages without layout (full screen immersion) */}
