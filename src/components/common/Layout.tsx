@@ -32,7 +32,7 @@ export const Layout = () => {
   return (
     <div className="min-h-screen w-full overflow-x-hidden bg-slate-50 dark:bg-slate-950 flex flex-col font-sans transition-colors duration-300 mobile-layout">
       {/* Top Navbar */}
-      <nav className="bg-brand-primary dark:bg-slate-900 text-white shadow-lg sticky top-0 z-50 transition-colors duration-300 pt-safe sticky-nav">
+      <nav className="bg-brand-primary dark:bg-slate-900 text-white shadow-lg fixed top-0 left-0 right-0 z-50 transition-colors duration-300 pt-safe sticky-nav">
         <div className="max-w-6xl mx-auto px-4 h-14 md:h-16 flex items-center justify-between">
           
           {/* Left: Brand + Desktop Nav */}
@@ -77,7 +77,14 @@ export const Layout = () => {
       </main>
 
       {/* Mobile Bottom Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 dark:border-slate-800 border-t border-slate-200 flex justify-around items-center h-16 z-50 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] transition-colors duration-300 bottom-nav">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 dark:border-slate-800 border-t border-slate-200 flex justify-between items-center px-4 h-16 z-50 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] transition-colors duration-300 bottom-nav">
+        {user && (
+          <div className="flex items-center gap-1.5 bg-black/20 px-2 py-1 rounded-full text-xs font-bold shadow-inner">
+            <Trophy size={14} className="text-yellow-300 fill-yellow-300" />
+            <span>{totalScore}</span>
+          </div>
+        )}
+        <div className="flex justify-around items-center w-full">
         {navItems.map((item) => (
           <Link 
             key={item.path}
@@ -90,6 +97,7 @@ export const Layout = () => {
             <span className="text-[11px] font-bold leading-none">{item.name}</span>
           </Link>
         ))}
+        </div>
       </div>
     </div>
   );
