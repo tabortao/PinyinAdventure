@@ -30,7 +30,7 @@ export const Layout = () => {
   ];
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-slate-50 dark:bg-slate-950 flex flex-col font-sans transition-colors duration-300">
+    <div className="min-h-screen w-full overflow-x-hidden bg-slate-50 dark:bg-slate-950 flex flex-col font-sans transition-colors duration-300 mobile-layout">
       {/* Top Navbar */}
       <nav className="bg-brand-primary dark:bg-slate-900 text-white shadow-lg sticky top-0 z-50 transition-colors duration-300 pt-safe sticky-nav">
         <div className="max-w-6xl mx-auto px-4 h-14 md:h-16 flex items-center justify-between">
@@ -72,22 +72,22 @@ export const Layout = () => {
       </nav>
 
       {/* Main Content */}
-      <main className="flex-1 relative pb-20 md:pb-0 dark:bg-slate-950 transition-colors duration-300 main-content-offset">
+      <main className="flex-1 relative pb-20 md:pb-0 dark:bg-slate-950 transition-colors duration-300 main-content-offset scrollable-content">
         <Outlet />
       </main>
 
       {/* Mobile Bottom Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 dark:border-slate-800 border-t border-slate-200 flex justify-around items-center h-16 z-50 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] transition-colors duration-300">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 dark:border-slate-800 border-t border-slate-200 flex justify-around items-center h-16 z-50 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] transition-colors duration-300 bottom-nav">
         {navItems.map((item) => (
           <Link 
             key={item.path}
             to={item.path}
             className={`flex flex-col items-center justify-center w-full h-full transition-colors ${isActive(item.path) ? 'text-brand-primary dark:text-brand-primary' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-400'}`}
           >
-            <div className={`transition-transform duration-200 ${isActive(item.path) ? 'scale-110' : 'scale-100'}`}>
+            <div className={`transition-transform duration-200 mb-1 ${isActive(item.path) ? 'scale-110' : 'scale-100'}`}>
                {item.icon}
             </div>
-            <span className="text-[10px] font-bold mt-1">{item.name}</span>
+            <span className="text-[11px] font-bold leading-none">{item.name}</span>
           </Link>
         ))}
       </div>
