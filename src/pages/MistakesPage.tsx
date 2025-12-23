@@ -213,9 +213,9 @@ export const MistakesPage = () => {
 
   // List Interface
   return (
-    <div className="max-w-6xl mx-auto px-4 pb-20 pt-4">
-      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4 mt-2">
-        <div>
+    <div className="max-w-6xl mx-auto px-4 pb-20 pt-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 mt-2">
+        <div className="text-left">
           <h1 className="text-3xl font-black text-brand-dark dark:text-brand-primary mb-2 transition-colors">错音本</h1>
           <p className="text-slate-500 dark:text-slate-400 transition-colors">
             {activeTab === 'questions' 

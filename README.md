@@ -1,7 +1,3 @@
-# 欢迎使用你的秒哒应用代码包
-秒哒应用链接
-    URL:https://www.miaoda.cn/projects/app-89i5xxtol9mp
-
 # 智能拼音大闯关 (Pinyin Adventure)
 
 ## 1. 项目简介
@@ -44,14 +40,7 @@ npm install
 pnpm install
 ```
 
-### 4.3 环境变量
-复制 `.env.example` 为 `.env` 并填写 Supabase 配置：
-```env
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
-
-### 4.4 开发与构建
+### 4.3 开发与构建
 ```bash
 # 启动开发服务器
 npm run dev

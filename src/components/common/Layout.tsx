@@ -72,7 +72,7 @@ export const Layout = () => {
       </nav>
 
       {/* Main Content */}
-      <main className="absolute inset-x-0 top-[3.5rem] md:top-[4rem] md:bottom-0 dark:bg-slate-950 transition-colors duration-300 scrollable-content overflow-y-auto pb-[64px]">
+      <main className="absolute inset-x-0 top-[3.5rem] md:top-[4rem] md:bottom-0 dark:bg-slate-950 transition-colors duration-300 scrollable-content overflow-y-auto pb-[64px] main-content-offset">
         <Outlet />
       </main>
 
@@ -83,9 +83,9 @@ export const Layout = () => {
           <Link 
             key={item.path}
             to={item.path}
-            className={`flex flex-col items-center justify-center flex-1 h-full py-0 transition-colors ${isActive(item.path) ? 'text-brand-primary dark:text-brand-primary' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-400'}`}
+            className={`flex flex-col items-center justify-center flex-1 h-full py-1 transition-colors ${isActive(item.path) ? 'text-brand-primary dark:text-brand-primary' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-400'}`}
           >
-            <div className={`transition-transform duration-200 flex items-center justify-center ${isActive(item.path) ? 'scale-110' : 'scale-100'}`}>
+            <div className={`transition-transform duration-200 flex items-center justify-center mb-0.5 ${isActive(item.path) ? 'scale-110' : 'scale-100'}`}>
                {item.icon}
             </div>
             <span className="text-[11px] font-bold leading-none">{item.name}</span>

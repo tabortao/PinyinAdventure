@@ -64,6 +64,13 @@
     padding-top: calc(3.5rem + env(safe-area-inset-top, 0px));
   }
   
+  /* PWA mode specific adjustments */
+  @media (display-mode: standalone) {
+    .main-content-offset {
+      padding-top: calc(3.5rem + env(safe-area-inset-top, 0px) + 8px);
+    }
+  }
+  
   /* Mobile bottom navigation optimization */
   .bottom-nav {
     position: fixed !important;
