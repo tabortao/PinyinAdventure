@@ -17,7 +17,7 @@ export const FishingStagesPage = () => {
   // We can add unlock logic here later
   
   return (
-    <div className="min-h-screen bg-cyan-50 dark:bg-slate-950 transition-colors pb-20 relative overflow-hidden">
+    <div className="min-h-screen bg-cyan-50 dark:bg-slate-950 transition-colors pb-16 relative overflow-hidden">
       {/* Background Decor */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
           <div className="absolute top-10 left-10 opacity-10 animate-pulse text-cyan-600 dark:text-cyan-400"><Fish size={64} /></div>

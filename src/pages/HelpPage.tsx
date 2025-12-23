@@ -6,7 +6,7 @@ export const HelpPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6 pb-24 md:pb-6 relative text-slate-900 dark:text-slate-100 transition-colors">
+    <div className="max-w-4xl mx-auto px-4 py-6 pb-16 md:pb-6 relative text-slate-900 dark:text-slate-100 transition-colors">
 
       <button 
         onClick={() => navigate('/settings')} 

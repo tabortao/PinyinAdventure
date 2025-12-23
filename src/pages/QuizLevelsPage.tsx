@@ -77,7 +77,7 @@ export const QuizLevelsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20 transition-colors">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-16 transition-colors">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 p-4 shadow-sm transition-colors">
         <div className="max-w-6xl mx-auto flex items-center justify-between">

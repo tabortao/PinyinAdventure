@@ -7,7 +7,7 @@ export const HomePage = () => {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-4 pb-24 transition-colors">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-4 pb-16 transition-colors">
        <div className="max-w-6xl mx-auto pt-4 md:pt-6">
           <div className="text-center mb-10">
             <h1 className="text-3xl font-black text-brand-dark dark:text-white mb-2 tracking-tight">

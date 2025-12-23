@@ -71,7 +71,7 @@ export const FishingLevelSelectPage = () => {
   }
 
   return (
-    <div className={`min-h-screen ${stageInfo.bg} transition-colors pb-20`}>
+    <div className={`min-h-screen ${stageInfo.bg} transition-colors pb-16`}>
       {/* Header */}
       <div className="sticky top-0 z-10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 p-4 shadow-sm transition-colors">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
