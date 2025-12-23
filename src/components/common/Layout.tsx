@@ -72,18 +72,18 @@ export const Layout = () => {
       </nav>
 
       {/* Main Content */}
-      <main className="absolute inset-x-0 top-[3.5rem] md:top-[4rem] md:bottom-0 dark:bg-slate-950 transition-colors duration-300 scrollable-content overflow-y-auto pb-[60px] main-content-offset">
+      <main className="absolute inset-x-0 top-[3.5rem] md:top-[4rem] md:bottom-0 dark:bg-slate-950 transition-colors duration-300 scrollable-content overflow-y-auto pb-[80px] main-content-offset">
         <Outlet />
       </main>
 
       {/* Mobile Bottom Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 dark:border-slate-800 border-t border-slate-200 z-50 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] transition-colors duration-300 bottom-nav">
-        <div className="flex justify-around items-center w-full h-[50px] max-w-sm mx-auto">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 dark:border-slate-800 border-t border-slate-200 z-50 py-2 pb-5 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] transition-colors duration-300 bottom-nav">
+        <div className="flex justify-around items-center w-full max-w-sm mx-auto">
         {navItems.map((item) => (
           <Link 
             key={item.path}
             to={item.path}
-            className={`flex flex-col items-center justify-center w-16 h-full transition-colors ${isActive(item.path) ? 'text-brand-primary dark:text-brand-primary' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-400'}`}
+            className={`flex flex-col items-center justify-center w-16 py-1 transition-colors ${isActive(item.path) ? 'text-brand-primary dark:text-brand-primary' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-400'}`}
           >
             <div className={`transition-transform duration-200 flex items-center justify-center ${isActive(item.path) ? 'scale-110' : 'scale-100'}`}>
                {item.icon}
